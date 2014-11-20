@@ -1,9 +1,9 @@
 ---
 :source:
   :path: test
-  :file: test_Decompression.c
+  :file: test_Dictionary.c
 :successes:
-- :test: test_module_generator_needs_to_be_implemented
+- :test: test_initDictionary_with_size_of_3_should_return_dictionary_with_size_of_3
   :line: 12
   :message: ''
 :failures: []
