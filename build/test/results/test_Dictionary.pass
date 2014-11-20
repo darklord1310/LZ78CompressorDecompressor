@@ -6,11 +6,17 @@
 - :test: test_initDictionary_with_size_of_3_should_return_dictionary_with_size_of_3
   :line: 12
   :message: ''
+- :test: test_getSizeOfString_given_string_abc_should_return_3
+  :line: 25
+  :message: ''
+- :test: test_getSizeOfString_given_empty_string_should_return_0
+  :line: 34
+  :message: ''
 :failures: []
 :ignores: []
 :counts:
-  :total: 1
-  :passed: 1
+  :total: 3
+  :passed: 3
   :failed: 0
   :ignored: 0
 :stdout: []

@@ -35,6 +35,8 @@ char* GlobalOrderError;
 extern void setUp(void);
 extern void tearDown(void);
 extern void test_initDictionary_with_size_of_3_should_return_dictionary_with_size_of_3(void);
+extern void test_getSizeOfString_given_string_abc_should_return_3(void);
+extern void test_getSizeOfString_given_empty_string_should_return_0(void);
 
 
 //=======Test Reset Option=====
@@ -51,6 +53,8 @@ int main(void)
   Unity.TestFile = "test_Dictionary.c";
   UnityBegin();
   RUN_TEST(test_initDictionary_with_size_of_3_should_return_dictionary_with_size_of_3, 12);
+  RUN_TEST(test_getSizeOfString_given_string_abc_should_return_3, 25);
+  RUN_TEST(test_getSizeOfString_given_empty_string_should_return_0, 34);
 
   return (UnityEnd());
 }

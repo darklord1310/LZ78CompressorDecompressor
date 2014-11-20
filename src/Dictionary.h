@@ -16,15 +16,15 @@ struct DictionaryEntry
 
 struct Dictionary
 {
-    DictionaryEntry **Entry;    // pointer to pointer which point to the DictionaryEntry
+    DictionaryEntry *Entry;    // pointer to pointer which point to the DictionaryEntry
     int dictionarySize;         // the size of the dictionary
     int currentIndex;           // the index which the dictionary is pointing to
 };
 
 
 Dictionary *initDictionary(int dictSize);
-char *addEntry(Dictionary *dict, char *EntryToAdd);
-
+// char *addEntry(Dictionary *dict, char *EntryToAdd);
+int getSizeOfString(char *string);
 
 
 #endif // Dictionary_H
