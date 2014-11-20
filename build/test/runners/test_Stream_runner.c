@@ -34,7 +34,10 @@ char* GlobalOrderError;
 //=======External Functions This Runner Calls=====
 extern void setUp(void);
 extern void tearDown(void);
-extern void test_module_generator_needs_to_be_implemented(void);
+extern void test_initInStream_should_malloc_correctly(void);
+extern void test_initOutStream_should_malloc_correctly(void);
+extern void test_openInStream_open_a_text_file_available_should_not_throw_error(void);
+extern void test_openInStream_open_a_text_file_unavailable_should_throw_error(void);
 
 
 //=======Test Reset Option=====
@@ -50,7 +53,10 @@ int main(void)
 {
   Unity.TestFile = "test_Stream.c";
   UnityBegin();
-  RUN_TEST(test_module_generator_needs_to_be_implemented, 12);
+  RUN_TEST(test_initInStream_should_malloc_correctly, 14);
+  RUN_TEST(test_initOutStream_should_malloc_correctly, 24);
+  RUN_TEST(test_openInStream_open_a_text_file_available_should_not_throw_error, 34);
+  RUN_TEST(test_openInStream_open_a_text_file_unavailable_should_throw_error, 57);
 
   return (UnityEnd());
 }
