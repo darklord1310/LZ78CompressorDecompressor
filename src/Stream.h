@@ -29,7 +29,7 @@ struct InStream
 
 
 InStream *openInStream(char *filename, char *mode, InStream *in);
-OutStream *openOutputStream(char *filename, char *mode, OutStream *out);
+OutStream *openOutStream(char *filename, char *mode, OutStream *out);
 
 unsigned int streamReadBit(InStream *in);
 unsigned int streamReadBits(InStream *in, int bitSize);

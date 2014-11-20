@@ -46,14 +46,14 @@ void test_openInStream_open_a_text_file_available_should_not_throw_error(void)
     }
     Catch(ERR){
         TEST_ASSERT_EQUAL(ERR_FAILED_TO_OPEN, ERR);
-		printf("FAILED TO OPEN FILE\n");
+		printf("File not exist!\n");
     }
     
     freeInStream(in);
 }
 
 
-
+// abc is not existed
 void test_openInStream_open_a_text_file_unavailable_should_throw_error(void)
 {
     CEXCEPTION_T ERR;
@@ -67,7 +67,7 @@ void test_openInStream_open_a_text_file_unavailable_should_throw_error(void)
     }
     Catch(ERR){
         TEST_ASSERT_EQUAL(ERR_FAILED_TO_OPEN, ERR);
-		printf("FAILED TO OPEN FILE\n");
+		printf("File not exist!\n");
     }
     
     freeInStream(in);
@@ -75,5 +75,15 @@ void test_openInStream_open_a_text_file_unavailable_should_throw_error(void)
 
 
 
+void test_openOutStream_should_open_file_successfully(void)
+{
+    OutStream *out = initOutStream();
+    
+    out = openOutStream("test/support/zzz.txt", "rb" , out);
+    TEST_ASSERT_NOT_NULL(out);
+    TEST_ASSERT_NOT_NULL(out->file);
+    TEST_ASSERT_EQUAL("test/support/zzz.txt", out->filename);
+    freeOutStream(out);
 
+}
 

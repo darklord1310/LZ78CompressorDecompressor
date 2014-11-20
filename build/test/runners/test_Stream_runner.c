@@ -38,6 +38,7 @@ extern void test_initInStream_should_malloc_correctly(void);
 extern void test_initOutStream_should_malloc_correctly(void);
 extern void test_openInStream_open_a_text_file_available_should_not_throw_error(void);
 extern void test_openInStream_open_a_text_file_unavailable_should_throw_error(void);
+extern void test_openOutStream_should_open_file_successfully(void);
 
 
 //=======Test Reset Option=====
@@ -57,6 +58,7 @@ int main(void)
   RUN_TEST(test_initOutStream_should_malloc_correctly, 24);
   RUN_TEST(test_openInStream_open_a_text_file_available_should_not_throw_error, 34);
   RUN_TEST(test_openInStream_open_a_text_file_unavailable_should_throw_error, 57);
+  RUN_TEST(test_openOutStream_should_open_file_successfully, 78);
 
   return (UnityEnd());
 }

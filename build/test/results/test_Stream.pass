@@ -15,12 +15,15 @@
 - :test: test_openInStream_open_a_text_file_unavailable_should_throw_error
   :line: 57
   :message: ''
+- :test: test_openOutStream_should_open_file_successfully
+  :line: 78
+  :message: ''
 :failures: []
 :ignores: []
 :counts:
-  :total: 4
-  :passed: 4
+  :total: 5
+  :passed: 5
   :failed: 0
   :ignored: 0
 :stdout:
-- FAILED TO OPEN FILE
+- File not exist!

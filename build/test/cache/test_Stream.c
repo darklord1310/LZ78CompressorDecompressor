@@ -91,7 +91,7 @@ void test_openInStream_open_a_text_file_available_should_not_throw_error(void)
 
         UnityAssertEqualNumber((_U_SINT)((ERR_FAILED_TO_OPEN)), (_U_SINT)((ERR)), (((void *)0)), (_U_UINT)48, UNITY_DISPLAY_STYLE_INT);
 
-  printf("FAILED TO OPEN FILE\n");
+  printf("File not exist!\n");
 
     }
 
@@ -133,12 +133,40 @@ void test_openInStream_open_a_text_file_unavailable_should_throw_error(void)
 
         UnityAssertEqualNumber((_U_SINT)((ERR_FAILED_TO_OPEN)), (_U_SINT)((ERR)), (((void *)0)), (_U_UINT)69, UNITY_DISPLAY_STYLE_INT);
 
-  printf("FAILED TO OPEN FILE\n");
+  printf("File not exist!\n");
 
     }
 
 
 
     freeInStream(in);
+
+}
+
+
+
+
+
+
+
+void test_openOutStream_should_open_file_successfully(void)
+
+{
+
+    OutStream *out = initOutStream();
+
+
+
+    out = openOutStream("test/support/zzz.txt", "rb" , out);
+
+    if ((((out)) != ((void *)0))) {} else {UnityFail( (" Expected Non-NULL"), (_U_UINT)(_U_UINT)(_U_UINT)83);;};
+
+    if ((((out->file)) != ((void *)0))) {} else {UnityFail( (" Expected Non-NULL"), (_U_UINT)(_U_UINT)(_U_UINT)84);;};
+
+    UnityAssertEqualNumber((_U_SINT)(("test/support/zzz.txt")), (_U_SINT)((out->filename)), (((void *)0)), (_U_UINT)85, UNITY_DISPLAY_STYLE_INT);
+
+    freeOutStream(out);
+
+
 
 }
