@@ -7,6 +7,6 @@
  * Return index of match entry if found
  * Return 0 if not found
  */
-int compareDictEntry(char *input);
+//int compareDictEntry(char *input,Dictionary *dictionary);
 
 
