@@ -9,5 +9,6 @@ struct Dictionary
     int sizeofEntry ;
 };
 
-
+Dictionary *initDictionary(int dictSize);
+void destroyDictionary(Dictionary *dictionary,int dictSize);
 #endif // Dictionary_H
