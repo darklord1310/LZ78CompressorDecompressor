@@ -25,6 +25,9 @@ struct Dictionary
 Dictionary *initDictionary(int dictSize);
 // char *addEntry(Dictionary *dict, char *EntryToAdd);
 int getSizeOfString(char *string);
+Dictionary **initDictionary(int dictSize);
+void destroyDictionary(Dictionary **dictionary,int dictSize);
 
 
 #endif // Dictionary_H
+
