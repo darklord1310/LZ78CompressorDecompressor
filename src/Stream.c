@@ -59,3 +59,25 @@ OutStream *openOutStream(char *filename, char *mode, OutStream *out)
 
     return out;
 }
+
+/*
+unsigned int streamReadBit(InStream *in)
+{
+    int *dataRead = &(in->byteToRead);
+    int bitRead ;
+    
+    fread(dataRead,sizeof(char),1, in->file);
+
+    *bitRead = *dataRead & 1 ;
+    
+    return bitRead ;
+}
+
+
+unsigned int streamReadBits(InStream *in, int bitSize)
+{
+
+
+
+}
+*/
