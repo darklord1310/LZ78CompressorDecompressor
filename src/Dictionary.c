@@ -29,32 +29,42 @@ Dictionary *initDictionary(int dictSize)
 }
 
 
-
-
-// void destroyDictionary(Dictionary *dictionary,int dictSize)
-// {
-    // int i;
+/* *
+ *  Add data to the current empty/available DictionaryEntry
+ *
+ * Return 1 if data has been successfully added
+ * Return 0 if data is not added due to full dictionary
+ */
+int addEntryData(Dictionary *dictionary, char *EntryDataToAdd)
+{
+    int index = dictionary->currentIndex ;
     
-    // for ( i = 0 ; i < dictSize ; i ++ )
-        // free(dictionary->Entry[i]);
-            
-// }
-
-
-// char *addEntry(Dictionary *dict, char *EntryToAdd)
-// {
-    // if( dict->currentIndex != dict->dictionarySize )
-    // {
-        // strcpy(dict->Entry[dict->currentIndex]->data , "abc");
-        // dict->Entry[dict->currentIndex]->entrySize = getSizeOfString(EntryToAdd);
-        // dict->currentIndex++;
-    // }
+    if( !isDictionaryFull(dictionary) )
+    {
+        strcpy(dictionary->Entry[index].data , EntryDataToAdd);
+        dictionary->Entry[index].entrySize = getSizeOfString(EntryDataToAdd);
+        dictionary->currentIndex++;
+        
+        return 1 ;
+    }
     
-    // return EntryToAdd;
-// }
+    return 0 ;
+}
 
+/**
+ *  Check if the dictionary is full based on currentIndex
+ *
+ * Return 1 if dictionary is full
+ * Return 0 if dictionary is not full
+ */
+int isDictionaryFull(Dictionary *dictionary)
+{
+    if( dictionary->currentIndex >= dictionary->dictionarySize )
+        return 1 ;
+    else    
+        return 0 ;
 
-
+}
 
 int getSizeOfString(char *string)
 {

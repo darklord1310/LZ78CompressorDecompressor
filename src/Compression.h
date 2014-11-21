@@ -3,7 +3,7 @@
 
 #include "Dictionary.h"
 
-int compareDictEntry(char *input,Dictionary *dictionary);
-
+int compare_DictionaryData(char *input,Dictionary *dictionary);
+void merge_InputDataDictionaryData(char *input,char *output,Dictionary *dictionary,int Index);
 
 #endif // Compression_H
