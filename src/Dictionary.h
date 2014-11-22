@@ -23,10 +23,12 @@ struct Dictionary
 
 
 Dictionary *initDictionary(int dictSize);
-// char *addEntry(Dictionary *dict, char *EntryToAdd);
+int addEntryData(Dictionary *dictionary, char *EntryDataToAdd);
+int isDictionaryFull(Dictionary *dictionary);
 int getSizeOfString(char *string);
-Dictionary **initDictionary(int dictSize);
-void destroyDictionary(Dictionary **dictionary,int dictSize);
+
+void refreshDictionaryEntryData(Dictionary *dictionary,int dictSize);
+void destroyDictionary(Dictionary *dictionary,int dictSize);
 
 
 #endif // Dictionary_H
