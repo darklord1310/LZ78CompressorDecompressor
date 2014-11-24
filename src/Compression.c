@@ -3,6 +3,8 @@
 #include "Stream.h"
 #include <string.h>
 #include <stdio.h>
+
+
 /* *
  *  Compare data in the dictionary with input
  *

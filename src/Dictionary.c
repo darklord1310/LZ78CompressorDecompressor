@@ -2,7 +2,7 @@
 #include "stdlib.h"
 #include "malloc.h"
 #include <string.h>
-
+#include "stdio.h"
 
 /*
  * Initialize the dictionary
@@ -41,15 +41,18 @@ int addEntryData(Dictionary *dictionary, char *EntryDataToAdd)
     
     if( !isDictionaryFull(dictionary) )
     {
+        // printf("%s\n", *EntryDataToAdd);
         strcpy(dictionary->Entry[index].data , EntryDataToAdd);
+        // printf("%s\n", dictionary->Entry[0].data);
         dictionary->Entry[index].entrySize = getSizeOfString(EntryDataToAdd);
         dictionary->currentIndex++;
         
         return 1 ;
     }
-    
-    return 0 ;
+    else
+        return 0 ;
 }
+
 
 /**
  *  Check if the dictionary is full based on currentIndex
