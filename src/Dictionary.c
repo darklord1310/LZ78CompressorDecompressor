@@ -99,8 +99,10 @@ void destroyDictionary(Dictionary *dictionary,int dictSize)
     for ( i = 0 ; i < dictSize ; i ++ )  
     {
         free(&(dictionary->Entry[i].data));
-        free(&(dictionary->Entry[i])); 
-    }    
+    }
+    
+    free(dictionary->Entry);
     free(dictionary);
+
 }
 
