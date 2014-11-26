@@ -41,9 +41,7 @@ int addEntryData(Dictionary *dictionary, char *EntryDataToAdd)
     
     if( !isDictionaryFull(dictionary) )
     {
-        // printf("%s\n", *EntryDataToAdd);
         strcpy(dictionary->Entry[index].data , EntryDataToAdd);
-        // printf("%s\n", dictionary->Entry[0].data);
         dictionary->Entry[index].entrySize = getSizeOfString(EntryDataToAdd);
         dictionary->currentIndex++;
         

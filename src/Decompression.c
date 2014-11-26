@@ -16,21 +16,22 @@
  */
 int rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in)
 {
-   
-}
 
-
-int getAPairOfIndexAndData(Dictionary *dictionary, InStream *in)
-{
+    int DictionaryFull;
     
-    unsigned int index, data;
-
+    
+    // do{
     
     // index = streamReadBits(in, 16);
     // data = streamReadBits(in, 8);
+    // DictionaryFull = addDataToDictionary(dictionary, data, index);
+        
+    // }while( data != '$' || DictionaryFull);
    
-    
 }
+
+
+
 
 
 int addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int index)

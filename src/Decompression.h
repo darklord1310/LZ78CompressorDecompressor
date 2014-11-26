@@ -7,7 +7,6 @@
 
 
 char convertIntToChar(unsigned int inputdata);
-int getAPairOfIndexAndData(Dictionary *dictionary, InStream *in);
 int addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int index);
 
 
