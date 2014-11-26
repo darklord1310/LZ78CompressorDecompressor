@@ -33,12 +33,22 @@ int getAPairOfIndexAndData(Dictionary *dictionary, InStream *in)
 }
 
 
-int addDataToDictionary(Dictionary *dictionary, unsigned int data)
+int addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int index)
 {
     int indicator;
+    int signedIndex = index;                    //to change the unsigned index into signed index
     char *convertedData = (char *)(&data);      //typecast the int type data to char type
+    char *string;
     
-    indicator = addEntryData(dictionary, convertedData);
+    if( (signedIndex-1) < 0)
+        indicator = addEntryData(dictionary, convertedData);
+    else
+    {
+        strcpy(string, dictionary->Entry[signedIndex-1].data);
+        strcat(string, convertedData);
+        strcpy(convertedData, string);
+        indicator = addEntryData(dictionary, convertedData);
+    }
     
     if(indicator == 1)
         return 1;
