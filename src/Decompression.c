@@ -44,13 +44,22 @@ int rebuildDictionaryForDecompression(char *filename, char *mode, Dictionary *di
 }
 
 
-void LZ78_Decompressor()
+void LZ78_Decompressor(char *infilename, char *outfilename, char *inmode, char *outmode, Dictionary *dictionary, InStream *in, OutStream *out)
 {
-
-
-
-
-
+    int status, signedIndex;
+    unsigned int index, data;
+    char *string;
+    
+    status = rebuildDictionaryForDecompression(infilename, inmode, dictionary, in);
+    
+    in = openInStream(infilename, inmode, in);
+    index = streamReadBits(in, 16);
+    data = streamReadBits(in, 8);
+    signedIndex = index;
+    
+    if( signedIndex-1 < 0) 
+        string = strdup(dictionary->Entry[signedIndex-1].data);
+    
 
 
 }
@@ -61,13 +70,13 @@ int addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int 
     int indicator;
     int signedIndex = index;                    //to change the unsigned index into signed index
     char *convertedData = (char *)(&data);      //typecast the int type data to char type
-    char string[1024];
+    char *string;
     
     if( (signedIndex-1) < 0)
         indicator = addEntryData(dictionary, convertedData);
     else
     {
-        strcpy(string, dictionary->Entry[signedIndex-1].data);
+        string = strdup(dictionary->Entry[signedIndex-1].data);
         strcat(string, convertedData);
         indicator = addEntryData(dictionary, string);
     }
