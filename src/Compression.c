@@ -4,68 +4,62 @@
 #include <string.h>
 #include <stdio.h>
 
-
-void LZ78_Compressor(char *inputBuffer, char *outputBuffer, Dictionary *dictionary)
-{   
-    int i = 0,j = strlen(inputBuffer), returnedIndex, saveIndex, stringLength, inputState ;
-    char dataString[1024] = {} ;
-   
-    while ( i < j )
-    {
-        memset(dataString,0,1024); //clear string to 0
-        strncpy(dataString,&inputBuffer[i],1);//read 1 character from inputBuffer and copy to dataString
-          
+void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out)
+{       
+    char readByte, dataString[1024] ;
+    int returnedIndex, saveIndex;
+    
+    while ( (readByte = (char)(streamReadBits(in,8))) != EOF )
+    {         
+        if(isDictionaryFull(dictionary))
+            refreshDictionaryEntryData(dictionary,dictionary->dictionarySize);
+        
         if(isDictionaryEmpty(dictionary)) // if dictionary is empty
         {
-            addEntryData(dictionary, dataString); // directly add it into dictionary
-            LZ78_Output(dataString,outputBuffer,0); // output 0X where X = character in dataString
+            addEntryData(dictionary, &readByte); // directly add it into dictionary
+            LZ78_Output(out,readByte,0); // output (0,x) *without braces
         }       
         else
         {
-            returnedIndex = compare_DictionaryData(dataString,dictionary); //check is there any matched data in dictionaryEntry
+            returnedIndex = compare_DictionaryData(&readByte,dictionary); //check is there any matched data in dictionaryEntry
             if ( returnedIndex >= 0 ) // if true
             {
                 saveIndex = returnedIndex ; // store the index of first match in dictionaryEntry
-
+                memset (dataString,0,1024); //clear dataString
+                
                 while(returnedIndex != -1)
                 {
-                    i ++ ;  // read next character 
-                    stringLength = strlen(dataString);
-                    dataString[stringLength] = inputBuffer[i]; //add next character to dataString
+                    readByte = (char)(streamReadBits(in,8)) ;// read next character
                     
-                    returnedIndex = compare_DictionaryData(dataString,dictionary); //check again is there any matched data
+                    if (readByte == EOF)
+                        LZ78_Output(out,readByte,saveIndex+1);
+                    else    
+                    {
+                        strcat(dataString,&readByte); //add next character to dataString
+                        returnedIndex = compare_DictionaryData(dataString,dictionary); //check again is there any matched data
                     
-                    if (returnedIndex != -1 )    
-                        saveIndex = returnedIndex ; // store the index of last match in dictionaryEntry
+                        if (returnedIndex != -1 )    
+                            saveIndex = returnedIndex ; // store the index of last match in dictionaryEntry
+                    }
                 }
                 
                 if(addEntryData(dictionary,dataString)) // add dataString into dictionary
-                {
-                    saveIndex ++ ; //increment saveIndex as dictionaryEntry starts from 0 instead of 1
-                    memset(dataString,0,1024); //clear string to 0
-                    strncpy(dataString,&inputBuffer[i],1); //read character from inputBuffer again
-                    LZ78_Output(dataString,outputBuffer,saveIndex); // produce output (dictionaryIndex+1)(X) *without ()
-                }
+                    LZ78_Output(out,readByte,saveIndex+1); // produce output (dictionaryIndex+1)(X) *without ()
             }
             else // no matched data
             {
-                if(addEntryData(dictionary,dataString))
-                    LZ78_Output(dataString,outputBuffer,0); 
+                if(addEntryData(dictionary,&readByte))
+                    LZ78_Output(out,readByte,0); // output (0,x) *without braces
             }
         }
-    
-        i ++;
     }
 }
 
 
-void LZ78_Output(char *inputString,char *outputBuffer,int index)
+void LZ78_Output(OutStream *out,char outputByte,int index)
 {
-    char charIndex[5] ;
-    
-    itoa(index,charIndex); // convert integer type of index to character
-    strcat(outputBuffer,charIndex); // append index to buffer
-    strcat(outputBuffer,inputString); // append inputString to buffer
+    streamWriteBits(out,index,16);
+    streamWriteBits(out,(int)(outputByte),8);
 }
 
 
@@ -88,42 +82,3 @@ int compare_DictionaryData(char *inputString,Dictionary *dictionary)
     return (-1);
 }
 
-/* *
- *  Merge data in the selected index of dictionaryEntry with input
- *
- * 
- */ 
-void merge_InputDataDictionaryData(char *inputString,Dictionary *dictionary,int index)
-{
-    strcat(inputString,dictionary->Entry[index].data);
-}
-
-/* itoa:  convert n to characters in s */
-void itoa(int n, char s[])
-{
-    int i, sign;
-
-    if ((sign = n) < 0)  /* record sign */
-        n = -n;          /* make n positive */
-    i = 0;
-    do {       /* generate digits in reverse order */
-        s[i++] = n % 10 + '0';   /* get next digit */
-    } while ((n /= 10) > 0);     /* delete it */
-    if (sign < 0)
-        s[i++] = '-';
-    s[i] = '\0';
-    reverse(s);
-}
-
-/* reverse:  reverse string s in place */
-void reverse(char s[])
-{
-    int i, j;
-    char c;
-
-    for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
-        c = s[i];
-        s[i] = s[j];
-        s[j] = c;
-    }
-}
