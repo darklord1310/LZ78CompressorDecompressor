@@ -8,22 +8,55 @@
 
 void LZ78_Compressor(char *inputBuffer, char *outputBuffer, Dictionary *dictionary)
 {   
-    int i = 0,j = strlen(inputBuffer);
-    char *inputString ;
-    
-    if(isDictionaryEmpty(dictionary)) // if dictionary is empty
+    int i = 0,j = strlen(inputBuffer), returnedIndex, saveIndex, stringLength, inputState ;
+    char dataString[1024] = {} ;
+   
+    while ( i < j )
     {
-        if(addEntryData(dictionary, &inputBuffer[i])); // directly add it into dictionary
-            LZ78_Output(&inputBuffer[i],outputBuffer,0); // output 0X where X = character in inputBuffer
-    }    
-    
-    /*else    
-    {
-       
-       
-        
-    }*/
+        memset(dataString,0,1024); //clear string to 0
+        strncpy(dataString,&inputBuffer[i],1);//read 1 character from inputBuffer and copy to dataString
+          
+        if(isDictionaryEmpty(dictionary)) // if dictionary is empty
+        {
+            addEntryData(dictionary, dataString); // directly add it into dictionary
+            LZ78_Output(dataString,outputBuffer,0); // output 0X where X = character in inputBuffer
+        }       
+        else
+        {
+            returnedIndex = compare_DictionaryData(dataString,dictionary); //check is there any matched data in dictionaryEntry
+            if ( returnedIndex >= 0 ) // if true
+            {
+                saveIndex = returnedIndex ; // store the index of first match in dictionaryEntry
 
+                while(returnedIndex != -1)
+                {
+                    i ++ ;  // read next character 
+                    stringLength = strlen(dataString);
+                    dataString[stringLength] = inputBuffer[i]; //add next character to dataString
+                    
+                    returnedIndex = compare_DictionaryData(dataString,dictionary); //check again is there any matched data
+                    
+                    if (returnedIndex != -1 )    
+                        saveIndex = returnedIndex ; // store the index of last match in dictionaryEntry
+                }
+                
+                if(addEntryData(dictionary,dataString)) // add dataString into dictionary
+                {
+                    saveIndex ++ ; //increment saveIndex as dictionaryEntry starts from 0 instead of 1
+                    memset(dataString,0,1024); //clear string to 0
+                    strncpy(dataString,&inputBuffer[i],1); //read character from inputBuffer again
+                    LZ78_Output(dataString,outputBuffer,saveIndex); // produce output (dictionaryIndex+1)(X) *without ()
+                }
+            }
+            else // no matched data
+            {
+                if(addEntryData(dictionary,dataString))
+                    LZ78_Output(dataString,outputBuffer,0); 
+            }
+        }
+    
+        i ++;
+    }
 }
 
 
@@ -61,8 +94,8 @@ int compare_DictionaryData(char *inputString,Dictionary *dictionary)
  *
  * 
  */ 
-void merge_InputDataDictionaryData(char *inputString,char *outputString,Dictionary *dictionary,int index)
+void merge_InputDataDictionaryData(char *inputString,Dictionary *dictionary,int index)
 {
-    strcpy(outputString,inputString);
-    strcat(outputString,dictionary->Entry[index].data);
+    strcat(inputString,dictionary->Entry[index].data);
 }
+

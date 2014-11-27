@@ -38,7 +38,6 @@ Dictionary *initDictionary(int dictSize)
 int addEntryData(Dictionary *dictionary, char *EntryDataToAdd)
 {
     int index = dictionary->currentIndex ;
-    
     if( !isDictionaryFull(dictionary) )
     {
         strcpy(dictionary->Entry[index].data , EntryDataToAdd);
