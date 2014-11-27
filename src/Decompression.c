@@ -53,7 +53,7 @@ int addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int 
     int indicator;
     int signedIndex = index;                    //to change the unsigned index into signed index
     char *convertedData = (char *)(&data);      //typecast the int type data to char type
-    char *string;
+    char string[1024];
     
     if( (signedIndex-1) < 0)
         indicator = addEntryData(dictionary, convertedData);
