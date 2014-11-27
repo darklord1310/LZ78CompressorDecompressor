@@ -2,7 +2,7 @@
 #include "stdlib.h"
 #include "malloc.h"
 #include <string.h>
-
+#include "stdio.h"
 
 /*
  * Initialize the dictionary
@@ -47,9 +47,10 @@ int addEntryData(Dictionary *dictionary, char *EntryDataToAdd)
         
         return 1 ;
     }
-    
-    return 0 ;
+    else
+        return 0 ;
 }
+
 
 /**
  *  Check if the dictionary is full based on currentIndex
@@ -107,13 +108,15 @@ void refreshDictionaryEntryData(Dictionary *dictionary,int dictSize)
 
 void destroyDictionary(Dictionary *dictionary,int dictSize)
 {
-    int i  ;
+    // int i  ;
     
-    for ( i = 0 ; i < dictSize ; i ++ )  
-    {
-        free(&(dictionary->Entry[i].data));
-        free(&(dictionary->Entry[i])); 
-    }    
+    // for ( i = 0 ; i < dictSize ; i ++ )  
+    // {
+        // free(&(dictionary->Entry[i].data));
+        // free(&(dictionary->Entry[i])); 
+    // }  
+    
     free(dictionary);
+
 }
 

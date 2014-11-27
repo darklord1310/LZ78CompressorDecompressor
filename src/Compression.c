@@ -36,6 +36,7 @@ void LZ78_Output(char *inputString,char *outputBuffer,int index)
     strcat(outputBuffer,inputString); // append inputString to buffer
 }
 
+
 /* *
  *  Compare data in the dictionary with input
  *
