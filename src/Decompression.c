@@ -59,7 +59,7 @@ int addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int 
         indicator = addEntryData(dictionary, convertedData);
     else
     {
-        // strcpy(string, dictionary->Entry[signedIndex-1].data);
+        strcpy(string, dictionary->Entry[signedIndex-1].data);
         // strcat(string, convertedData);
         // indicator = addEntryData(dictionary, string);
     }
