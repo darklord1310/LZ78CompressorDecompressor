@@ -60,8 +60,8 @@ int addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int 
     else
     {
         strcpy(string, dictionary->Entry[signedIndex-1].data);
-        // strcat(string, convertedData);
-        // indicator = addEntryData(dictionary, string);
+        strcat(string, convertedData);
+        indicator = addEntryData(dictionary, string);
     }
     
     if(indicator == 1)
