@@ -154,7 +154,7 @@ void test_addDataToDictionary_given_data1_data2_data3_and_data4_when_write_data4
  *      1.  $
  *
  */
-void xtest_rebuildDictionaryForDecompression_given_dictionary_size_3_should_rebuild_accordingly_and_return_0(void)
+void test_rebuildDictionaryForDecompression_given_dictionary_size_3_should_rebuild_accordingly_and_return_0(void)
 {
     int status;
         
@@ -169,6 +169,7 @@ void xtest_rebuildDictionaryForDecompression_given_dictionary_size_3_should_rebu
     streamReadBits_ExpectAndReturn(in, 8, 97);
     streamReadBits_ExpectAndReturn(in, 16, 0);
     streamReadBits_ExpectAndReturn(in, 8, 36);
+    closeInStream_ExpectAndReturn(in,in);
 
 	//Run
     in = initInStream();
@@ -196,32 +197,47 @@ void xtest_rebuildDictionaryForDecompression_given_dictionary_size_3_should_rebu
  *      1.  $
  *
  */
-void xtest_rebuildDictionaryForDecompression_given_dictionary_size_2_should_rebuild_accordingly_and_return_1(void)
+void test_rebuildDictionaryForDecompression_given_dictionary_size_2_should_rebuild_accordingly_and_return_1(void)
 {
-    // int status;
+    int status;
         
-    //Create test fixture
-	// InStream *in;	
-    // Dictionary *dict = initDictionary(2);    
+    // Create test fixture
+	InStream *in;	
+    Dictionary *dict = initDictionary(2);    
 
-	//Mock
-    // initInStream_ExpectAndReturn(in);
-    // openInStream_ExpectAndReturn("test_streamReadBit.txt", "rb" , in, in);
-    // streamReadBits_ExpectAndReturn(in, 16, 0);
-    // streamReadBits_ExpectAndReturn(in, 8, 100);
-    // streamReadBits_ExpectAndReturn(in, 16, 0);
-    // streamReadBits_ExpectAndReturn(in, 8, 36);
+	// Mock
+    initInStream_ExpectAndReturn(in);
+    openInStream_ExpectAndReturn("test_streamReadBit.txt", "rb" , in, in);
+    streamReadBits_ExpectAndReturn(in, 16, 0);
+    streamReadBits_ExpectAndReturn(in, 8, 100);
+    streamReadBits_ExpectAndReturn(in, 16, 0);
+    streamReadBits_ExpectAndReturn(in, 8, 36);
+    closeInStream_ExpectAndReturn(in,in);
 
-	//Run
-    // in = initInStream();
-    // status = rebuildDictionaryForDecompression("test_streamReadBit.txt", "rb", dict, in);
-    // TEST_ASSERT_EQUAL(1, status);                       //because dictionary already full
-    // TEST_ASSERT_EQUAL(2, dict->currentIndex);
-    // TEST_ASSERT_EQUAL_STRING("d" ,dict->Entry[0].data);
-    // TEST_ASSERT_EQUAL_STRING("$" ,dict->Entry[1].data);
-    // TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
-    // TEST_ASSERT_EQUAL(1 ,dict->Entry[1].entrySize);
+	// Run
+    in = initInStream();
+    status = rebuildDictionaryForDecompression("test_streamReadBit.txt", "rb", dict, in);
+    TEST_ASSERT_EQUAL(1, status);                       //because dictionary already full
+    TEST_ASSERT_EQUAL(2, dict->currentIndex);
+    TEST_ASSERT_EQUAL_STRING("d" ,dict->Entry[0].data);
+    TEST_ASSERT_EQUAL_STRING("$" ,dict->Entry[1].data);
+    TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
+    TEST_ASSERT_EQUAL(1 ,dict->Entry[1].entrySize);
     
-    
-    // destroyDictionary(dict,2);
+    destroyDictionary(dict,2);
+}
+
+
+
+
+
+void test_LZ78_Decompressor_given_input_as_shown_should_decompress_correctly()
+{
+
+
+
+
+
+
+
 }

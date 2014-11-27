@@ -27,10 +27,9 @@ int rebuildDictionaryForDecompression(char *filename, char *mode, Dictionary *di
     
     index = streamReadBits(in, 16);
     data = streamReadBits(in, 8);
-    int blablabal = addDataToDictionary(dictionary, data, index);
+    addDataToDictionary(dictionary, data, index);
     convertedData = (char)data;               //typecast int to char
     
-
     if(isDictionaryFull(dictionary) == 1 )
         break;
     
@@ -45,7 +44,16 @@ int rebuildDictionaryForDecompression(char *filename, char *mode, Dictionary *di
 }
 
 
+void LZ78_Decompressor()
+{
 
+
+
+
+
+
+
+}
 
 
 int addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int index)
