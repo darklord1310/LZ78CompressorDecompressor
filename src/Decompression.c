@@ -50,17 +50,32 @@ void LZ78_Decompressor(char *infilename, char *outfilename, char *inmode, char *
     unsigned int index, data;
     char *string;
     
-    status = rebuildDictionaryForDecompression(infilename, inmode, dictionary, in);
+    in = openInStream(infilename, inmode, in);                  //open input file
+    out = openOutStream(outfilename, outmode, out);             //open output file
     
-    in = openInStream(infilename, inmode, in);
-    index = streamReadBits(in, 16);
-    data = streamReadBits(in, 8);
+    status = rebuildDictionaryForDecompression(infilename, inmode, dictionary, in);     //rebuild dictionary
+    
+    index = streamReadBits(in, 16);                             //read index
+    data = streamReadBits(in, 8);                               //read data
+    
     signedIndex = index;
+    char *convertedData = (char*)(&data);
     
-    if( signedIndex-1 < 0) 
+    if( signedIndex-1 < 0)                                      //if index is 0
+    {
         string = strdup(dictionary->Entry[signedIndex-1].data);
-    
+        streamWriteBits(out, (unsigned int)(*string), 8);       //just write to output file directly
+    }
+    else                                                        //if index is not 0
+    {   
+        string = strdup(dictionary->Entry[signedIndex-1].data);
+        strcat(string, convertedData);                          //combined the string with the data
+        streamWriteBits(out, (unsigned int)(*string), 8);       //then write to output file
+    }
 
+    
+    in = closeInStream(in);                                    //open input file
+    out = closeOutStream(out);                                 //open output file
 
 }
 
