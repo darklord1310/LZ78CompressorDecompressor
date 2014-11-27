@@ -1,4 +1,4 @@
-#include "Dictionary.c"
+#include "Dictionary.h"
 #include "Stream.h"
 #include "Decompression.h"
 #include <stdio.h>
@@ -13,25 +13,47 @@
  * Input :
  *					
  *
+ * Return:  1       if dictionary full
+ *          
  */
-int rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in)
+int rebuildDictionaryForDecompression(char *filename, char *mode, Dictionary *dictionary, InStream *in)
 {
-
-    int DictionaryFull;
+    unsigned int index, data;
+    char convertedData;
     
-    
-    // do{
-    
-    // index = streamReadBits(in, 16);
-    // data = streamReadBits(in, 8);
-    // DictionaryFull = addDataToDictionary(dictionary, data, index);
+    in = openInStream(filename, mode, in);
         
-    // }while( data != '$' || DictionaryFull);
-   
+    do{
+    
+    index = streamReadBits(in, 16);
+    data = streamReadBits(in, 8);
+    addDataToDictionary(dictionary, data, index);
+    convertedData = (char)data;               //typecast int to char
+    
+    if(isDictionaryFull(dictionary) == 1 )
+        break;
+    
+    }while( convertedData != '$' );
+    
+    in = closeInStream(in);
+    
+    if(isDictionaryFull(dictionary) )
+        return 1;
+    else
+        return 0;
 }
 
 
+void LZ78_Decompressor()
+{
 
+
+
+
+
+
+
+}
 
 
 int addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int index)
@@ -39,7 +61,7 @@ int addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int 
     int indicator;
     int signedIndex = index;                    //to change the unsigned index into signed index
     char *convertedData = (char *)(&data);      //typecast the int type data to char type
-    char *string;
+    char string[1024];
     
     if( (signedIndex-1) < 0)
         indicator = addEntryData(dictionary, convertedData);
@@ -47,8 +69,7 @@ int addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int 
     {
         strcpy(string, dictionary->Entry[signedIndex-1].data);
         strcat(string, convertedData);
-        strcpy(convertedData, string);
-        indicator = addEntryData(dictionary, convertedData);
+        indicator = addEntryData(dictionary, string);
     }
     
     if(indicator == 1)
