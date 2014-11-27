@@ -3,7 +3,6 @@
 #include "Stream.h"
 #include <string.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 
 void LZ78_Compressor(char *inputBuffer, char *outputBuffer, Dictionary *dictionary)
@@ -19,7 +18,7 @@ void LZ78_Compressor(char *inputBuffer, char *outputBuffer, Dictionary *dictiona
         if(isDictionaryEmpty(dictionary)) // if dictionary is empty
         {
             addEntryData(dictionary, dataString); // directly add it into dictionary
-            LZ78_Output(dataString,outputBuffer,0); // output 0X where X = character in inputBuffer
+            LZ78_Output(dataString,outputBuffer,0); // output 0X where X = character in dataString
         }       
         else
         {
@@ -64,7 +63,7 @@ void LZ78_Output(char *inputString,char *outputBuffer,int index)
 {
     char charIndex[5] ;
     
-    itoa(index,charIndex,10); // convert integer type of index to character
+    itoa(index,charIndex); // convert integer type of index to character
     strcat(outputBuffer,charIndex); // append index to buffer
     strcat(outputBuffer,inputString); // append inputString to buffer
 }
@@ -99,3 +98,32 @@ void merge_InputDataDictionaryData(char *inputString,Dictionary *dictionary,int 
     strcat(inputString,dictionary->Entry[index].data);
 }
 
+/* itoa:  convert n to characters in s */
+void itoa(int n, char s[])
+{
+    int i, sign;
+
+    if ((sign = n) < 0)  /* record sign */
+        n = -n;          /* make n positive */
+    i = 0;
+    do {       /* generate digits in reverse order */
+        s[i++] = n % 10 + '0';   /* get next digit */
+    } while ((n /= 10) > 0);     /* delete it */
+    if (sign < 0)
+        s[i++] = '-';
+    s[i] = '\0';
+    reverse(s);
+}
+
+/* reverse:  reverse string s in place */
+void reverse(char s[])
+{
+    int i, j;
+    char c;
+
+    for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
+        c = s[i];
+        s[i] = s[j];
+        s[j] = c;
+    }
+}
