@@ -66,6 +66,20 @@ int isDictionaryFull(Dictionary *dictionary)
 
 }
 
+/**
+ *  Check if the dictionary is empty if currentIndex = 0
+ *
+ * Return 1 if dictionary is empty
+ * Return 0 if dictionary is not empty
+ */
+int isDictionaryEmpty(Dictionary *dictionary)
+{
+    if( dictionary->currentIndex == 0 )
+        return 1 ;
+    else    
+        return 0 ;
+}
+
 int getSizeOfString(char *string)
 {
 	int j=0,length=0;

@@ -59,3 +59,13 @@ void test_merge_InputDataDictionaryData_given_input_BBB_dictionaryEntry0_contain
     TEST_ASSERT_EQUAL_STRING("BBBAAA",result);
     destroyDictionary(dict,10);
 }
+
+void test_LZ78_Compressor_given_input_A_should_output_0A()
+{
+    Dictionary *dict = initDictionary(10);
+    char output[10];
+    
+    LZ78_Compressor("A", output, dict);
+
+    TEST_ASSERT_EQUAL_STRING("0A",output);
+}
