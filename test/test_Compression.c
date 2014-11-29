@@ -50,47 +50,130 @@ void test_compare_DictionaryData_given_input_CCC_and_dictionary_doesnt_contains_
 void test_LZ78_Compressor_given_input_A_should_output_0A()
 {
     Dictionary *dict = initDictionary(10);
-    InStream *in ; 
-    OutStream *out ;
+    InStream in ; 
+    OutStream out ;
     
-    streamReadBits_ExpectAndReturn(in,8,'A');
-    streamWriteBits_Expect(out,0,16);
-    streamWriteBits_Expect(out,'A',8);
-    streamReadBits_ExpectAndReturn(in,8,EOF);
-    LZ78_Compressor(dict,in,out);
+    streamReadBits_ExpectAndReturn(&in,8,'A');
+    streamWriteBits_Expect(&out,0,16);
+    streamWriteBits_Expect(&out,'A',8);
+    streamReadBits_ExpectAndReturn(&in,8,EOF);
 
-    
+    LZ78_Compressor(dict,&in,&out);
+
     TEST_ASSERT_EQUAL_STRING("A",dict->Entry[0].data);
+    TEST_ASSERT_EQUAL_STRING("",dict->Entry[1].data);
     destroyDictionary(dict,10);
 }
 
-void xtest_LZ78_Compressor_given_input_AAB_should_output_0A1B()
+void test_LZ78_Compressor_given_input_AAAAAAAAA_should_output_0A_1A_2A_3EOF()
 {
     Dictionary *dict = initDictionary(10);
-    char output[10];
+    InStream in ; 
+    OutStream out ;
     
+    streamReadBits_ExpectAndReturn(&in,8,'A');
+    streamWriteBits_Expect(&out,0,16);
+    streamWriteBits_Expect(&out,'A',8);
     
-    //LZ78_Compressor("AAB", output, dict);
+    streamReadBits_ExpectAndReturn(&in,8,'A');
+    streamReadBits_ExpectAndReturn(&in,8,'A');
+    streamWriteBits_Expect(&out,1,16);
+    streamWriteBits_Expect(&out,'A',8);
+    
+    streamReadBits_ExpectAndReturn(&in,8,'A');
+    streamReadBits_ExpectAndReturn(&in,8,'A');
+    streamReadBits_ExpectAndReturn(&in,8,'A');
+    streamWriteBits_Expect(&out,2,16);
+    streamWriteBits_Expect(&out,'A',8);
+    
+    streamReadBits_ExpectAndReturn(&in,8,'A');
+    streamReadBits_ExpectAndReturn(&in,8,'A');
+    streamReadBits_ExpectAndReturn(&in,8,'A');
+    streamReadBits_ExpectAndReturn(&in,8,EOF);
+    streamWriteBits_Expect(&out,3,16);
+    streamWriteBits_Expect(&out,EOF,8);
+    
+    LZ78_Compressor(dict,&in,&out);
 
-    TEST_ASSERT_EQUAL_STRING("0A1B",output);
     TEST_ASSERT_EQUAL_STRING("A",dict->Entry[0].data);
-    TEST_ASSERT_EQUAL_STRING("AB",dict->Entry[1].data);
+    TEST_ASSERT_EQUAL_STRING("AA",dict->Entry[1].data);
+    TEST_ASSERT_EQUAL_STRING("AAA",dict->Entry[2].data);
+    TEST_ASSERT_EQUAL_STRING("",dict->Entry[3].data);
+    
     destroyDictionary(dict,10);
-
 }
 
-void xtest_LZ78_Compressor_given_input_AABAC_should_output_0A1B1C()
+void test_LZ78_Compressor_given_input_space_A_space_B_should_output_0space_0A_1B()
 {
+
     Dictionary *dict = initDictionary(10);
-    char output[10];
-    
-    
-    //LZ78_Compressor("AABAC", output, dict);
+    InStream in ; 
+    OutStream out ;
 
-    TEST_ASSERT_EQUAL_STRING("0A1B1C",output);
-    TEST_ASSERT_EQUAL_STRING("A",dict->Entry[0].data);
-    TEST_ASSERT_EQUAL_STRING("AB",dict->Entry[1].data);
-    TEST_ASSERT_EQUAL_STRING("AC",dict->Entry[2].data);
+    streamReadBits_ExpectAndReturn(&in,8,' ');
+    streamWriteBits_Expect(&out,0,16);
+    streamWriteBits_Expect(&out,' ',8);
+    
+    streamReadBits_ExpectAndReturn(&in,8,'A');
+    streamWriteBits_Expect(&out,0,16);
+    streamWriteBits_Expect(&out,'A',8);
+
+    streamReadBits_ExpectAndReturn(&in,8,' ');
+    streamReadBits_ExpectAndReturn(&in,8,'B');
+    streamWriteBits_Expect(&out,1,16);
+    streamWriteBits_Expect(&out,'B',8);
+    
+    streamReadBits_ExpectAndReturn(&in,8,EOF);
+    
+    LZ78_Compressor(dict,&in,&out);
+
+    TEST_ASSERT_EQUAL_STRING(" ",dict->Entry[0].data);
+    TEST_ASSERT_EQUAL_STRING("A",dict->Entry[1].data);
+    TEST_ASSERT_EQUAL_STRING(" B",dict->Entry[2].data);
+    TEST_ASSERT_EQUAL_STRING("",dict->Entry[3].data);
+    
     destroyDictionary(dict,10);
+}
 
+
+/* CR = carriage return
+ * LF = line feed  
+ * EOL = end of line
+ */
+void test_LZ78_Compressor_given_input_CR_LF_EOL_EOL_A_should_output_0CR_0LF_1LF_3A()
+{
+
+    Dictionary *dict = initDictionary(10);
+    InStream in ; 
+    OutStream out ;
+
+    streamReadBits_ExpectAndReturn(&in,8,'\r');
+    streamWriteBits_Expect(&out,0,16);
+    streamWriteBits_Expect(&out,'\r',8);
+    
+    streamReadBits_ExpectAndReturn(&in,8,'\n');
+    streamWriteBits_Expect(&out,0,16);
+    streamWriteBits_Expect(&out,'\n',8);
+
+    streamReadBits_ExpectAndReturn(&in,8,'\r');
+    streamReadBits_ExpectAndReturn(&in,8,'\n');
+    streamWriteBits_Expect(&out,1,16);
+    streamWriteBits_Expect(&out,'\n',8);
+    
+    streamReadBits_ExpectAndReturn(&in,8,'\r');
+    streamReadBits_ExpectAndReturn(&in,8,'\n');
+    streamReadBits_ExpectAndReturn(&in,8,'A');
+    streamWriteBits_Expect(&out,3,16);
+    streamWriteBits_Expect(&out,'A',8);
+    
+    streamReadBits_ExpectAndReturn(&in,8,EOF);
+    
+    LZ78_Compressor(dict,&in,&out);
+
+    TEST_ASSERT_EQUAL_STRING("\r",dict->Entry[0].data);
+    TEST_ASSERT_EQUAL_STRING("\n",dict->Entry[1].data);
+    TEST_ASSERT_EQUAL_STRING("\r\n",dict->Entry[2].data);
+    TEST_ASSERT_EQUAL_STRING("\r\nA",dict->Entry[3].data);
+    
+    destroyDictionary(dict,10);
 }
