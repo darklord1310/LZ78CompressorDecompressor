@@ -8,21 +8,21 @@
 
 
 /*
- * Build the dictionary for decompression
+ * Build the dictionary for decompression, will return 1 if dictionary has full
  *
  * Input :
  *					
  *
- * Return:  1       if dictionary full
+ * Return:
+ *            1     if dictionary full
+ *            0     if dictionary not full
  *          
  */
-int rebuildDictionaryForDecompression(char *filename, char *mode, Dictionary *dictionary, InStream *in)
+int rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in)
 {
     unsigned int index, data;
     char convertedData;
-    
-    in = openInStream(filename, mode, in);
-        
+           
     do{
     
     index = streamReadBits(in, 16);
@@ -35,13 +35,15 @@ int rebuildDictionaryForDecompression(char *filename, char *mode, Dictionary *di
     
     }while( convertedData != '$' );
     
-    in = closeInStream(in);
-    
-    if(isDictionaryFull(dictionary) )
+    if(isDictionaryFull(dictionary) == 1 )
+    {
+        dictionary->currentIndex = 0;
         return 1;
+    }
     else
-        return 0;
+        return 0;   
 }
+
 
 
 void LZ78_Decompressor(char *infilename, char *outfilename, char *inmode, char *outmode, Dictionary *dictionary, InStream *in, OutStream *out)
@@ -53,38 +55,52 @@ void LZ78_Decompressor(char *infilename, char *outfilename, char *inmode, char *
     in = openInStream(infilename, inmode, in);                  //open input file
     out = openOutStream(outfilename, outmode, out);             //open output file
     
-    status = rebuildDictionaryForDecompression(infilename, inmode, dictionary, in);     //rebuild dictionary
+    rebuildDictionaryForDecompression(dictionary, in);          //rebuild dictionary
+    
+    string = strdup(Decompression(in, dictionary));             //decompress
+    
+    
+    
+    
+    
+    streamWriteBits(out, (unsigned int)(*string), 8);           //write to output file 
+    
+    in = closeInStream(in);                                     //open input file
+    out = closeOutStream(out);                                  //open output file
+}
+
+
+
+char *Decompression(InStream *in, Dictionary *dictionary)
+{
+    unsigned int index, data;
+    int signedIndex;
+    char *string;
     
     index = streamReadBits(in, 16);                             //read index
     data = streamReadBits(in, 8);                               //read data
     
-    signedIndex = index;
+    signedIndex = (int)index;
     char *convertedData = (char*)(&data);
     
     if( signedIndex-1 < 0)                                      //if index is 0
-    {
         string = strdup(dictionary->Entry[signedIndex-1].data);
-        streamWriteBits(out, (unsigned int)(*string), 8);       //just write to output file directly
-    }
     else                                                        //if index is not 0
     {   
         string = strdup(dictionary->Entry[signedIndex-1].data);
         strcat(string, convertedData);                          //combined the string with the data
-        streamWriteBits(out, (unsigned int)(*string), 8);       //then write to output file
     }
 
-    
-    in = closeInStream(in);                                    //open input file
-    out = closeOutStream(out);                                 //open output file
-
+    return string;
 }
 
 
-int addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int index)
+
+void addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int index)
 {
     int indicator;
-    int signedIndex = index;                    //to change the unsigned index into signed index
-    char *convertedData = (char *)(&data);      //typecast the int type data to char type
+    int signedIndex = (int)index;                    //to change the unsigned index into signed index
+    char *convertedData = (char *)(&data);           //typecast the int type data to char type
     char *string;
     
     if( (signedIndex-1) < 0)
@@ -95,11 +111,6 @@ int addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int 
         strcat(string, convertedData);
         indicator = addEntryData(dictionary, string);
     }
-    
-    if(indicator == 1)
-        return 1;
-    else
-        return 0;
 }
 
 
