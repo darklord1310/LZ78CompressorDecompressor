@@ -97,12 +97,11 @@ int getSizeOfString(char *string)
 void refreshDictionaryEntryData(Dictionary *dictionary,int dictSize)
 {
     int i  ;
-    
-    for ( i = 0 ; i < dictSize ; i ++ )    
-    {    
-        free(&(dictionary->Entry[i].data));
-        dictionary->Entry[i].data = calloc( 1024, sizeof(char) );
-    }
+   
+    for ( i = 0 ; i < dictSize ; i ++ )
+        memset (dictionary->Entry[i].data,0,1024);
+        
+    dictionary->currentIndex = 0;
 }
 
 void destroyDictionary(Dictionary *dictionary,int dictSize)

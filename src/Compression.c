@@ -17,7 +17,7 @@ void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out)
         if(isDictionaryEmpty(dictionary)) // if dictionary is empty
         {
             addEntryData(dictionary, readByte); // directly add it into dictionary
-            LZ78_Output(out,readByte[0],0); // output (0,x) *without braces
+            LZ78_Output(out,readByte[0],0,EOFstate); // output (0,x) *without braces
         }       
         else
         {
@@ -48,12 +48,12 @@ void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out)
                 if (EOFstate != 1)//prevent adding EOF into dictionary
                     addEntryData(dictionary,dataString); // add dataString into dictionary
                     
-                LZ78_Output(out,readByte[0],saveIndex+1); // produce output (dictionaryIndex+1 , X) *without ()
+                LZ78_Output(out,readByte[0],saveIndex+1,EOFstate); // produce output (dictionaryIndex+1 , X) *without ()
             }
             else // no matched data
             {
                 addEntryData(dictionary,readByte);
-                LZ78_Output(out,readByte[0],0); // output (0,x) *without braces
+                LZ78_Output(out,readByte[0],0,EOFstate); // output (0,x) *without braces
             }
         }
         if (EOFstate == 1) //EOF encountered previously 
@@ -63,10 +63,11 @@ void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out)
 }
 
 
-void LZ78_Output(OutStream *out,char outputByte,int index)
+void LZ78_Output(OutStream *out,char outputByte,int index,int EOFstate)
 {
     streamWriteBits(out,index,16);
-    streamWriteBits(out,(int)(outputByte),8);
+    if (EOFstate != 1 ) // prevent writing EOF to file
+        streamWriteBits(out,(int)(outputByte),8);
 }
 
 
@@ -97,3 +98,4 @@ void merge_InputDataDictionaryData(char *inputString,Dictionary *dictionary,int 
 {
    strcat(inputString,dictionary->Entry[index].data);
 }
+
