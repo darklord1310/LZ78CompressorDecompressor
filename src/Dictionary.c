@@ -38,7 +38,6 @@ Dictionary *initDictionary(int dictSize)
 int addEntryData(Dictionary *dictionary, char *EntryDataToAdd)
 {
     int index = dictionary->currentIndex ;
-    
     if( !isDictionaryFull(dictionary) )
     {
         strcpy(dictionary->Entry[index].data , EntryDataToAdd);
@@ -65,6 +64,20 @@ int isDictionaryFull(Dictionary *dictionary)
     else    
         return 0 ;
 
+}
+
+/**
+ *  Check if the dictionary is empty if currentIndex = 0
+ *
+ * Return 1 if dictionary is empty
+ * Return 0 if dictionary is not empty
+ */
+int isDictionaryEmpty(Dictionary *dictionary)
+{
+    if( dictionary->currentIndex == 0 )
+        return 1 ;
+    else    
+        return 0 ;
 }
 
 int getSizeOfString(char *string)

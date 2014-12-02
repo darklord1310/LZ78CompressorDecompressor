@@ -2,8 +2,10 @@
 #define Compression_H
 
 #include "Dictionary.h"
+#include "Stream.h"
 
-int compare_DictionaryData(char *input,Dictionary *dictionary);
-void merge_InputDataDictionaryData(char *input,char *output,Dictionary *dictionary,int Index);
-
+int compare_DictionaryData(char *inputString,Dictionary *dictionary);
+void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out);
+void LZ78_Output(OutStream *out,char outputByte,int index);
+void merge_InputDataDictionaryData(char *inputString,Dictionary *dictionary,int index);
 #endif // Compression_H

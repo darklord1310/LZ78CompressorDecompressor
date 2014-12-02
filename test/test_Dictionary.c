@@ -84,6 +84,24 @@ void test_isDictionaryFull_given_currentIndex_2_dicionary_size_3_should_return_0
     destroyDictionary(dict,3);
 } 
 
+void test_isDictionaryEmpty_given_currentIndex_0_should_return_1()
+{
+    Dictionary *dict = initDictionary(3);
+    
+    TEST_ASSERT_EQUAL(1,isDictionaryEmpty(dict));
+    destroyDictionary(dict,3);
+}
+
+void test_isDictionaryEmpty_given_currentIndex_2_should_return_0()
+{
+    Dictionary *dict = initDictionary(3);
+    dict->currentIndex = 2 ;
+
+    TEST_ASSERT_EQUAL(0,isDictionaryEmpty(dict));
+    destroyDictionary(dict,3);
+
+}
+
 void test_addEntry_given_string_zzz_should_return_1_and_currentIndex_should_point_to_1()
 {
     Dictionary *dict = initDictionary(3);
