@@ -7,7 +7,7 @@
 void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out)
 {       
     char readByte[2] ={}, dataString[1024] ;
-    int returnedIndex, saveIndex, EOFstate , i = 0;
+    int returnedIndex, saveIndex, EOFstate =0 , i = 0;
 
     while (1)
     {   
@@ -20,8 +20,10 @@ void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out)
         printf("readByte[0] char : %c\n\n",readByte[0]);
     
         if(isDictionaryFull(dictionary)) 
+        {
+            printf("Dictionary is Full\n");
             refreshDictionaryEntryData(dictionary,dictionary->dictionarySize); 
-        
+        }
         if(isDictionaryEmpty(dictionary)) // if dictionary is empty
         {
             addEntryData(dictionary, readByte); // directly add it into dictionary
