@@ -7,10 +7,18 @@
 void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out)
 {       
     char readByte[2] ={}, dataString[1024] ;
-    int returnedIndex, saveIndex, EOFstate ;
+    int returnedIndex, saveIndex, EOFstate , i = 0;
 
-    while ( (readByte[0] = (char)(streamReadBits(in,8))) != EOF )
+    while (1)
     {   
+        readByte[0] = (char)(streamReadBits(in,8));
+        if (checkEndOfFile(in)) // if EOF encountered
+            break;  // break loop
+        
+        printf("Phase %d \n",i);
+        printf("readByte[0] decimal : %d\n",readByte[0]);
+        printf("readByte[0] char : %c\n\n",readByte[0]);
+    
         if(isDictionaryFull(dictionary)) 
             refreshDictionaryEntryData(dictionary,dictionary->dictionarySize); 
         
@@ -30,7 +38,7 @@ void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out)
                 while(returnedIndex != -1)
                 {
                     readByte[0] = (char)(streamReadBits(in,8)) ;// read next character
-                    if (readByte[0] == EOF) //if EOF detected
+                    if (checkEndOfFile(in)) //if EOF detected
                     {    
                         EOFstate = 1 ; // use to remember EOF encountered for later uses
                         returnedIndex = -1 ; //quit loop
@@ -56,8 +64,10 @@ void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out)
                 LZ78_Output(out,readByte[0],0,EOFstate); // output (0,x) *without braces
             }
         }
+        i++;
         if (EOFstate == 1) //EOF encountered previously 
             break ; // break loop
+            
     }
     
 }
@@ -98,4 +108,5 @@ void merge_InputDataDictionaryData(char *inputString,Dictionary *dictionary,int 
 {
    strcat(inputString,dictionary->Entry[index].data);
 }
+
 
