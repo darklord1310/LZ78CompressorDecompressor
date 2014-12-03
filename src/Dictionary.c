@@ -40,6 +40,7 @@ int addEntryData(Dictionary *dictionary, char *EntryDataToAdd)
     int index = dictionary->currentIndex ;
     if( !isDictionaryFull(dictionary) )
     {
+        memset (dictionary->Entry[index].data,0,1024);
         strcpy(dictionary->Entry[index].data , EntryDataToAdd);
         dictionary->Entry[index].entrySize = getSizeOfString(EntryDataToAdd);
         dictionary->currentIndex++;

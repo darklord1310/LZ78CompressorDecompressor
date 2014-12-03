@@ -128,8 +128,8 @@ void test_LZ78_Compressor_given_input_space_A_space_B_should_output_0space_0A_1B
 
     TEST_ASSERT_EQUAL_STRING(" ",dict->Entry[0].data);
     TEST_ASSERT_EQUAL_STRING("A",dict->Entry[1].data);
+    printf("Data 1: %s\n",dict->Entry[2].data);
     TEST_ASSERT_EQUAL_STRING(" B",dict->Entry[2].data);
-    TEST_ASSERT_EQUAL_STRING("",dict->Entry[3].data);
     
     destroyDictionary(dict,10);
 }
