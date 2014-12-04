@@ -3,7 +3,6 @@
 #include "Stream.h"
 #include <string.h>
 #include <stdio.h>
-#include <math.h>
 
 void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out)
 {       

@@ -73,27 +73,42 @@ InStream *closeInStream(InStream *in)
     fclose(in->file);
 }
 
-/*
+
 unsigned int streamReadBit(InStream *in)
 {
-    int *dataRead = &(in->byteToRead);
-    int bitRead ;
+    int bitTest ;
     
-    fread(dataRead,sizeof(char),1, in->file);
-
-    *bitRead = *dataRead & 1 ;
+    bitTest = in->byteToRead & (1 << in->bitIndex) ;
+    in -> bitIndex ++ ;
     
-    return bitRead ;
+    if (bitTest != 0 )
+        return 1 ; 
+    else 
+        return 0 ;
 }
 
 
 unsigned int streamReadBits(InStream *in, int bitSize)
 {
+    unsigned int dataRead = 0, bitRead = 0 ,i ;
+    
+    if (in->byteToRead == 0 && in->bitIndex == 0 ) //no data have been read yet
+        fread(&(in->byteToRead),1,1,in->file);
 
-
-
+    for ( i = 0 ; i < bitSize ; i ++)
+    {
+        if (in->bitIndex == 8 ) //fully extracted 1 byte
+        {
+            fread(&(in->byteToRead),1,1,in->file); //read new byte
+            in->bitIndex = 0 ;
+        }
+        
+        bitRead = streamReadBit(in);
+        dataRead = dataRead | bitRead << i;
+    }
+    return dataRead ;
 }
-*/
+
 
 void streamWriteBit(OutStream *out,int bitToWrite)
 {
