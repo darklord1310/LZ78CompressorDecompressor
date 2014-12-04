@@ -69,7 +69,6 @@ void test_openInStream_open_a_text_file_unavailable_should_throw_error(void)
         TEST_ASSERT_EQUAL(ERR_FAILED_TO_OPEN, ERR);
 		printf("File not exist!\n");
     }
-    closeInStream(in);
     freeInStream(in);
 }
 
@@ -175,7 +174,6 @@ void test_streamWriteBits_given_value_8_bitSize_4_should_write_8_to_byteToWrite_
 
 void test_streamWriteBits_given_A_bitSize_8_should_flush_A_during_closeOutStream()
 {
-    printf("test_streamWriteBits_given_value_A_bitSize_8_should_flush_A_during_closeOutStream()\n");
     OutStream *out = initOutStream();
     
     out = openOutStream("test/support/test_streamWriteBits.txt", "wb" , out);
@@ -197,6 +195,7 @@ void test_streamWriteBits_given_A_bitSize_8_should_flush_A_during_closeOutStream
 void test_streamWriteBits_given_ABCDEFGH_bitSize_64_should_flush_ABCDEFGH()
 {
     char *string = "ABCDEFGH" ;
+    
     int i ;
     OutStream *out = initOutStream();
     
@@ -213,4 +212,73 @@ void test_streamWriteBits_given_ABCDEFGH_bitSize_64_should_flush_ABCDEFGH()
     freeOutStream(out);
 }
 
+void test_streamReadBit_given_byteToRead_3_bitIndex_0_should_return_1_and_increment_bitIndex()
+{
+    InStream * in = initInStream();
+    in->byteToRead = 3 ;
+    TEST_ASSERT_EQUAL(1,streamReadBit(in));
+    TEST_ASSERT_EQUAL(1,in->bitIndex);
+    
+    freeInStream(in);
+}
 
+void test_streamReadBit_given_byteToRead_3_bitIndex_4_should_return_0_and_increment_bitIndex()
+{
+    InStream * in = initInStream();
+    in->byteToRead = 3 ;
+    in->bitIndex = 4 ;
+    TEST_ASSERT_EQUAL(0,streamReadBit(in));
+    TEST_ASSERT_EQUAL(5,in->bitIndex);
+    
+    freeInStream(in);
+}
+
+void test_streamReadBits_given_byteToRead_20_bitSize_4_should_return_4()
+{
+    InStream *in = initInStream();
+    in->byteToRead = 20 ;
+    TEST_ASSERT_EQUAL(4,streamReadBits(in,4));
+    TEST_ASSERT_EQUAL(4,in->bitIndex);
+    
+    freeInStream(in);
+}
+
+void test_streamReadBits_given_byteToRead_20_bitSize_5_should_return_20()
+{
+    InStream *in = initInStream();
+    in->byteToRead = 20 ;
+    TEST_ASSERT_EQUAL(20,streamReadBits(in,5));
+    TEST_ASSERT_EQUAL(5,in->bitIndex);
+    
+    freeInStream(in);
+}
+
+void test_streamReadBits_given_bitSize_64_storageType_string_should_extract_data_from_the_file()
+{
+    char storage[10] = {};
+    int i ;
+    InStream *in = initInStream();
+    in = openInStream("test/support/test_streamReadBits.txt", "rb" , in);
+
+    for ( i = 0 ; i < 8 ; i ++ )
+        storage[i] = (char)streamReadBits(in,8) ;
+    
+    TEST_ASSERT_EQUAL_STRING("ABCDEFGH",storage);
+    closeInStream(in);
+    freeInStream(in);
+}
+
+void test_streamReadBits_given_bitSize_16_storageType_int_should_extract_data_from_the_file()
+{
+    int storage;
+    int i ;
+    
+    InStream *in = initInStream();
+    in = openInStream("test/support/test_streamReadBits.txt", "rb" , in);
+
+    storage = streamReadBits(in,16) ;
+    
+    TEST_ASSERT_EQUAL(0x4241,storage); /*Text file in little endian format*/
+    closeInStream(in);
+    freeInStream(in);
+}
