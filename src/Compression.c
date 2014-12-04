@@ -124,15 +124,15 @@ int findLastMatchEntry(Dictionary *dictionary, InStream *in, char *dataString, c
 
 int determineNumberOfBitsRequired(int index)
 {
-    int storeIndex ;
-    double result ;
+    int bitTest, i ,result = 0;
     
-    if (index == 0 )
-        return 1 ;
+    for ( i = 0 ; i < (sizeof(int) * 8) ; i ++)
+    {
+        bitTest = index & ( 1 << i ) ;
         
-    storeIndex = index + 1;
-    result = log2((double)storeIndex);
-    result = ceil(result);
-
-    return (int)result;
+        if (bitTest != 0 )
+            result = i;
+    }
+    
+    return (result + 1);
 }

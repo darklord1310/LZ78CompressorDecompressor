@@ -1,6 +1,5 @@
 #include "unity.h"
 #include <string.h>
-#include <math.h>
 #include "Dictionary.h"
 #include "Compression.h"
 #include "mock_Stream.h"
