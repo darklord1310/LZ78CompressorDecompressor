@@ -60,6 +60,19 @@ OutStream *openOutStream(char *filename, char *mode, OutStream *out)
     return out;
 }
 
+OutStream *closeOutStream(OutStream *out)
+{
+    if (out->bitIndex != 0)
+        streamFlush(out);
+        
+    fclose(out->file);
+}
+
+InStream *closeInStream(InStream *in)
+{
+    fclose(in->file);
+}
+
 /*
 unsigned int streamReadBit(InStream *in)
 {
@@ -81,3 +94,55 @@ unsigned int streamReadBits(InStream *in, int bitSize)
 
 }
 */
+
+void streamWriteBit(OutStream *out,int bitToWrite)
+{
+    out->byteToWrite = (out->byteToWrite) << 1 ; //shift left 1 time
+    out->byteToWrite = out->byteToWrite | bitToWrite ;
+    out->bitIndex ++ ;
+}
+
+void streamWriteBits(OutStream *out,unsigned int value,int bitSize)
+{
+    int bitToWrite[bitSize],bitTest, i ,j ;
+    
+    j = bitSize - 1;
+    
+    for ( i = 0 ; i < bitSize ; i ++) //reverse value to Write MSB first
+    {
+        bitTest = (value >> i) & 1; 
+        if (bitTest != 0)
+            bitToWrite[j] = 1;
+        else    
+            bitToWrite[j] = 0;
+        j -- ;
+    }
+    
+   
+    for ( i = 0 ; i < bitSize ; i ++) //write value to buffer
+    {
+        if (out->bitIndex == 8)
+            streamFlush(out);
+
+        streamWriteBit(out,bitToWrite[i]);
+    }
+}    
+    
+void streamFlush(OutStream *out)
+{
+    int n;
+    n = fwrite(&(out->byteToWrite),1,1,out->file);
+    
+    out->byteToWrite = 0;
+    out->bitIndex = 0 ;
+}
+
+int checkEndOfFile(InStream *in)
+{
+    if(feof (in->file))
+        return 1;
+        
+    else 
+        return 0 ;
+
+}
