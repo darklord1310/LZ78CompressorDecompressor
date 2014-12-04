@@ -23,23 +23,25 @@ int rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in)
     unsigned int index, data;
     char convertedData;
            
-    do{
-    
-    index = streamReadBits(in, 16);
-    data = streamReadBits(in, 8);
-    addDataToDictionary(dictionary, data, index);
-    convertedData = (char)data;               //typecast int to char
-    
-    if(isDictionaryFull(dictionary) == 1 )
-        break;
-    
-    }while( convertedData != '$' );
-    
-    if(isDictionaryFull(dictionary) == 1 )
+    while(1)
     {
-        dictionary->currentIndex = 0;
-        return 1;
+        index = streamReadBits(in, 16);
+        if( checkEndOfFile(in) )
+            break;
+            
+        data = streamReadBits(in, 8);
+        if( checkEndOfFile(in) )
+            break;
+            
+        convertedData = (char)data;               //typecast int to char
+        addDataToDictionary(dictionary, data, index);
+        
+        if(isDictionaryFull(dictionary) == 1 )
+            break;
     }
+    
+    if(isDictionaryFull(dictionary) == 1 )
+        return 1;
     else
         return 0;   
 }
@@ -57,9 +59,7 @@ void LZ78_Decompressor(char *infilename, char *outfilename, char *inmode, char *
     
     rebuildDictionaryForDecompression(dictionary, in);          //rebuild dictionary
     
-    string = strdup(Decompression(in, dictionary));             //decompress
-    
-    
+
     
     
     
@@ -71,7 +71,7 @@ void LZ78_Decompressor(char *infilename, char *outfilename, char *inmode, char *
 
 
 
-char *Decompression(InStream *in, Dictionary *dictionary)
+void Decompression(InStream *in, OutStream *out, Dictionary *dictionary)
 {
     unsigned int index, data;
     int signedIndex;
@@ -91,25 +91,23 @@ char *Decompression(InStream *in, Dictionary *dictionary)
         strcat(string, convertedData);                          //combined the string with the data
     }
 
-    return string;
 }
 
 
 
 void addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int index)
 {
-    int indicator;
     int signedIndex = (int)index;                    //to change the unsigned index into signed index
     char *convertedData = (char *)(&data);           //typecast the int type data to char type
     char *string;
-    
+
     if( (signedIndex-1) < 0)
-        indicator = addEntryData(dictionary, convertedData);
+        addEntryData(dictionary, convertedData);
     else
     {
         string = strdup(dictionary->Entry[signedIndex-1].data);
         strcat(string, convertedData);
-        indicator = addEntryData(dictionary, string);
+        addEntryData(dictionary, string);
     }
 }
 
