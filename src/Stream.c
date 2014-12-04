@@ -126,7 +126,6 @@ void streamWriteBits(OutStream *out,unsigned int value,int bitSize)
 
         streamWriteBit(out,bitToWrite[i]);
     }
-    printf("Byte to write %c",out->byteToWrite);
 }    
     
 void streamFlush(OutStream *out)
