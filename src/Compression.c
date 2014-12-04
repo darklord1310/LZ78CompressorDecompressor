@@ -7,57 +7,44 @@
 void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out)
 {       
     char readByte[2] ={}, dataString[1024] ;
-    int returnedIndex, saveIndex, EOFstate ;
+    int returnedIndex, lastIndex, EOFstate =0 , i = 0;
 
-    while ( (readByte[0] = (char)(streamReadBits(in,8))) != EOF )
+    while (1)
     {   
+        readByte[0] = (char)(streamReadBits(in,8));
+        
+        if (checkEndOfFile(in)) // if EOF encountered
+            break;  // break loop
+            
         if(isDictionaryFull(dictionary)) 
             refreshDictionaryEntryData(dictionary,dictionary->dictionarySize); 
-        
+            
         if(isDictionaryEmpty(dictionary)) // if dictionary is empty
         {
             addEntryData(dictionary, readByte); // directly add it into dictionary
-            LZ78_Output(out,readByte[0],0,EOFstate); // output (0,x) *without braces
+            LZ78_Output(out,readByte[0],0,EOFstate); // output (0,x) *without ()
         }       
-        else
+        else // dictionary is not empty
         {
             returnedIndex = compare_DictionaryData(readByte,dictionary); //check is there any matched data in dictionaryEntry
             if ( returnedIndex >= 0 ) // if true
             {
-                saveIndex = returnedIndex ; // store the index of first match in dictionaryEntry
-                memset (dataString,0,1024); //clear dataString
-                merge_InputDataDictionaryData(dataString,dictionary,saveIndex); //merge input character with data in dictionary
-                while(returnedIndex != -1)
-                {
-                    readByte[0] = (char)(streamReadBits(in,8)) ;// read next character
-                    if (readByte[0] == EOF) //if EOF detected
-                    {    
-                        EOFstate = 1 ; // use to remember EOF encountered for later uses
-                        returnedIndex = -1 ; //quit loop
-                    }
-                    else    
-                    {
-                        strcat(dataString,readByte); //add next character to dataString
-                        returnedIndex = compare_DictionaryData(dataString,dictionary); //check again is there any matched data
-                    
-                        if (returnedIndex != -1 )  // if there is still existing a match in dictionaryEntry
-                            saveIndex = returnedIndex ; // store the index of last match in dictionaryEntry
-                    }
-                }
+                lastIndex = findLastMatchEntry(dictionary,in,dataString,readByte,&returnedIndex, &EOFstate);
                 
                 if (EOFstate != 1)//prevent adding EOF into dictionary
                     addEntryData(dictionary,dataString); // add dataString into dictionary
                     
-                LZ78_Output(out,readByte[0],saveIndex+1,EOFstate); // produce output (dictionaryIndex+1 , X) *without ()
+                LZ78_Output(out,readByte[0],lastIndex+1,EOFstate); // produce output (lastIndex+1 , X) *without ()
             }
             else // no matched data
             {
                 addEntryData(dictionary,readByte);
-                LZ78_Output(out,readByte[0],0,EOFstate); // output (0,x) *without braces
+                LZ78_Output(out,readByte[0],0,EOFstate); // output (0,x) *without ()
             }
         }
+        
         if (EOFstate == 1) //EOF encountered previously 
-            break ; // break loop
+            break ; // break loop          
     }
     
 }
@@ -99,3 +86,37 @@ void merge_InputDataDictionaryData(char *inputString,Dictionary *dictionary,int 
    strcat(inputString,dictionary->Entry[index].data);
 }
 
+
+/*  Find the last match of dictionaryEntry
+*
+*  Return the index of the last match dictionaryEntry
+*/ 
+int findLastMatchEntry(Dictionary *dictionary, InStream *in, char *dataString, char *readByte, int *returnedIndex, int *EOFstate)
+{
+    int lastIndex = *returnedIndex ; // store the index of first match in dictionaryEntry
+    
+    memset (dataString,0,1024); //clear dataString
+    merge_InputDataDictionaryData(dataString,dictionary,lastIndex); //merge input character with data in dictionary
+    
+    while(*returnedIndex != -1)
+    {
+        readByte[0] = (char)(streamReadBits(in,8)) ;// read next character
+        if (checkEndOfFile(in)) //if EOF detected
+        {    
+            *EOFstate = 1 ; // use to remember EOF encountered for later uses
+            *returnedIndex = -1 ; //quit loop
+        }
+        else    
+        {
+            strcat(dataString,readByte); //add next character to dataString
+            *returnedIndex = compare_DictionaryData(dataString,dictionary); //check again is there any matched data
+                    
+            if (*returnedIndex != -1 )  // if there is still existing a match in dictionaryEntry
+                lastIndex = *returnedIndex ; // store the index of last match in dictionaryEntry
+        }
+    }
+    
+
+    return lastIndex ;
+
+}
