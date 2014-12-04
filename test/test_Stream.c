@@ -88,7 +88,7 @@ void test_openOutStream_should_open_file_successfully(void)
 
 }
 
-void test_streamWriteBit_1time_given_input_1_should_write_1_to_byteToWrite_and_increment_bitIndex_to_1()
+void xtest_streamWriteBit_1time_given_input_1_should_write_1_to_byteToWrite_and_increment_bitIndex_to_1()
 {
     OutStream *out = initOutStream();
     
@@ -103,7 +103,7 @@ void test_streamWriteBit_1time_given_input_1_should_write_1_to_byteToWrite_and_i
     freeOutStream(out);
 }
 
-void test_streamWriteBit_2time_given_input_1_0_should_write_1_0_to_byteToWrite_and_increment_bitIndex_to_2()
+void xtest_streamWriteBit_2time_given_input_1_0_should_write_1_0_to_byteToWrite_and_increment_bitIndex_to_2()
 {
     OutStream *out = initOutStream();
     
@@ -123,7 +123,7 @@ void test_streamWriteBit_2time_given_input_1_0_should_write_1_0_to_byteToWrite_a
     freeOutStream(out);
 }
 
-void test_streamWriteBit_3time_given_input_1_0_1_should_write_1_0_1_to_byteToWrite_and_increment_bitIndex_to_3()
+void xtest_streamWriteBit_3time_given_input_1_0_1_should_write_1_0_1_to_byteToWrite_and_increment_bitIndex_to_3()
 {
     OutStream *out = initOutStream();
     
@@ -148,7 +148,7 @@ void test_streamWriteBit_3time_given_input_1_0_1_should_write_1_0_1_to_byteToWri
     freeOutStream(out);
 }
 
-void test_streamWriteBits_given_value_8_bitSize_3_should_write_0_to_byteToWrite_return_bitIndex_3()
+void xtest_streamWriteBits_given_value_8_bitSize_3_should_write_0_to_byteToWrite_return_bitIndex_3()
 {
     OutStream *out = initOutStream();
     
@@ -161,7 +161,7 @@ void test_streamWriteBits_given_value_8_bitSize_3_should_write_0_to_byteToWrite_
     
 }
 
-void test_streamWriteBits_given_value_8_bitSize_4_should_write_8_to_byteToWrite_return_bitIndex_4()
+void xtest_streamWriteBits_given_value_8_bitSize_4_should_write_8_to_byteToWrite_return_bitIndex_4()
 {
     OutStream *out = initOutStream();
     
