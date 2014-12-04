@@ -54,7 +54,7 @@ void LZ78_Output(OutStream *out,char outputByte,int index,int EOFstate)
 {
     streamWriteBits(out,index,16);
     if (EOFstate != 1 ) // prevent writing EOF to file
-        streamWriteBits(out,(int)(outputByte),8);
+        streamWriteBits(out,(unsigned int)(outputByte),8);
 }
 
 
