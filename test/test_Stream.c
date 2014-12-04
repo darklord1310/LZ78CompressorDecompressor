@@ -69,7 +69,6 @@ void test_openInStream_open_a_text_file_unavailable_should_throw_error(void)
         TEST_ASSERT_EQUAL(ERR_FAILED_TO_OPEN, ERR);
 		printf("File not exist!\n");
     }
-    closeInStream(in);
     freeInStream(in);
 }
 
