@@ -3,6 +3,7 @@
 #include "Stream.h"
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 
 void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out)
 {       
@@ -119,4 +120,19 @@ int findLastMatchEntry(Dictionary *dictionary, InStream *in, char *dataString, c
 
     return lastIndex ;
 
+}
+
+int determineNumberOfBitsRequired(int index)
+{
+    int storeIndex ;
+    double result ;
+    
+    if (index == 0 )
+        return 1 ;
+        
+    storeIndex = index + 1;
+    result = log2((double)storeIndex);
+    result = ceil(result);
+
+    return (int)result;
 }

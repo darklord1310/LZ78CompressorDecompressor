@@ -173,9 +173,8 @@ void test_streamWriteBits_given_value_8_bitSize_4_should_write_8_to_byteToWrite_
     freeOutStream(out);
 }
 
-void test_streamWriteBits_given_A_bitSize_8_should_flush_A_during_closeOutStream()
+void xtest_streamWriteBits_given_A_bitSize_8_should_flush_A_during_closeOutStream()
 {
-    printf("test_streamWriteBits_given_value_A_bitSize_8_should_flush_A_during_closeOutStream()\n");
     OutStream *out = initOutStream();
     
     out = openOutStream("test/support/test_streamWriteBits.txt", "wb" , out);
@@ -194,9 +193,10 @@ void test_streamWriteBits_given_A_bitSize_8_should_flush_A_during_closeOutStream
 }
 
 
-void test_streamWriteBits_given_ABCDEFGH_bitSize_64_should_flush_ABCDEFGH()
+void xtest_streamWriteBits_given_ABCDEFGH_bitSize_64_should_flush_ABCDEFGH()
 {
     char *string = "ABCDEFGH" ;
+    
     int i ;
     OutStream *out = initOutStream();
     

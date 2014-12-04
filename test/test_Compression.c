@@ -1,5 +1,6 @@
 #include "unity.h"
 #include <string.h>
+#include <math.h>
 #include "Dictionary.h"
 #include "Compression.h"
 #include "mock_Stream.h"
@@ -242,3 +243,29 @@ void test_LZ78_Compressor_given_input_CR_LF_LF_A_should_output_0CR_0LF_2A()
     destroyDictionary(dict,10);
 }
 
+void test_determineNumberOfBitsRequired_given_0_should_return_1()
+{
+    TEST_ASSERT_EQUAL(1,determineNumberOfBitsRequired(0));
+
+}
+
+void test_determineNumberOfBitsRequired_given_1_should_return_1()
+{
+    TEST_ASSERT_EQUAL(1,determineNumberOfBitsRequired(1));
+
+}
+
+void test_determineNumberOfBitsRequired_given_2_should_return_2()
+{
+    TEST_ASSERT_EQUAL(2,determineNumberOfBitsRequired(2));
+}
+
+void test_determineNumberOfBitsRequired_given_5_should_return_3()
+{
+    TEST_ASSERT_EQUAL(3,determineNumberOfBitsRequired(5));
+}
+
+void test_determineNumberOfBitsRequired_given_8_should_return_4()
+{
+    TEST_ASSERT_EQUAL(4,determineNumberOfBitsRequired(8));
+}
