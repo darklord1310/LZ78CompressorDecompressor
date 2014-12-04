@@ -73,27 +73,6 @@ InStream *closeInStream(InStream *in)
     fclose(in->file);
 }
 
-/*
-unsigned int streamReadBit(InStream *in)
-{
-    int *dataRead = &(in->byteToRead);
-    int bitRead ;
-    
-    fread(dataRead,sizeof(char),1, in->file);
-
-    *bitRead = *dataRead & 1 ;
-    
-    return bitRead ;
-}
-
-
-unsigned int streamReadBits(InStream *in, int bitSize)
-{
-
-
-
-}
-*/
 
 void streamWriteBit(OutStream *out,int bitToWrite)
 {

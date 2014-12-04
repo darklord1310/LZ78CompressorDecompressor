@@ -9,7 +9,7 @@
 void addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int index);
 int rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in);
 void Decompression(InStream *in, OutStream *out, Dictionary *dictionary);
-void LZ78_Decompressor(char *infilename, char *outfilename, char *inmode, char *outmode, Dictionary *dictionary, InStream *in, OutStream *out);
+void LZ78_Decompressor(char *infilename, char *outfilename, Dictionary *dictionary);
 
 
 
