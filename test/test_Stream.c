@@ -255,7 +255,7 @@ void test_streamReadBits_given_byteToRead_20_bitSize_5_should_return_20()
 
 void test_streamReadBits_given_bitSize_64_storageType_string_should_extract_data_from_the_file()
 {
-    char storage[10] ;
+    char storage[10] = {};
     int i ;
     InStream *in = initInStream();
     in = openInStream("test/support/test_streamReadBits.txt", "rb" , in);
