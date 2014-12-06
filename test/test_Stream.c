@@ -46,7 +46,7 @@ void test_openInStream_open_a_text_file_available_should_not_throw_error(void)
     }
     Catch(ERR){
         TEST_ASSERT_EQUAL(ERR_FAILED_TO_OPEN, ERR);
-		printf("File not exist!\n");
+		TEST_FAIL_MESSAGE("File not exist!");
     }
     closeInStream(in);
     freeInStream(in);
@@ -63,6 +63,7 @@ void test_openInStream_open_a_text_file_unavailable_should_throw_error(void)
     Try
 	{
         in = openInStream("test/support/abc.txt", "rb" , in);
+        TEST_FAIL_MESSAGE("Expected file to be opened");
 
     }
     Catch(ERR){

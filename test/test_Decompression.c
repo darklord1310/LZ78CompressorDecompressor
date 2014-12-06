@@ -194,18 +194,25 @@ void test_rebuildDictionaryForDecompression_given_dictionary_size_10_is_larger_t
 	// Mock
     streamReadBits_ExpectAndReturn(&in, 16, 0);
     checkEndOfFile_ExpectAndReturn(&in, 0);
+    
     streamReadBits_ExpectAndReturn(&in, 8, 100);
     checkEndOfFile_ExpectAndReturn(&in, 0);
+    
     streamReadBits_ExpectAndReturn(&in, 16, 1);
     checkEndOfFile_ExpectAndReturn(&in, 0);
+    
     streamReadBits_ExpectAndReturn(&in, 8, 65);
     checkEndOfFile_ExpectAndReturn(&in, 0);
+    
     streamReadBits_ExpectAndReturn(&in, 16, 2);
     checkEndOfFile_ExpectAndReturn(&in, 0);
+    
     streamReadBits_ExpectAndReturn(&in, 8, 98);
     checkEndOfFile_ExpectAndReturn(&in, 0);
+    
     streamReadBits_ExpectAndReturn(&in, 16, 2);
     checkEndOfFile_ExpectAndReturn(&in, 0);
+    
     streamReadBits_ExpectAndReturn(&in, 8, EOF);
     checkEndOfFile_ExpectAndReturn(&in, 1);
 
@@ -329,7 +336,6 @@ void test_Decompression_given_0A_1A_2A_3EOF_should_write_A_AA_AAA_AAA()
  *      1.  b
  *      2.  ab
  *      3.  aa
- *      4.  b
  *
  */
 void test_Decompression_given_0a_0b_1b_1a_2EOF_should_write_a_b_ab_aa_b()
@@ -346,8 +352,6 @@ void test_Decompression_given_0a_0b_1b_1a_2EOF_should_write_a_b_ab_aa_b()
     dict->Entry[2].entrySize = 2;
     dict->Entry[3].data = strdup("aa");
     dict->Entry[3].entrySize = 2;
-    dict->Entry[4].data = strdup("b");
-    dict->Entry[4].entrySize = 1;
 
 
     // Mock
@@ -402,10 +406,13 @@ void test_Decompression_given_0a_0b_1b_1a_2EOF_should_write_a_b_ab_aa_b()
 
 
 
-/* CR = carriage return = 13 , 0x0D
+
+/*
+ * Test for control word like carriage return, line feed
+ * CR = carriage return = 13 , 0x0D
  * LF = line feed  = 10 0x0A
  */
-void test_Decompression_given_input_0CR_0LF_2A_should_output_CR_LF_LF_A_()
+void test_Decompression_given_input_0CR_0LF_2A_should_output_CR_LF_LF_A()
 {
     // Create test fixture
 	InStream in;	
@@ -413,31 +420,68 @@ void test_Decompression_given_input_0CR_0LF_2A_should_output_CR_LF_LF_A_()
     Dictionary *dict = initDictionary(10);
     dict->Entry[0].data = strdup("\r");
     dict->Entry[0].entrySize = 1;
-    dict->Entry[1].data = strdup("b");
+    dict->Entry[1].data = strdup("\n");
     dict->Entry[1].entrySize = 1;
-    dict->Entry[2].data = strdup("ab");
+    dict->Entry[2].data = strdup("\nA");
     dict->Entry[2].entrySize = 2;
-    dict->Entry[3].data = strdup("aa");
-    dict->Entry[3].entrySize = 2;
-    dict->Entry[4].data = strdup("b");
-    dict->Entry[4].entrySize = 1;
 
+    
+    // Mock
+    streamReadBits_ExpectAndReturn(&in, 16, 0);                     //read index 0
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    
+    streamReadBits_ExpectAndReturn(&in, 8, 13);                     //read CR
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    
+    streamWriteBits_Expect(&out, (unsigned int)('\r'), 8);           //expect CR here
+    
+    streamReadBits_ExpectAndReturn(&in, 16, 0);                     //read index 0
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    
+    streamReadBits_ExpectAndReturn(&in, 8, 10);                     //read LF
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    
+    streamWriteBits_Expect(&out, (unsigned int)('\n'), 8);           //expect LF here
+    
+    streamReadBits_ExpectAndReturn(&in, 16, 2);                     //read index 2
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    
+    streamReadBits_ExpectAndReturn(&in, 8, 65);                     //read A
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    
+    streamWriteBits_Expect(&out, (unsigned int)('\n'), 8);          //expect LF here
+    streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
+    
+    streamReadBits_ExpectAndReturn(&in, 16, EOF);                   //read EOF
+    checkEndOfFile_ExpectAndReturn(&in, 1); 
 
-
-
-
-
-
+    //run
+    Decompression(&in, &out, dict);
 }
 
 
-void test_LZ78_Decompressor_given_input_as_shown_should_decompress_correctly()
+
+void test_swapUpper16bitsWithLower16bits_given_0x0100_should_return_1()
 {
 
+    unsigned int value = 0x100;
+    unsigned int convertedvalue = swapUpper16bitsWithLower16bits(value);
 
 
-
-
-
+    TEST_ASSERT_EQUAL(1, convertedvalue);
 
 }
+
+
+void test_swapUpper16bitsWithLower16bits_given_0x0E00_should_return_14()
+{
+
+    unsigned int value = 0xe00;
+    unsigned int convertedvalue = swapUpper16bitsWithLower16bits(value);
+
+
+    TEST_ASSERT_EQUAL(14, convertedvalue);
+}
+
+
+

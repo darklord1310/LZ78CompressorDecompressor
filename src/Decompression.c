@@ -20,12 +20,14 @@
  */
 int rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in)
 {
-    unsigned int index, data;
+    unsigned int index, data, convertedIndex;
     char convertedData;
            
     while(1)
     {
         index = streamReadBits(in, 16);
+        convertedIndex = swapUpper16bitsWithLower16bits(index);
+        
         if( checkEndOfFile(in) )
             break;
             
@@ -34,7 +36,7 @@ int rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in)
             break;
             
         convertedData = (char)data;               //typecast int to char
-        addDataToDictionary(dictionary, data, index);
+        addDataToDictionary(dictionary, data, convertedIndex);
         
         if(isDictionaryFull(dictionary) == 1 )
             break;
@@ -48,56 +50,31 @@ int rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in)
 
 
 
-void LZ78_Decompressor(char *infilename, char *outfilename, Dictionary *dictionary)
-{
-    int status, signedIndex;
-    unsigned int index, data;
-    char *string;
-    InStream *in;
-    OutStream *out;
-    
-    in = initInStream();
-    out = initOutStream();
-    
-    in = openInStream(infilename, "rb" , in);                        //open input file
-    out = openOutStream(outfilename, "wb" , out);                    //open output file
-    
-
-    status = rebuildDictionaryForDecompression(dictionary, in);      //rebuild dictionary
-    
-
-    
-    
-    
-
-    
-    in = closeInStream(in);                                         //open input file
-    out = closeOutStream(out);                                      //open output file
-}
-
-
-
 void Decompression(InStream *in, OutStream *out, Dictionary *dictionary)
 {
-    unsigned int index, data;
+    unsigned int index, data, convertedIndex;
     int signedIndex , i;
     char *string;
     
     while(1)
     {
         index = streamReadBits(in, 16);                             //read index
-        signedIndex = (int)index;
+        convertedIndex = swapUpper16bitsWithLower16bits(index);
+        signedIndex = (int)convertedIndex;
+        
         if( checkEndOfFile(in) )
             break;
+            
         data = streamReadBits(in, 8);                               //read data
         char *convertedData = (char*)(&data);
+        
         if( !checkEndOfFile(in) )
         {
             if( signedIndex-1 < 0)                                      //if index is 0
                 streamWriteBits(out, (unsigned int)(*convertedData), 8);
             else                                                        //if index is not 0
             {   
-                string = strdup(dictionary->Entry[index-1].data);
+                string = strdup(dictionary->Entry[convertedIndex-1].data);
                 strcat(string, convertedData);                          //combined the string with the data
                 for(i=0; i < strlen(string); i++)
                     streamWriteBits(out, (unsigned int)(string[i]), 8);
@@ -105,8 +82,11 @@ void Decompression(InStream *in, OutStream *out, Dictionary *dictionary)
         }
         else
         {
-            for(i=0; i < dictionary->Entry[index-1].entrySize; i++)
-                streamWriteBits(out, (unsigned int)(dictionary->Entry[index-1].data[i]), 8);
+            if(convertedIndex != 0)
+            {
+                for(i=0; i < dictionary->Entry[convertedIndex-1].entrySize; i++)
+                    streamWriteBits(out, (unsigned int)(dictionary->Entry[convertedIndex-1].data[i]), 8);
+            }
             break;
         }
     }
@@ -131,3 +111,14 @@ void addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int
 }
 
 
+
+// this function is used to correct the read sequence of int value read by streamReadBits
+unsigned int swapUpper16bitsWithLower16bits(unsigned int value)
+{
+    unsigned int low8bits = value & 0x000F;
+    unsigned int upper8bits = (value >> 8);
+    unsigned int newvalue = (low8bits << 8) | upper8bits;
+
+    
+    return newvalue;
+}
