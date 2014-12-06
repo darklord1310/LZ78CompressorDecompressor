@@ -14,25 +14,21 @@ void tearDown(void)
 }
 
 
-void testing()
+void test_getPositionInFile_after_read_6_byte_should_point_to_6()
 {
     //Create test fixture
     unsigned int storage[10] = {};
-    // InStream *in = initInStream();                                              //init InStream
-    // storage[0] = streamReadBits(in,16) ;
-    // storage[1] = streamReadBits(in,8) ;
-    // storage[2] = streamReadBits(in,16) ;
-    // storage[3] = streamReadBits(in,8) ;
-    // closeInStream(in);
-        
-    // int position = getPositionInFile(in);
-  
-    // TEST_ASSERT_EQUAL(1, storage[2]);
-    // TEST_ASSERT_EQUAL((int)('a'), storage[1]);
-    // TEST_ASSERT_EQUAL(1, storage[2]);
-    // TEST_ASSERT_EQUAL((int)('b'), storage[3]);
-    // TEST_ASSERT_EQUAL('a', storage[1]);
+    InStream *in = initInStream();                                              //init InStream
+    in = openInStream("test/support/test_decompression_in_0a1b1a0b2a4.txt", "rb" , in);
+    storage[0] = streamReadBits(in,16) ;
+    storage[1] = streamReadBits(in,8) ;
+    storage[2] = streamReadBits(in,16) ;
+    storage[3] = streamReadBits(in,8) ;
 
+        
+    int position = getPositionInFile(in);
+    TEST_ASSERT_EQUAL(6, position);
+    closeInStream(in);
 }
 
 

@@ -3,7 +3,7 @@
 #include "Decompression.h"
 #include <stdio.h>
 #include <string.h>
-
+#include "Decompression_noMocking.h"
 
 
 
@@ -18,7 +18,7 @@
  *            0     if dictionary not full
  *          
  */
-int rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in)
+void rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in, int *lastDecompressPosition)
 {
     unsigned int index, data, convertedIndex;
     char convertedData;
@@ -35,22 +35,19 @@ int rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in)
         if( checkEndOfFile(in) )
             break;
             
-        convertedData = (char)data;               //typecast int to char
         addDataToDictionary(dictionary, data, convertedIndex);
         
         if(isDictionaryFull(dictionary) == 1 )
+        {
+            *lastDecompressPosition = getPositionInFile(in) + 1;
             break;
-    }
-    
-    if(isDictionaryFull(dictionary) == 1 )
-        return 1;
-    else
-        return 0;   
+        }
+    } 
 }
 
 
 
-void Decompression(InStream *in, OutStream *out, Dictionary *dictionary)
+void Decompression(InStream *in, OutStream *out, Dictionary *dictionary, int *lastDecompressPosition)
 {
     unsigned int index, data, convertedIndex;
     int signedIndex , i;
@@ -62,13 +59,13 @@ void Decompression(InStream *in, OutStream *out, Dictionary *dictionary)
         convertedIndex = swapUpper16bitsWithLower16bits(index);
         signedIndex = (int)convertedIndex;
         
-        if( checkEndOfFile(in) )
+        if( checkEndOfFile(in) || getPositionInFile(in) == *lastDecompressPosition)
             break;
             
         data = streamReadBits(in, 8);                               //read data
         char *convertedData = (char*)(&data);
         
-        if( !checkEndOfFile(in) )
+        if( !checkEndOfFile(in) || getPositionInFile(in) != *lastDecompressPosition)
         {
             if( signedIndex-1 < 0)                                      //if index is 0
                 streamWriteBits(out, (unsigned int)(*convertedData), 8);
