@@ -2,7 +2,7 @@
 #include "Decompression.h"
 #include "Dictionary.h"
 #include "mock_Stream.h"
-#include "Decompression_noMocking.h"
+
 
 void setUp(void)
 {
@@ -80,19 +80,19 @@ void test_addDataToDictionary_given_data1_and_data2_when_write_data2_should_merg
  *      2.  abc
  *
  */
-// void test_addDataToDictionary_given_data1_data_2_and_data3_when_write_data3_should_merge_ab_and_c_together_and_write_into_dictionary_entry2()
-// {
-    // Dictionary *dict = initDictionary(3);
+void test_addDataToDictionary_given_data1_data_2_and_data3_when_write_data3_should_merge_ab_and_c_together_and_write_into_dictionary_entry2()
+{
+    Dictionary *dict = initDictionary(3);
         
-    // addDataToDictionary(dict, 97, 0);
-    // addDataToDictionary(dict, 98, 1);
-    // addDataToDictionary(dict, 99, 2);
-    // TEST_ASSERT_EQUAL(3, dict->currentIndex);
-    // TEST_ASSERT_EQUAL_STRING("abc" ,dict->Entry[2].data);
-    // TEST_ASSERT_EQUAL(3 ,dict->Entry[2].entrySize);
+    addDataToDictionary(dict, 97, 0);
+    addDataToDictionary(dict, 98, 1);
+    addDataToDictionary(dict, 99, 2);
+    TEST_ASSERT_EQUAL(3, dict->currentIndex);
+    TEST_ASSERT_EQUAL_STRING("abc" ,dict->Entry[2].data);
+    TEST_ASSERT_EQUAL(3 ,dict->Entry[2].entrySize);
     
-    // destroyDictionary(dict,3);
-// }
+    destroyDictionary(dict,3);
+}
 
 
 
@@ -107,35 +107,36 @@ void test_addDataToDictionary_given_data1_and_data2_when_write_data2_should_merg
  *      0.  a
  *
  */
-// void test_rebuildDictionaryForDecompression_given_dictionary_size_3_is_larger_than_data_written_should_rebuild_accordingly_and_currentIndex_is_1_and_should_return_0(void)
-// {
-    // Create test fixture
-    // int status;
-	// InStream in;	
-    // Dictionary *dict = initDictionary(3);    
+void test_rebuildDictionaryForDecompression_given_dictionary_size_3_is_larger_than_data_written_should_rebuild_accordingly_and_currentIndex_is_1_and_should_return_neg_1(void)
+{
+    //Create test fixture
+    int status;
+	InStream in;	
+    Dictionary *dict = initDictionary(3);    
+    int lastDecompressPosition = -1;
 
-	// Mock
-    // streamReadBits_ExpectAndReturn(&in, 16, 0);
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
-    // streamReadBits_ExpectAndReturn(&in, 8, 97);
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
-    // streamReadBits_ExpectAndReturn(&in, 16, EOF);
-    // checkEndOfFile_ExpectAndReturn(&in, 1);
+	//Mock
+    streamReadBits_ExpectAndReturn(&in, 16, 0);
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 97);
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, EOF);
+    checkEndOfFile_ExpectAndReturn(&in, 1);
 
-	// Run
-    // status = rebuildDictionaryForDecompression(dict, &in);
-    // TEST_ASSERT_EQUAL(0, status);
-    // TEST_ASSERT_EQUAL(1, dict->currentIndex);
-    // TEST_ASSERT_EQUAL_STRING("a" ,dict->Entry[0].data);
-    // TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
+	//Run
+    status = rebuildDictionaryForDecompression(dict, &in, &lastDecompressPosition);
+    TEST_ASSERT_EQUAL(-1, status);
+    TEST_ASSERT_EQUAL(1, dict->currentIndex);
+    TEST_ASSERT_EQUAL_STRING("a" ,dict->Entry[0].data);
+    TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
     
-    // destroyDictionary(dict,3);
-// }
+    destroyDictionary(dict,3);
+}
 
 
 
 
-/*
+/* Try to write 0a0b but only 0a is written into dictionary because dictionary has already full
  * Given input = 0a0b
  * In binary   = 00000000 00000000      01100001     00000000 00000000      01100010
  *               |               |      |      |     |               |      |      |
@@ -145,29 +146,31 @@ void test_addDataToDictionary_given_data1_and_data2_when_write_data2_should_merg
  *      0.  a
  *
  */
-// void test_rebuildDictionaryForDecompression_given_dictionary_size_1_is_smaller_than_data_written_should_rebuild_accordingly_and_currentIndex_is_1_and_should_return_1(void)
-// {
-    // Create test fixture
-    // int status;
-	// InStream in;	
-    // Dictionary *dict = initDictionary(1);    
+void test_rebuildDictionaryForDecompression_given_dictionary_size_1_is_smaller_than_data_written_should_rebuild_accordingly_and_currentIndex_is_1_and_should_return_4(void)
+{
+    //Create test fixture
+    int status;
+	InStream in;	
+    Dictionary *dict = initDictionary(1);    
+    int lastDecompressPosition = -1;
 
-	// Mock
-    // streamReadBits_ExpectAndReturn(&in, 16, 0);
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
-    // streamReadBits_ExpectAndReturn(&in, 8, 97);
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+	//Mock
+    streamReadBits_ExpectAndReturn(&in, 16, 0);
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 97);
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    getPositionInFile_ExpectAndReturn(&in, 3);
 
 
-	// Run
-    // status = rebuildDictionaryForDecompression(dict, &in);
-    // TEST_ASSERT_EQUAL(1, dict->currentIndex);
-    // TEST_ASSERT_EQUAL(1, status);
-    // TEST_ASSERT_EQUAL_STRING("a" ,dict->Entry[0].data);
-    // TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
+	//Run
+    status = rebuildDictionaryForDecompression(dict, &in, &lastDecompressPosition);
+    TEST_ASSERT_EQUAL(1, dict->currentIndex);
+    TEST_ASSERT_EQUAL(4, status);                           //dictionary is already full and last decompress position is 4
+    TEST_ASSERT_EQUAL_STRING("a" ,dict->Entry[0].data);
+    TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
     
-    // destroyDictionary(dict,3);
-// }
+    destroyDictionary(dict,3);
+}
 
 
 
@@ -185,52 +188,53 @@ void test_addDataToDictionary_given_data1_and_data2_when_write_data2_should_merg
  *      2.  dAb
  *
  */
-// void test_rebuildDictionaryForDecompression_given_dictionary_size_10_is_larger_than_data_written_should_rebuild_accordingly_currentIndex_is_3_and_should_return_0(void)
-// {
+void test_rebuildDictionaryForDecompression_given_dictionary_size_10_is_larger_than_data_written_should_rebuild_accordingly_currentIndex_is_3_and_should_return_neg_1(void)
+{
     // Create test fixture
-	// InStream in;	
-    // int status;
-    // Dictionary *dict = initDictionary(10);    
+	InStream in;	
+    int status;
+    int lastDecompressPosition = -1;
+    Dictionary *dict = initDictionary(10);    
 
 	// Mock
-    // streamReadBits_ExpectAndReturn(&in, 16, 0);
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 0);
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamReadBits_ExpectAndReturn(&in, 8, 100);
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 100);
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamReadBits_ExpectAndReturn(&in, 16, 1);
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 0x0100);
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamReadBits_ExpectAndReturn(&in, 8, 65);
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 65);
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamReadBits_ExpectAndReturn(&in, 16, 2);
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 0x0200);
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamReadBits_ExpectAndReturn(&in, 8, 98);
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 98);
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamReadBits_ExpectAndReturn(&in, 16, 2);
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 0x0200);
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamReadBits_ExpectAndReturn(&in, 8, EOF);
-    // checkEndOfFile_ExpectAndReturn(&in, 1);
+    streamReadBits_ExpectAndReturn(&in, 8, EOF);
+    checkEndOfFile_ExpectAndReturn(&in, 1);
 
 	// Run
-    // status = rebuildDictionaryForDecompression(dict, &in);
-    // TEST_ASSERT_EQUAL(3, dict->currentIndex);
-    // TEST_ASSERT_EQUAL(0, status);
-    // TEST_ASSERT_EQUAL_STRING("d" ,dict->Entry[0].data);
-    // TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
-    // TEST_ASSERT_EQUAL_STRING("dA" ,dict->Entry[1].data);
-    // TEST_ASSERT_EQUAL(2 ,dict->Entry[1].entrySize);
-    // TEST_ASSERT_EQUAL_STRING("dAb" ,dict->Entry[2].data);
-    // TEST_ASSERT_EQUAL(3 ,dict->Entry[2].entrySize);
+    status = rebuildDictionaryForDecompression(dict, &in, &lastDecompressPosition);
+    TEST_ASSERT_EQUAL(3, dict->currentIndex);
+    TEST_ASSERT_EQUAL(-1, status);                                      //dictionary is not full
+    TEST_ASSERT_EQUAL_STRING("d" ,dict->Entry[0].data);
+    TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
+    TEST_ASSERT_EQUAL_STRING("dA" ,dict->Entry[1].data);
+    TEST_ASSERT_EQUAL(2 ,dict->Entry[1].entrySize);
+    TEST_ASSERT_EQUAL_STRING("dAb" ,dict->Entry[2].data);
+    TEST_ASSERT_EQUAL(3 ,dict->Entry[2].entrySize);
 
     
-    // destroyDictionary(dict,2);
-// }
+    destroyDictionary(dict,2);
+}
 
 
 /*
@@ -238,28 +242,28 @@ void test_addDataToDictionary_given_data1_and_data2_when_write_data2_should_merg
  *      0.  a
  *
  */
-// void test_Decompression_given_0a_should_write_a()
-// {
+void test_Decompression_given_0a_should_write_a()
+{
     // Create test fixture
-	// InStream in;	
-    // OutStream out;
-    // Dictionary *dict = initDictionary(10);
-    // dict->Entry[0].data = strdup("a");
-    // dict->Entry[0].entrySize = 1;
+	InStream in;	
+    OutStream out;
+    Dictionary *dict = initDictionary(10);
+    dict->Entry[0].data = strdup("a");
+    dict->Entry[0].entrySize = 1;
 
 
     // Mock
-    // streamReadBits_ExpectAndReturn(&in, 16, 0);
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
-    // streamReadBits_ExpectAndReturn(&in, 8, 97);
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
-    // streamWriteBits_Expect(&out, (unsigned int)('a'), 8);            //expect a here
-    // streamReadBits_ExpectAndReturn(&in, 16, EOF);
-    // checkEndOfFile_ExpectAndReturn(&in, 1);
+    streamReadBits_ExpectAndReturn(&in, 16, 0);
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 97);
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamWriteBits_Expect(&out, (unsigned int)('a'), 8);            //expect a here
+    streamReadBits_ExpectAndReturn(&in, 16, EOF);
+    checkEndOfFile_ExpectAndReturn(&in, 1);
     
     // run
-    // Decompression(&in, &out, dict);
-// }
+    Decompression(&in, &out, dict);
+}
 
 
 
@@ -270,62 +274,62 @@ void test_addDataToDictionary_given_data1_and_data2_when_write_data2_should_merg
  *      2.  AAA
  *
  */
-// void test_Decompression_given_0A_1A_2A_3EOF_should_write_A_AA_AAA_AAA()
-// {
+void test_Decompression_given_0A_1A_2A_3EOF_should_write_A_AA_AAA_AAA()
+{
     // Create test fixture
-	// InStream in;	
-    // OutStream out;
-    // Dictionary *dict = initDictionary(10);
-    // dict->Entry[0].data = strdup("A");
-    // dict->Entry[0].entrySize = 1;
-    // dict->Entry[1].data = strdup("AA");
-    // dict->Entry[1].entrySize = 2;
-    // dict->Entry[2].data = strdup("AAA");
-    // dict->Entry[2].entrySize = 3;
+	InStream in;	
+    OutStream out;
+    Dictionary *dict = initDictionary(10);
+    dict->Entry[0].data = strdup("A");
+    dict->Entry[0].entrySize = 1;
+    dict->Entry[1].data = strdup("AA");
+    dict->Entry[1].entrySize = 2;
+    dict->Entry[2].data = strdup("AAA");
+    dict->Entry[2].entrySize = 3;
 
 
     // Mock
-    // streamReadBits_ExpectAndReturn(&in, 16, 0);                     //read index 0
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 0);                     //read index 0
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamReadBits_ExpectAndReturn(&in, 8, 65);                     //read A
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 65);                     //read A
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
+    streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
     
-    // streamReadBits_ExpectAndReturn(&in, 16, 1);                     //read index 1
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 0x0100);                     //read index 1
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamReadBits_ExpectAndReturn(&in, 8, 65);                     //read A
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 65);                     //read A
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
-    // streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
+    streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
+    streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
     
-    // streamReadBits_ExpectAndReturn(&in, 16, 2);                     //read index 2
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 0x0200);                     //read index 2
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamReadBits_ExpectAndReturn(&in, 8, 65);                     //read A
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 65);                     //read A
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
-    // streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
-    // streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
+    streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
+    streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
+    streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
     
-    // streamReadBits_ExpectAndReturn(&in, 16, 3);                     //read index 3
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 0x0300);                     //read index 3
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamReadBits_ExpectAndReturn(&in, 8, EOF);                     //read EOF
-    // checkEndOfFile_ExpectAndReturn(&in, 1);                          //eof reached
+    streamReadBits_ExpectAndReturn(&in, 8, EOF);                     //read EOF
+    checkEndOfFile_ExpectAndReturn(&in, 1);                          //eof reached
     
-    // streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
-    // streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
-    // streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
+    streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
+    streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
+    streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
     
     
     // run
-    // Decompression(&in, &out, dict);
-// }
+    Decompression(&in, &out, dict);
+}
 
 
 
@@ -339,71 +343,71 @@ void test_addDataToDictionary_given_data1_and_data2_when_write_data2_should_merg
  *      3.  aa
  *
  */
-// void test_Decompression_given_0a_0b_1b_1a_2EOF_should_write_a_b_ab_aa_b()
-// {
+void test_Decompression_given_0a_0b_1b_1a_2EOF_should_write_a_b_ab_aa_b()
+{
     // Create test fixture
-	// InStream in;	
-    // OutStream out;
-    // Dictionary *dict = initDictionary(10);
-    // dict->Entry[0].data = strdup("a");
-    // dict->Entry[0].entrySize = 1;
-    // dict->Entry[1].data = strdup("b");
-    // dict->Entry[1].entrySize = 1;
-    // dict->Entry[2].data = strdup("ab");
-    // dict->Entry[2].entrySize = 2;
-    // dict->Entry[3].data = strdup("aa");
-    // dict->Entry[3].entrySize = 2;
+	InStream in;	
+    OutStream out;
+    Dictionary *dict = initDictionary(10);
+    dict->Entry[0].data = strdup("a");
+    dict->Entry[0].entrySize = 1;
+    dict->Entry[1].data = strdup("b");
+    dict->Entry[1].entrySize = 1;
+    dict->Entry[2].data = strdup("ab");
+    dict->Entry[2].entrySize = 2;
+    dict->Entry[3].data = strdup("aa");
+    dict->Entry[3].entrySize = 2;
 
 
     // Mock
-    // streamReadBits_ExpectAndReturn(&in, 16, 0);                     //read index 0
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 0);                     //read index 0
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamReadBits_ExpectAndReturn(&in, 8, 97);                     //read a
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 97);                     //read a
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamWriteBits_Expect(&out, (unsigned int)('a'), 8);           //expect a here
+    streamWriteBits_Expect(&out, (unsigned int)('a'), 8);           //expect a here
     
-    // streamReadBits_ExpectAndReturn(&in, 16, 0);                     //read index 0
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 0);                     //read index 0
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamReadBits_ExpectAndReturn(&in, 8, 98);                     //read b
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 98);                     //read b
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamWriteBits_Expect(&out, (unsigned int)('b'), 8);           //expect b here
+    streamWriteBits_Expect(&out, (unsigned int)('b'), 8);           //expect b here
     
-    // streamReadBits_ExpectAndReturn(&in, 16, 1);                     //read index 1
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 0x0100);                     //read index 1
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamReadBits_ExpectAndReturn(&in, 8, 98);                     //read b
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 98);                     //read b
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamWriteBits_Expect(&out, (unsigned int)('a'), 8);           //expect a here
-    // streamWriteBits_Expect(&out, (unsigned int)('b'), 8);           //expect b here
+    streamWriteBits_Expect(&out, (unsigned int)('a'), 8);           //expect a here
+    streamWriteBits_Expect(&out, (unsigned int)('b'), 8);           //expect b here
     
-    // streamReadBits_ExpectAndReturn(&in, 16, 1);                     //read index 1
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 0x0100);                     //read index 1
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamReadBits_ExpectAndReturn(&in, 8, 97);                     //read a
-    // checkEndOfFile_ExpectAndReturn(&in, 0);                         
+    streamReadBits_ExpectAndReturn(&in, 8, 97);                     //read a
+    checkEndOfFile_ExpectAndReturn(&in, 0);                         
     
-    // streamWriteBits_Expect(&out, (unsigned int)('a'), 8);           //expect a here
-    // streamWriteBits_Expect(&out, (unsigned int)('a'), 8);           //expect a here
+    streamWriteBits_Expect(&out, (unsigned int)('a'), 8);           //expect a here
+    streamWriteBits_Expect(&out, (unsigned int)('a'), 8);           //expect a here
 
-    // streamReadBits_ExpectAndReturn(&in, 16, 2);                     //read index 2
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 0x0200);                     //read index 2
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamReadBits_ExpectAndReturn(&in, 8, EOF);                     //read EOF
-    // checkEndOfFile_ExpectAndReturn(&in, 1); 
+    streamReadBits_ExpectAndReturn(&in, 8, EOF);                     //read EOF
+    checkEndOfFile_ExpectAndReturn(&in, 1); 
     
-    // streamWriteBits_Expect(&out, (unsigned int)('b'), 8);           //expect b here
+    streamWriteBits_Expect(&out, (unsigned int)('b'), 8);           //expect b here
 
 
 
     // run
-    // Decompression(&in, &out, dict);
+    Decompression(&in, &out, dict);
 
-// }
+}
 
 
 
@@ -413,52 +417,52 @@ void test_addDataToDictionary_given_data1_and_data2_when_write_data2_should_merg
  * CR = carriage return = 13 , 0x0D
  * LF = line feed  = 10 0x0A
  */
-// void xtest_Decompression_given_input_0CR_0LF_2A_should_output_CR_LF_LF_A()
-// {
+void test_Decompression_given_input_0CR_0LF_2A_should_output_CR_LF_LF_A()
+{
     // Create test fixture
-	// InStream in;	
-    // OutStream out;
-    // Dictionary *dict = initDictionary(10);
-    // dict->Entry[0].data = strdup("\r");
-    // dict->Entry[0].entrySize = 1;
-    // dict->Entry[1].data = strdup("\n");
-    // dict->Entry[1].entrySize = 1;
-    // dict->Entry[2].data = strdup("\nA");
-    // dict->Entry[2].entrySize = 2;
+	InStream in;	
+    OutStream out;
+    Dictionary *dict = initDictionary(10);
+    dict->Entry[0].data = strdup("\r");
+    dict->Entry[0].entrySize = 1;
+    dict->Entry[1].data = strdup("\n");
+    dict->Entry[1].entrySize = 1;
+    dict->Entry[2].data = strdup("\nA");
+    dict->Entry[2].entrySize = 2;
 
     
     // Mock
-    // streamReadBits_ExpectAndReturn(&in, 16, 0);                     //read index 0
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 0);                     //read index 0
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamReadBits_ExpectAndReturn(&in, 8, 13);                     //read CR
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 13);                     //read CR
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamWriteBits_Expect(&out, (unsigned int)('\r'), 8);           //expect CR here
+    streamWriteBits_Expect(&out, (unsigned int)('\r'), 8);           //expect CR here
     
-    // streamReadBits_ExpectAndReturn(&in, 16, 0);                     //read index 0
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 0);                     //read index 0
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamReadBits_ExpectAndReturn(&in, 8, 10);                     //read LF
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 10);                     //read LF
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamWriteBits_Expect(&out, (unsigned int)('\n'), 8);           //expect LF here
+    streamWriteBits_Expect(&out, (unsigned int)('\n'), 8);           //expect LF here
     
-    // streamReadBits_ExpectAndReturn(&in, 16, 2);                     //read index 2
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 0x0200);                     //read index 2
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamReadBits_ExpectAndReturn(&in, 8, 65);                     //read A
-    // checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 65);                     //read A
+    checkEndOfFile_ExpectAndReturn(&in, 0);
     
-    // streamWriteBits_Expect(&out, (unsigned int)('\n'), 8);          //expect LF here
-    // streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
+    streamWriteBits_Expect(&out, (unsigned int)('\n'), 8);          //expect LF here
+    streamWriteBits_Expect(&out, (unsigned int)('A'), 8);           //expect A here
     
-    // streamReadBits_ExpectAndReturn(&in, 16, EOF);                   //read EOF
-    // checkEndOfFile_ExpectAndReturn(&in, 1); 
+    streamReadBits_ExpectAndReturn(&in, 16, EOF);                   //read EOF
+    checkEndOfFile_ExpectAndReturn(&in, 1); 
 
     // run
-    // Decompression(&in, &out, dict);
-// }
+    Decompression(&in, &out, dict);
+}
 
 
 

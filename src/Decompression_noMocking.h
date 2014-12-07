@@ -2,13 +2,12 @@
 #define Decompression_noMocking_H
 
 
-#include "Decompression.h"
 #include "Stream.h"
 #include "Dictionary.h"
+#include "Decompression.h"
 
-int getPositionInFile(InStream *in);
 void LZ78_Decompressor(char *infilename, char *outfilename, int dictSize);
-
+void finalDecompression(InStream *in, OutStream *out, Dictionary *dictionary, int *lastDecompressPosition);
 
 
 

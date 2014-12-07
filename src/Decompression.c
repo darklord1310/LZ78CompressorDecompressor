@@ -3,7 +3,7 @@
 #include "Decompression.h"
 #include <stdio.h>
 #include <string.h>
-#include "Decompression_noMocking.h"
+
 
 
 
@@ -14,11 +14,11 @@
  *					
  *
  * Return:
- *            1     if dictionary full
- *            0     if dictionary not full
+ *            -1     if dictionary not full
+ *          not -1   if dictionary has already full
  *          
  */
-void rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in, int *lastDecompressPosition)
+int rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in, int *lastDecompressPosition)
 {
     unsigned int index, data, convertedIndex;
     char convertedData;
@@ -43,11 +43,20 @@ void rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in, int
             break;
         }
     } 
+    
+    if(isDictionaryFull(dictionary) == 1 )
+        return *lastDecompressPosition;
+    else
+        return -1;
+
 }
 
 
-
-void Decompression(InStream *in, OutStream *out, Dictionary *dictionary, int *lastDecompressPosition)
+/* This function is to check for the main functionality of decompression, but this is not the final and real function
+ * the final version of this function is located at Decompression_noMocking, it is not including here because I can'tan
+ * mock the function like fseek and rewind
+ */
+void Decompression(InStream *in, OutStream *out, Dictionary *dictionary)
 {
     unsigned int index, data, convertedIndex;
     int signedIndex , i;
@@ -59,13 +68,13 @@ void Decompression(InStream *in, OutStream *out, Dictionary *dictionary, int *la
         convertedIndex = swapUpper16bitsWithLower16bits(index);
         signedIndex = (int)convertedIndex;
         
-        if( checkEndOfFile(in) || getPositionInFile(in) == *lastDecompressPosition)
+        if( checkEndOfFile(in) )
             break;
             
         data = streamReadBits(in, 8);                               //read data
         char *convertedData = (char*)(&data);
         
-        if( !checkEndOfFile(in) || getPositionInFile(in) != *lastDecompressPosition)
+        if( !checkEndOfFile(in) )
         {
             if( signedIndex-1 < 0)                                      //if index is 0
                 streamWriteBits(out, (unsigned int)(*convertedData), 8);

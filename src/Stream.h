@@ -51,4 +51,6 @@ OutStream *initOutStream();
 void freeInStream(InStream *in);
 void freeOutStream(OutStream *out);
 
+int getPositionInFile(InStream *in);
+
 #endif // Stream_H
