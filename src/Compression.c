@@ -4,10 +4,16 @@
 #include <string.h>
 #include <stdio.h>
 
-void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out)
+/*
+ *
+ *
+ * mode : Fixed -> fixed dictionary index to 16bits
+ *      : Variable -> use just sufficient number of bits to represent the dictionary index
+ */
+void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out, int mode)
 {       
     char readByte[2] ={}, dataString[1024] ;
-    int returnedIndex, lastIndex, EOFstate =0 , i = 0;
+    int returnedIndex, lastIndex, EOFstate = 0 , i = 0;
 
     while (1)
     {   
@@ -15,14 +21,14 @@ void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out)
         
         if (checkEndOfFile(in)) // if EOF encountered
             break;  // break loop
-            
+        
         if(isDictionaryFull(dictionary)) 
             refreshDictionaryEntryData(dictionary,dictionary->dictionarySize); 
             
         if(isDictionaryEmpty(dictionary)) // if dictionary is empty
         {
             addEntryData(dictionary, readByte); // directly add it into dictionary
-            LZ78_Output(out,readByte[0],0,EOFstate); // output (0,x) *without ()
+            LZ78_Output(out,readByte[0],0,EOFstate,mode); // output (0,x) *without ()
         }       
         else // dictionary is not empty
         {
@@ -34,27 +40,35 @@ void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out)
                 if (EOFstate != 1)//prevent adding EOF into dictionary
                     addEntryData(dictionary,dataString); // add dataString into dictionary
                     
-                LZ78_Output(out,readByte[0],lastIndex+1,EOFstate); // produce output (lastIndex+1 , X) *without ()
+                LZ78_Output(out,readByte[0],lastIndex+1,EOFstate,mode); // produce output (lastIndex+1 , X) *without ()
             }
             else // no matched data
             {
                 addEntryData(dictionary,readByte);
-                LZ78_Output(out,readByte[0],0,EOFstate); // output (0,x) *without ()
+                LZ78_Output(out,readByte[0],0,EOFstate,mode); // output (1,x) *without ()
             }
         }
         
         if (EOFstate == 1) //EOF encountered previously 
-            break ; // break loop          
+            break ; //break while loop
+        
     }
-    
+   
 }
 
 
-void LZ78_Output(OutStream *out,char outputByte,int index,int EOFstate)
+void LZ78_Output(OutStream *out,char outputByte,int index,int EOFstate, int mode)
 {
-    streamWriteBits(out,index,16);
-    if (EOFstate != 1 ) // prevent writing EOF to file
-        streamWriteBits(out,(unsigned int)(outputByte),8);
+    int bitsRequired = 0 ;
+    
+    if (mode == Fixed)
+        bitsRequired = 16 ;
+    else if (mode == Variable)
+        bitsRequired = determineNumberOfBitsRequired(index);
+        
+    streamWriteBits(out,index,bitsRequired);
+    if (EOFstate == 0 ) // prevent writing EOF to file
+        streamWriteBits(out,(unsigned int)(outputByte),8);       
 }
 
 
@@ -101,6 +115,7 @@ int findLastMatchEntry(Dictionary *dictionary, InStream *in, char *dataString, c
     while(*returnedIndex != -1)
     {
         readByte[0] = (char)(streamReadBits(in,8)) ;// read next character
+
         if (checkEndOfFile(in)) //if EOF detected
         {    
             *EOFstate = 1 ; // use to remember EOF encountered for later uses
@@ -125,6 +140,9 @@ int determineNumberOfBitsRequired(int index)
 {
     int bitTest, i ,result = 0;
     
+    if (index == 0 )
+        return 1;
+    
     for ( i = 0 ; i < (sizeof(int) * 8) ; i ++)
     {
         bitTest = index & ( 1 << i ) ;
@@ -135,3 +153,4 @@ int determineNumberOfBitsRequired(int index)
     
     return (result + 1);
 }
+
