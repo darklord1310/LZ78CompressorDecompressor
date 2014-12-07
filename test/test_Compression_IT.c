@@ -152,3 +152,57 @@ void test_LZ78_Compression_Variable_mode_given_input_file_sampleText_forCompress
     freeOutStream(out);
     destroyDictionary(dictionary,100);
 }
+
+void test_LZ78_Compression_Variable_mode_given_input_file_README()
+{
+    InStream *in = initInStream();
+    OutStream *out = initOutStream();
+    Dictionary *dictionary = initDictionary(4096);
+    
+    in = openInStream("test/support/README", "rb" , in);
+    out = openOutStream("test/support/README_Compressed_Variable", "wb" , out);
+      
+    LZ78_Compressor(dictionary,in,out,Variable);
+
+    closeInStream(in);
+    closeOutStream(out);
+    freeInStream(in);
+    freeOutStream(out);
+    destroyDictionary(dictionary,4096);
+}
+
+void test_LZ78_Compression_Variable_mode_given_input_file_StringObject_o()
+{
+    InStream *in = initInStream();
+    OutStream *out = initOutStream();
+    Dictionary *dictionary = initDictionary(4096);
+    
+    in = openInStream("test/support/StringObject.o", "rb" , in);
+    out = openOutStream("test/support/StringObject_Compressed_Variable.o", "wb" , out);
+      
+    LZ78_Compressor(dictionary,in,out,Variable);
+
+    closeInStream(in);
+    closeOutStream(out);
+    freeInStream(in);
+    freeOutStream(out);
+    destroyDictionary(dictionary,4096);
+}
+
+void test_LZ78_Compression_Variable_mode_given_input_file_libjansson_4_dll_()
+{
+    InStream *in = initInStream();
+    OutStream *out = initOutStream();
+    Dictionary *dictionary = initDictionary(4096);
+    
+    in = openInStream("test/support/libjansson-4.dll", "rb" , in);
+    out = openOutStream("test/support/libjansson-4_Compressed_Variable.dll", "wb" , out);
+      
+    LZ78_Compressor(dictionary,in,out,Variable);
+
+    closeInStream(in);
+    closeOutStream(out);
+    freeInStream(in);
+    freeOutStream(out);
+    destroyDictionary(dictionary,4096);
+}
