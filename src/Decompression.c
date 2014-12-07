@@ -14,90 +14,83 @@
  *					
  *
  * Return:
- *            1     if dictionary full
- *            0     if dictionary not full
+ *            -1     if dictionary not full
+ *          not -1   if dictionary has already full
  *          
  */
-int rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in)
+int rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in, int *lastDecompressPosition)
 {
-    unsigned int index, data;
+    unsigned int index, data, convertedIndex;
     char convertedData;
+    
+    if( *lastDecompressPosition != -1)          //if it is not -1 then we need to travel to last decompress position
+        fseek(in->file , *lastDecompressPosition , SEEK_SET);
            
     while(1)
     {
         index = streamReadBits(in, 16);
+        convertedIndex = swapUpper16bitsWithLower16bits(index);
+        
         if( checkEndOfFile(in) )
             break;
             
         data = streamReadBits(in, 8);
+        
         if( checkEndOfFile(in) )
             break;
             
-        convertedData = (char)data;               //typecast int to char
-        addDataToDictionary(dictionary, data, index);
+        addDataToDictionary(dictionary, data, convertedIndex);
         
         if(isDictionaryFull(dictionary) == 1 )
+        {
+            *lastDecompressPosition = getPositionInFile(in);
             break;
-    }
+        }
+    } 
     
     if(isDictionaryFull(dictionary) == 1 )
-        return 1;
+    {
+        index = streamReadBits(in, 16);
+        if( checkEndOfFile(in) )
+            return -1;
+        else
+            return *lastDecompressPosition;
+    }
     else
-        return 0;   
+        return -1;
+
 }
 
 
-
-void LZ78_Decompressor(char *infilename, char *outfilename, Dictionary *dictionary)
-{
-    int status, signedIndex;
-    unsigned int index, data;
-    char *string;
-    InStream *in;
-    OutStream *out;
-    
-    in = initInStream();
-    out = initOutStream();
-    
-    in = openInStream(infilename, "rb" , in);                        //open input file
-    out = openOutStream(outfilename, "wb" , out);                    //open output file
-    
-
-    status = rebuildDictionaryForDecompression(dictionary, in);      //rebuild dictionary
-    
-
-    
-    
-    
-
-    
-    in = closeInStream(in);                                         //open input file
-    out = closeOutStream(out);                                      //open output file
-}
-
-
-
+/* This function is to check for the main functionality of decompression, but this is not the final and real function
+ * the final version of this function is located at Decompression_noMocking, it is not including here because I can'tan
+ * mock the function like fseek and rewind
+ */
 void Decompression(InStream *in, OutStream *out, Dictionary *dictionary)
 {
-    unsigned int index, data;
+    unsigned int index, data, convertedIndex;
     int signedIndex , i;
     char *string;
     
     while(1)
     {
         index = streamReadBits(in, 16);                             //read index
-        signedIndex = (int)index;
+        convertedIndex = swapUpper16bitsWithLower16bits(index);
+        signedIndex = (int)convertedIndex;
+        
         if( checkEndOfFile(in) )
             break;
+            
         data = streamReadBits(in, 8);                               //read data
         char *convertedData = (char*)(&data);
+        
         if( !checkEndOfFile(in) )
         {
             if( signedIndex-1 < 0)                                      //if index is 0
                 streamWriteBits(out, (unsigned int)(*convertedData), 8);
             else                                                        //if index is not 0
             {   
-                string = strdup(dictionary->Entry[index-1].data);
+                string = strdup(dictionary->Entry[convertedIndex-1].data);
                 strcat(string, convertedData);                          //combined the string with the data
                 for(i=0; i < strlen(string); i++)
                     streamWriteBits(out, (unsigned int)(string[i]), 8);
@@ -105,8 +98,11 @@ void Decompression(InStream *in, OutStream *out, Dictionary *dictionary)
         }
         else
         {
-            for(i=0; i < dictionary->Entry[index-1].entrySize; i++)
-                streamWriteBits(out, (unsigned int)(dictionary->Entry[index-1].data[i]), 8);
+            if(convertedIndex != 0)
+            {
+                for(i=0; i < dictionary->Entry[convertedIndex-1].entrySize; i++)
+                    streamWriteBits(out, (unsigned int)(dictionary->Entry[convertedIndex-1].data[i]), 8);
+            }
             break;
         }
     }
@@ -119,7 +115,7 @@ void addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int
     int signedIndex = (int)index;                    //to change the unsigned index into signed index
     char *convertedData = (char *)(&data);           //typecast the int type data to char type
     char *string;
-
+    
     if( (signedIndex-1) < 0)
         addEntryData(dictionary, convertedData);
     else
@@ -131,3 +127,14 @@ void addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int
 }
 
 
+
+// this function is used to correct the read sequence of int value read by streamReadBits
+unsigned int swapUpper16bitsWithLower16bits(unsigned int value)
+{
+    unsigned int low8bits = value & 0x000F;
+    unsigned int upper8bits = (value >> 8);
+    unsigned int newvalue = (low8bits << 8) | upper8bits;
+
+    
+    return newvalue;
+}

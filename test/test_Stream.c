@@ -46,7 +46,7 @@ void test_openInStream_open_a_text_file_available_should_not_throw_error(void)
     }
     Catch(ERR){
         TEST_ASSERT_EQUAL(ERR_FAILED_TO_OPEN, ERR);
-		printf("File not exist!\n");
+		TEST_FAIL_MESSAGE("File not exist!");
     }
     closeInStream(in);
     freeInStream(in);
@@ -63,6 +63,7 @@ void test_openInStream_open_a_text_file_unavailable_should_throw_error(void)
     Try
 	{
         in = openInStream("test/support/abc.txt", "rb" , in);
+        TEST_FAIL_MESSAGE("Expected file to be opened");
 
     }
     Catch(ERR){
@@ -281,4 +282,23 @@ void test_streamReadBits_given_bitSize_16_storageType_int_should_extract_data_fr
     TEST_ASSERT_EQUAL(0x4241,storage); /*Text file in little endian format*/
     closeInStream(in);
     freeInStream(in);
+}
+
+
+
+void test_getPositionInFile_after_read_6_byte_should_point_to_6()
+{
+    //Create test fixture
+    unsigned int storage[10] = {};
+    InStream *in = initInStream();                                              //init InStream
+    in = openInStream("test/support/LZ78decompressor_in_0a1b1a0b2a4.txt", "rb" , in);
+    storage[0] = streamReadBits(in,16) ;
+    storage[1] = streamReadBits(in,8) ;
+    storage[2] = streamReadBits(in,16) ;
+    storage[3] = streamReadBits(in,8) ;
+
+        
+    int position = getPositionInFile(in);
+    TEST_ASSERT_EQUAL(6, position);
+    closeInStream(in);
 }

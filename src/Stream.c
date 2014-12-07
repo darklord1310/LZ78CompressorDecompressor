@@ -151,5 +151,13 @@ int checkEndOfFile(InStream *in)
     if (result != 0)
         return 1;
     else 
-        return 0;
+}
+
+
+int getPositionInFile(InStream *in)
+{
+    int position = ftell(in->file);
+
+
+    return position;
 }
