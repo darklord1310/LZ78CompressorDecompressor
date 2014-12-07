@@ -46,6 +46,8 @@ void test_compare_DictionaryData_given_input_CCC_and_dictionary_doesnt_contains_
     destroyDictionary(dict,10);
 }
 
+/* Fixed mode LZ78_Compressor */
+/* Fixed mode LZ78_Compressor */
 
 void test_LZ78_Compressor_given_input_A_should_output_0A()
 {
@@ -61,13 +63,13 @@ void test_LZ78_Compressor_given_input_A_should_output_0A()
     streamReadBits_ExpectAndReturn(&in,8,EOF);
     checkEndOfFile_ExpectAndReturn(&in,1);
     
-    LZ78_Compressor(dict,&in,&out);
+    LZ78_Compressor(dict,&in,&out,Fixed);
 
     TEST_ASSERT_EQUAL_STRING("A",dict->Entry[0].data);
     destroyDictionary(dict,10);
 }
 
-void test_LZ78_Compressor_given_input_AAAAAAAAA_should_output_0A_1A_2A_3EOF()
+void test_LZ78_Compressor_given_input_AAAAAAAAA_should_output_0A_1A_2A_3()
 {
     Dictionary *dict = initDictionary(10);
     InStream in ; 
@@ -104,7 +106,7 @@ void test_LZ78_Compressor_given_input_AAAAAAAAA_should_output_0A_1A_2A_3EOF()
     checkEndOfFile_ExpectAndReturn(&in,1);
     streamWriteBits_Expect(&out,3,16);
     
-    LZ78_Compressor(dict,&in,&out);
+    LZ78_Compressor(dict,&in,&out,Fixed);
 
     TEST_ASSERT_EQUAL_STRING("A",dict->Entry[0].data);
     TEST_ASSERT_EQUAL_STRING("AA",dict->Entry[1].data);
@@ -139,7 +141,7 @@ void test_LZ78_Compressor_given_input_space_A_space_B_should_output_0space_0A_1B
     streamReadBits_ExpectAndReturn(&in,8,EOF);
     checkEndOfFile_ExpectAndReturn(&in,1);
     
-    LZ78_Compressor(dict,&in,&out);
+    LZ78_Compressor(dict,&in,&out,Fixed);
 
     TEST_ASSERT_EQUAL(32,dict->Entry[0].data[0]);
     TEST_ASSERT_EQUAL_STRING("A",dict->Entry[1].data);
@@ -189,8 +191,8 @@ void test_LZ78_Compressor_dictionaryIndex_4095_input_ABCABC_should_refresh_dicti
     
     streamReadBits_ExpectAndReturn(&in,8,EOF);
     checkEndOfFile_ExpectAndReturn(&in,1);
-    
-    LZ78_Compressor(dict,&in,&out);
+
+    LZ78_Compressor(dict,&in,&out,Fixed);
  
     TEST_ASSERT_EQUAL_STRING("B",dict->Entry[0].data);
     TEST_ASSERT_EQUAL_STRING("C",dict->Entry[1].data);
@@ -232,7 +234,7 @@ void test_LZ78_Compressor_given_input_CR_LF_LF_A_should_output_0CR_0LF_2A()
     streamReadBits_ExpectAndReturn(&in,8,EOF);
     checkEndOfFile_ExpectAndReturn(&in,1);
     
-    LZ78_Compressor(dict,&in,&out);
+    LZ78_Compressor(dict,&in,&out,Fixed);
  
     TEST_ASSERT_EQUAL(0x0D,*dict->Entry[0].data);
     TEST_ASSERT_EQUAL(0x0A,*dict->Entry[1].data);
