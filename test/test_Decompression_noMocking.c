@@ -14,11 +14,242 @@ void tearDown(void)
 }
 
 
+
+/*  Test for refresh dictionary with dicionary size 1
+    This test is quite similar with the one in Decompression.c but
+    this test is testing with some real input instead of mocking
+    
+    Test when dictionary full should refresh and place the value correctly
+    
+    Compression Input :     0a0b0c0d
+    Dictionary Size   :     1
+            
+    Expected Dictionary
+    
+    First time
+    0.  a
+    
+    2nd time
+    0.  b
+    
+    3rd time
+    0.  c
+    
+    4th time
+    0.  d
+    
+ */
+void test_rebuildDictionaryForDecompression_given_0a0b0c0d_and_dictionary_size_is_1_should_update_the_dictionary_correctly()
+{
+    //Create test fixture
+    char *infilename = "test/support/finaldecompression_in1.txt";
+    char *outfilename = "test/support/finaldecompression_out1.txt";    
+    int status , lastDecompressPosition = -1;
+    int dictSize = 1;
+    Dictionary *dict = initDictionary(dictSize);
+    OutStream *out = initOutStream();
+    InStream *in = initInStream();
+    
+    //Create compression input 0a0b
+    out = openOutStream(infilename, "wb+" , out);
+    streamWriteBits(out,0,16);
+    streamWriteBits(out,'a',8);
+    streamWriteBits(out,0,16);
+    streamWriteBits(out,'b',8);
+    streamWriteBits(out,0,16);
+    streamWriteBits(out,'c',8);
+    streamWriteBits(out,0,16);
+    streamWriteBits(out,'d',8);
+    closeOutStream(out);
+    
+    //Build dictionary
+    in = openInStream(infilename, "rb+" , in);
+    status = rebuildDictionaryForDecompression(dict, in, &lastDecompressPosition);
+    closeInStream(in);
+    
+    //verify dictionary
+    TEST_ASSERT_EQUAL(3 , status);
+    TEST_ASSERT_EQUAL_STRING( "a" , dict->Entry[0].data );
+    TEST_ASSERT_EQUAL(1 , dict->Entry[0].entrySize);
+    
+    //rebuild dictionary
+    in = openInStream(infilename, "rb+" , in);
+    refreshDictionaryEntryData(dict, dictSize);
+    TEST_ASSERT_EQUAL(3 , lastDecompressPosition);
+    status = rebuildDictionaryForDecompression(dict, in, &lastDecompressPosition);
+    closeInStream(in);
+    
+    //verify dictionary
+    TEST_ASSERT_EQUAL(6 , status);      
+    TEST_ASSERT_EQUAL_STRING( "b" , dict->Entry[0].data );
+    TEST_ASSERT_EQUAL(1 , dict->Entry[0].entrySize);
+    
+    //rebuild dictionary
+    in = openInStream(infilename, "rb+" , in);
+    refreshDictionaryEntryData(dict, dictSize);
+    TEST_ASSERT_EQUAL(6 , lastDecompressPosition);
+    status = rebuildDictionaryForDecompression(dict, in, &lastDecompressPosition);
+    closeInStream(in);
+ 
+    //verify dictionary
+    TEST_ASSERT_EQUAL(9 , status);      
+    TEST_ASSERT_EQUAL_STRING( "c" , dict->Entry[0].data );
+    TEST_ASSERT_EQUAL(1 , dict->Entry[0].entrySize);
+    
+    
+    //rebuild dictionary
+    in = openInStream(infilename, "rb+" , in);
+    refreshDictionaryEntryData(dict, dictSize);
+    TEST_ASSERT_EQUAL(9 , lastDecompressPosition);
+    status = rebuildDictionaryForDecompression(dict, in, &lastDecompressPosition);
+    closeInStream(in);
+    
+    //verify dictionary
+    TEST_ASSERT_EQUAL(-1 , status);      
+    TEST_ASSERT_EQUAL_STRING( "d" , dict->Entry[0].data );
+    TEST_ASSERT_EQUAL(1 , dict->Entry[0].entrySize);
+
+}
+
+
+
+/*  Test for refresh dictionary with dictionary size 3
+    This test is quite similar with the one in Decompression.c but
+    this test is testing with some real input instead of mocking
+    
+    Test when dictionary full should refresh and place the value correctly
+    
+    Compression Input :     0a0b0c0d
+    Dictionary Size   :     3
+            
+    Expected Dictionary
+    
+    First time
+    0.  a
+    1.  b
+    2.  c
+    
+    2nd time
+    0.  d
+    
+ */
+void test_rebuildDictionaryForDecompression_given_0a0b0c0d_and_dictionary_size_is_3_should_update_the_dictionary_correctly()
+{
+    //Create test fixture
+    char *infilename = "test/support/finaldecompression_in1.txt";
+    char *outfilename = "test/support/finaldecompression_out1.txt";    
+    int status , lastDecompressPosition = -1;
+    int dictSize = 3;
+    Dictionary *dict = initDictionary(dictSize);
+    OutStream *out = initOutStream();
+    InStream *in = initInStream();
+    
+    //Create compression input 0a0b
+    out = openOutStream(infilename, "wb+" , out);
+    streamWriteBits(out,0,16);
+    streamWriteBits(out,'a',8);
+    streamWriteBits(out,0,16);
+    streamWriteBits(out,'b',8);
+    streamWriteBits(out,0,16);
+    streamWriteBits(out,'c',8);
+    streamWriteBits(out,0,16);
+    streamWriteBits(out,'d',8);
+    closeOutStream(out);
+    
+    //Build dictionary
+    in = openInStream(infilename, "rb+" , in);
+    status = rebuildDictionaryForDecompression(dict, in, &lastDecompressPosition);
+    closeInStream(in);
+    
+    //verify dictionary
+    TEST_ASSERT_EQUAL(9 , status);
+    TEST_ASSERT_EQUAL_STRING( "a" , dict->Entry[0].data );
+    TEST_ASSERT_EQUAL(1 , dict->Entry[0].entrySize);
+    TEST_ASSERT_EQUAL_STRING( "b" , dict->Entry[1].data );
+    TEST_ASSERT_EQUAL(1 , dict->Entry[1].entrySize);
+    TEST_ASSERT_EQUAL_STRING( "c" , dict->Entry[2].data );
+    TEST_ASSERT_EQUAL(1 , dict->Entry[2].entrySize);
+    
+    //rebuild dictionary
+    in = openInStream(infilename, "rb+" , in);
+    refreshDictionaryEntryData(dict, dictSize);
+    TEST_ASSERT_EQUAL(9 , lastDecompressPosition);
+    status = rebuildDictionaryForDecompression(dict, in, &lastDecompressPosition);
+    closeInStream(in);
+    
+    //verify dictionary
+    TEST_ASSERT_EQUAL(-1 , status);      
+    TEST_ASSERT_EQUAL_STRING( "d" , dict->Entry[0].data );
+    TEST_ASSERT_EQUAL(1 , dict->Entry[0].entrySize);
+    
+}
+
+
+/*  Test for dictionary no refresh
+    This test is quite similar with the one in Decompression.c but
+    this test is testing with some real input instead of mocking
+    
+    Input             :     wabba wabba
+    Compression Input :     0w0a0b3a0space1a3b2
+    Dictionary Size   :     
+            
+    Expected Dictionary
+    
+    0.  w
+    1.  a
+    2.  b
+    3.  ba
+    4.  space
+    5   wa
+    6.  bb
+    
+ */
+void test_rebuildDictionaryForDecompression_given_0w0a0b3a0space1a3b2_and_dictionary_size_is_10_should_update_the_dictionary_correctly()
+{
+    //Create test fixture
+    char *infilename = "test/support/finaldecompression_in2.txt";
+    char *outfilename = "test/support/finaldecompression_out2.txt";    
+    int status , lastDecompressPosition = -1;
+    int dictSize = 10;
+    Dictionary *dict = initDictionary(dictSize);
+    OutStream *out = initOutStream();
+    InStream *in = initInStream();
+    
+    //Create compression input 0a0b
+    out = openOutStream(infilename, "wb+" , out);
+    streamWriteBits(out,0,16);  streamWriteBits(out,'w',8);
+    streamWriteBits(out,0,16);  streamWriteBits(out,'a',8);
+    streamWriteBits(out,0,16);  streamWriteBits(out,'b',8);
+    streamWriteBits(out,3,16);  streamWriteBits(out,'a',8);
+    streamWriteBits(out,0,16);  streamWriteBits(out,' ',8);
+    streamWriteBits(out,1,16);  streamWriteBits(out,'a',8);
+    streamWriteBits(out,3,16);  streamWriteBits(out,'b',8);
+    streamWriteBits(out,2,16);
+    closeOutStream(out);
+    
+    //Build dictionary
+    in = openInStream(infilename, "rb+" , in);
+    status = rebuildDictionaryForDecompression(dict, in, &lastDecompressPosition);
+    closeInStream(in);
+    
+    //verify dictionary
+    TEST_ASSERT_EQUAL(-1 , status);
+    TEST_ASSERT_EQUAL_STRING( "w" , dict->Entry[0].data );  TEST_ASSERT_EQUAL(1 , dict->Entry[0].entrySize);   
+    TEST_ASSERT_EQUAL_STRING( "a" , dict->Entry[1].data );  TEST_ASSERT_EQUAL(1 , dict->Entry[1].entrySize);
+    TEST_ASSERT_EQUAL_STRING( "b" , dict->Entry[2].data );  TEST_ASSERT_EQUAL(1 , dict->Entry[2].entrySize);
+    TEST_ASSERT_EQUAL_STRING( "ba" , dict->Entry[3].data );  TEST_ASSERT_EQUAL(2 , dict->Entry[3].entrySize);
+    TEST_ASSERT_EQUAL_STRING( " " , dict->Entry[4].data );  TEST_ASSERT_EQUAL(1 , dict->Entry[4].entrySize);
+    TEST_ASSERT_EQUAL_STRING( "wa" , dict->Entry[5].data );  TEST_ASSERT_EQUAL(2 , dict->Entry[5].entrySize);
+    TEST_ASSERT_EQUAL_STRING( "bb" , dict->Entry[6].data );  TEST_ASSERT_EQUAL(2 , dict->Entry[6].entrySize);
+
+}
+
+
 void test_LZ78_Decompressor_given_input_0a_1b_1a_0b_2a_4EOF_should_decompress_into_aabaababab()
 {
     // Create test fixture
-    char *infilename = "test/support/test_decompression_in_0a1b1a0b2a4.txt";
-    char *outfilename = "test/support/test_decompression_out_0a1b1a0b2a4.txt";    
+    char *infilename = "test/support/LZ78decompressor_in_0a1b1a0b2a4.txt";
+    char *outfilename = "test/support/LZ78decompressor_out_0a1b1a0b2a4.txt";    
     char *decompression_output;
     char *expectedOutput = "aabaababab";
     int i;

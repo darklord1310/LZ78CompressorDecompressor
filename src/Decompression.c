@@ -22,6 +22,9 @@ int rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in, int 
 {
     unsigned int index, data, convertedIndex;
     char convertedData;
+    
+    if( *lastDecompressPosition != -1)          //if it is not -1 then we need to travel to last decompress position
+        fseek(in->file , *lastDecompressPosition , SEEK_SET);
            
     while(1)
     {
@@ -32,6 +35,7 @@ int rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in, int 
             break;
             
         data = streamReadBits(in, 8);
+        
         if( checkEndOfFile(in) )
             break;
             
@@ -39,13 +43,19 @@ int rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in, int 
         
         if(isDictionaryFull(dictionary) == 1 )
         {
-            *lastDecompressPosition = getPositionInFile(in) + 1;
+            *lastDecompressPosition = getPositionInFile(in);
             break;
         }
     } 
     
     if(isDictionaryFull(dictionary) == 1 )
-        return *lastDecompressPosition;
+    {
+        index = streamReadBits(in, 16);
+        if( checkEndOfFile(in) )
+            return -1;
+        else
+            return *lastDecompressPosition;
+    }
     else
         return -1;
 
@@ -105,7 +115,7 @@ void addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int
     int signedIndex = (int)index;                    //to change the unsigned index into signed index
     char *convertedData = (char *)(&data);           //typecast the int type data to char type
     char *string;
-
+    
     if( (signedIndex-1) < 0)
         addEntryData(dictionary, convertedData);
     else

@@ -12,9 +12,9 @@ void LZ78_Decompressor(char *infilename, char *outfilename, int dictSize)
     OutStream *out;
     Dictionary *dictionary;
     
-    in = initInStream();
-    out = initOutStream();
-    dictionary = initDictionary(dictSize);
+    in = initInStream();                                              //init InSteam
+    out = initOutStream();                                            //init OutStream
+    dictionary = initDictionary(dictSize);                            //init Dictionary
     
     in = openInStream(infilename, "rb+" , in);                         //open input file
     out = openOutStream(outfilename, "wb+" , out);                     //open output file
@@ -25,7 +25,7 @@ void LZ78_Decompressor(char *infilename, char *outfilename, int dictSize)
         finalDecompression(in, out, dictionary, &lastDecompressPosition);
         
         if(status != -1)
-            refreshDictionaryEntryData(dictionary, 4096);
+            refreshDictionaryEntryData(dictionary, dictSize);
 
     }while(status != -1);
 
@@ -53,13 +53,13 @@ void finalDecompression(InStream *in, OutStream *out, Dictionary *dictionary, in
         convertedIndex = swapUpper16bitsWithLower16bits(index);     //correct the bits sequence by swapping the upper8 bits with lower8 bits
         signedIndex = (int)convertedIndex;
         
-        if( checkEndOfFile(in) || getPositionInFile(in) == *lastDecompressPosition)
+        if( checkEndOfFile(in) || getPositionInFile(in) == *lastDecompressPosition )
             break;
             
         data = streamReadBits(in, 8);                               //read data
         char *convertedData = (char*)(&data);
         
-        if( !checkEndOfFile(in) || getPositionInFile(in) != *lastDecompressPosition)
+        if( !checkEndOfFile(in) || getPositionInFile(in) != *lastDecompressPosition   )
         {
             if( signedIndex-1 < 0)                                      //if index is 0
                 streamWriteBits(out, (unsigned int)(*convertedData), 8);

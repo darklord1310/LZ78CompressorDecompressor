@@ -291,7 +291,7 @@ void test_getPositionInFile_after_read_6_byte_should_point_to_6()
     //Create test fixture
     unsigned int storage[10] = {};
     InStream *in = initInStream();                                              //init InStream
-    in = openInStream("test/support/test_decompression_in_0a1b1a0b2a4.txt", "rb" , in);
+    in = openInStream("test/support/LZ78decompressor_in_0a1b1a0b2a4.txt", "rb" , in);
     storage[0] = streamReadBits(in,16) ;
     storage[1] = streamReadBits(in,8) ;
     storage[2] = streamReadBits(in,16) ;
