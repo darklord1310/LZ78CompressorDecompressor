@@ -102,7 +102,7 @@ void test_streamWriteBit_1time_given_input_1_should_write_1_to_byteToWrite_and_i
     freeOutStream(out);
 }
 
-void test_streamWriteBit_2time_given_input_1_0_should_write_1_0_to_byteToWrite_and_increment_bitIndex_to_2()
+void test_streamWriteBit_2time_given_input_1_0_byteToWrite_should_contain_01_and_increment_bitIndex_to_2()
 {
     OutStream *out = initOutStream();
     
@@ -116,7 +116,7 @@ void test_streamWriteBit_2time_given_input_1_0_should_write_1_0_to_byteToWrite_a
     
     streamWriteBit(out,0);
     
-    TEST_ASSERT_EQUAL(2,out->byteToWrite);
+    TEST_ASSERT_EQUAL(1,out->byteToWrite);
     TEST_ASSERT_EQUAL(2,out->bitIndex);
     
     freeOutStream(out);
@@ -136,7 +136,7 @@ void test_streamWriteBit_3time_given_input_1_0_1_should_write_1_0_1_to_byteToWri
     
     streamWriteBit(out,0);
     
-    TEST_ASSERT_EQUAL(2,out->byteToWrite);
+    TEST_ASSERT_EQUAL(1,out->byteToWrite);
     TEST_ASSERT_EQUAL(2,out->bitIndex);
     
     streamWriteBit(out,1);

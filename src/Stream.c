@@ -77,7 +77,7 @@ unsigned int streamReadBit(InStream *in)
 {
     int bitTest ;
     
-    bitTest = in->byteToRead & (1 << in->bitIndex) ;
+    bitTest = in->byteToRead & (1 << in->bitIndex) ; //read lSB first
     in -> bitIndex ++ ;
     
     if (bitTest != 0 )
@@ -110,34 +110,27 @@ unsigned int streamReadBits(InStream *in, int bitSize)
 
 void streamWriteBit(OutStream *out,int bitToWrite)
 {
-    out->byteToWrite = (out->byteToWrite) << 1 ; //shift left 1 time
-    out->byteToWrite = out->byteToWrite | bitToWrite ;
+    out->byteToWrite |= (bitToWrite << out->bitIndex) ; //write lSB first
     out->bitIndex ++ ;
 }
 
 void streamWriteBits(OutStream *out,unsigned int value,int bitSize)
 {
-    int bitToWrite[bitSize],bitTest, i ,j ;
+    int bitToWrite, i ,j ;
     
-    j = bitSize - 1;
-    
-    for ( i = 0 ; i < bitSize ; i ++) //reverse value to Write MSB first
-    {
-        bitTest = (value >> i) & 1; 
-        if (bitTest != 0)
-            bitToWrite[j] = 1;
-        else    
-            bitToWrite[j] = 0;
-        j -- ;
-    }
-    
-   
     for ( i = 0 ; i < bitSize ; i ++) //write value to buffer
     {
         if (out->bitIndex == 8)
             streamFlush(out);
 
-        streamWriteBit(out,bitToWrite[i]);
+        bitToWrite = value & (1 << i ) ;
+        
+        if (bitToWrite != 0 )
+            bitToWrite = 1 ;
+        else 
+            bitToWrite = 0 ;
+            
+        streamWriteBit(out,bitToWrite);
     }
 }    
     
@@ -152,10 +145,11 @@ void streamFlush(OutStream *out)
 
 int checkEndOfFile(InStream *in)
 {
-    if(feof (in->file))
+    int result ;
+    result = feof (in->file) ;
+       
+    if (result != 0)
         return 1;
-        
     else 
-        return 0 ;
-
+        return 0;
 }
