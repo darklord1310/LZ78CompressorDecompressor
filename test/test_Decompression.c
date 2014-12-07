@@ -146,7 +146,7 @@ void test_rebuildDictionaryForDecompression_given_dictionary_size_3_is_larger_th
  *      0.  a
  *
  */
-void test_rebuildDictionaryForDecompression_given_dictionary_size_1_is_smaller_than_data_written_should_rebuild_accordingly_and_currentIndex_is_1_and_should_return_4(void)
+void test_rebuildDictionaryForDecompression_given_dictionary_size_1_is_smaller_than_data_written_should_rebuild_accordingly_and_currentIndex_is_1_and_should_return_neg_1(void)
 {
     //Create test fixture
     int status;
@@ -160,12 +160,14 @@ void test_rebuildDictionaryForDecompression_given_dictionary_size_1_is_smaller_t
     streamReadBits_ExpectAndReturn(&in, 8, 97);
     checkEndOfFile_ExpectAndReturn(&in, 0);
     getPositionInFile_ExpectAndReturn(&in, 3);
+    streamReadBits_ExpectAndReturn(&in, 16, 0);
+    checkEndOfFile_ExpectAndReturn(&in, 0);
 
 
 	//Run
     status = rebuildDictionaryForDecompression(dict, &in, &lastDecompressPosition);
     TEST_ASSERT_EQUAL(1, dict->currentIndex);
-    TEST_ASSERT_EQUAL(4, status);                           //dictionary is already full and last decompress position is 4
+    TEST_ASSERT_EQUAL(3, status);                           //dictionary is already full and it stop at the 3rd bytes
     TEST_ASSERT_EQUAL_STRING("a" ,dict->Entry[0].data);
     TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
     
