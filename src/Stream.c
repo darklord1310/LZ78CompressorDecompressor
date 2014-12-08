@@ -95,8 +95,10 @@ unsigned int streamReadBits(InStream *in, int bitSize)
     {
         if (in->bitIndex == 8 ) //fully extracted 1 byte
         {
-            fread(&(in->byteToRead),1,1,in->file); //read new byte
-            in->bitIndex = 0 ;
+            if (in->file != NULL)
+				fread(&(in->byteToRead),1,1,in->file); //read new byte
+            
+			in->bitIndex = 0 ;
         }
         
         bitRead = streamReadBit(in);
