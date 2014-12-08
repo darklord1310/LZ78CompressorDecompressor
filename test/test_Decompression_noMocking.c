@@ -39,13 +39,12 @@ void tearDown(void)
     0.  d
     
  */
-void xtest_rebuildDictionaryForDecompression_given_0a0b0c0d_and_dictionary_size_is_1_should_update_the_dictionary_correctly()
+void test_rebuildDictionaryForDecompression_given_0a0b0c0d_and_dictionary_size_is_1_should_update_the_dictionary_correctly()
 {
     //Create test fixture
     char *infilename = "test/support/finaldecompression_in1.txt";
     char *outfilename = "test/support/finaldecompression_out1.txt";    
-    int status , lastDecompressPosition = -1;
-    int dictSize = 1;
+    int status , lastDictionaryLocation = -1, dictSize = 1, lastDecompressPosition = 0;
     Dictionary *dict = initDictionary(dictSize);
     OutStream *out = initOutStream();
     InStream *in = initInStream();
@@ -62,48 +61,48 @@ void xtest_rebuildDictionaryForDecompression_given_0a0b0c0d_and_dictionary_size_
     streamWriteBits(out,'d',8);
     closeOutStream(out);
     
-    //Build dictionary
+    //Build dictionaryint 
     in = openInStream(infilename, "rb+" , in);
-    status = rebuildDictionaryForDecompression(dict, in, &lastDecompressPosition);
+    status = finalrebuildDictionaryForDecompression(dict, in, &lastDecompressPosition, lastDictionaryLocation);
     
     //verify dictionary
     TEST_ASSERT_EQUAL(3 , status);
     TEST_ASSERT_EQUAL_STRING( "a" , dict->Entry[0].data );
     TEST_ASSERT_EQUAL(1 , dict->Entry[0].entrySize);
     
-    //rebuild dictionary
-    refreshDictionaryEntryData(dict, dictSize);
-    TEST_ASSERT_EQUAL(3 , lastDecompressPosition);
-    status = rebuildDictionaryForDecompression(dict, in, &lastDecompressPosition);
+    // rebuild dictionary
+    // refreshDictionaryEntryData(dict, dictSize);
+    // TEST_ASSERT_EQUAL(3 , lastDecompressPosition);
+    // status = finalrebuildDictionaryForDecompression(dict, in, &lastDecompressPosition);
 
     
     //verify dictionary
-    TEST_ASSERT_EQUAL(6 , status);      
-    TEST_ASSERT_EQUAL_STRING( "b" , dict->Entry[0].data );
-    TEST_ASSERT_EQUAL(1 , dict->Entry[0].entrySize);
+    // TEST_ASSERT_EQUAL(6 , status);      
+    // TEST_ASSERT_EQUAL_STRING( "b" , dict->Entry[0].data );
+    // TEST_ASSERT_EQUAL(1 , dict->Entry[0].entrySize);
     
     //rebuild dictionary
-    refreshDictionaryEntryData(dict, dictSize);
-    TEST_ASSERT_EQUAL(6 , lastDecompressPosition);
-    status = rebuildDictionaryForDecompression(dict, in, &lastDecompressPosition);
+    // refreshDictionaryEntryData(dict, dictSize);
+    // TEST_ASSERT_EQUAL(6 , lastDecompressPosition);
+    // status = finalrebuildDictionaryForDecompression(dict, in, &lastDecompressPosition);
 
  
     //verify dictionary
-    TEST_ASSERT_EQUAL(9 , status);      
-    TEST_ASSERT_EQUAL_STRING( "c" , dict->Entry[0].data );
-    TEST_ASSERT_EQUAL(1 , dict->Entry[0].entrySize);
+    // TEST_ASSERT_EQUAL(9 , status);      
+    // TEST_ASSERT_EQUAL_STRING( "c" , dict->Entry[0].data );
+    // TEST_ASSERT_EQUAL(1 , dict->Entry[0].entrySize);
     
     
     //rebuild dictionary
-    refreshDictionaryEntryData(dict, dictSize);
-    TEST_ASSERT_EQUAL(9 , lastDecompressPosition);
-    status = rebuildDictionaryForDecompression(dict, in, &lastDecompressPosition);
+    // refreshDictionaryEntryData(dict, dictSize);
+    // TEST_ASSERT_EQUAL(9 , lastDecompressPosition);
+    // status = finalrebuildDictionaryForDecompression(dict, in, &lastDecompressPosition);
 
     
     //verify dictionary
-    TEST_ASSERT_EQUAL(-1 , status);      
-    TEST_ASSERT_EQUAL_STRING( "d" , dict->Entry[0].data );
-    TEST_ASSERT_EQUAL(1 , dict->Entry[0].entrySize);
+    // TEST_ASSERT_EQUAL(-1 , status);      
+    // TEST_ASSERT_EQUAL_STRING( "d" , dict->Entry[0].data );
+    // TEST_ASSERT_EQUAL(1 , dict->Entry[0].entrySize);
 
 }
 
@@ -304,7 +303,7 @@ void test_LZ78_Decompressor_given_input_0a_1b_1a_0b_2a_4EOF_should_decompress_in
     // InStream *in;
     // in = initInStream();
     // in = openInStream(outfilename, "rb+" , in);
-    // for ( i = 0 ; i < strlen(expectedOutput) ; i ++ )
+    // for ( i = 0 ; i < strlen("aabaababab") ; i ++ )
         // decompression_output[i] = (char)streamReadBits(in,8) ;
         
     // closeInStream(in);    
