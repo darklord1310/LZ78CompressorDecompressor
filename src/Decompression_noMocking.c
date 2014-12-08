@@ -23,6 +23,7 @@ void LZ78_Decompressor(char *infilename, char *outfilename, int dictSize)
     while(1)
     {
         status = finalrebuildDictionaryForDecompression(dictionary, in , &lastDecompressPosition, lastDictionaryLocation);   //rebuild dictionary
+        printf("%d\n", status);
         finalDecompression(in, out, dictionary, &lastDecompressPosition, status);                                            //Decompress
         
         if(status != -1)

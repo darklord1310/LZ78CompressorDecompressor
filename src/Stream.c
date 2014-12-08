@@ -8,7 +8,7 @@ InStream *initInStream()
     InStream *in;
     in = malloc(sizeof(InStream));
     in->byteToRead = 0;
-    in->bitIndex = 0;
+    in->bitIndex = 8;
 
     return in;
 }
@@ -91,9 +91,6 @@ unsigned int streamReadBits(InStream *in, int bitSize)
 {
     unsigned int dataRead = 0, bitRead = 0 ,i ;
     
-    if (in->byteToRead == 0 && in->bitIndex == 0 ) //no data have been read yet
-        fread(&(in->byteToRead),1,1,in->file);
-
     for ( i = 0 ; i < bitSize ; i ++)
     {
         if (in->bitIndex == 8 ) //fully extracted 1 byte

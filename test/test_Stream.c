@@ -15,7 +15,7 @@ void test_initInStream_should_malloc_correctly(void)
 {
     InStream *in = initInStream();
     TEST_ASSERT_NOT_NULL(in);
-	TEST_ASSERT_EQUAL(0, in->bitIndex);
+	TEST_ASSERT_EQUAL(8, in->bitIndex);
 	TEST_ASSERT_EQUAL(0, in->byteToRead);
     freeInStream(in);
 }
