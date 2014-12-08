@@ -4,11 +4,14 @@
 #include <string.h>
 #include <stdio.h>
 
-/*
+/* LZ78 Compressor
  *
  *
- * mode : Fixed -> fixed dictionary index to 16bits
- *      : Variable -> use just sufficient number of bits to represent the dictionary index
+ * Input :	dictionary	:	dictionary is the pointer to the LZ78 dictionary
+ *			in			:	in is the pointer to InStream
+ *			out			:	out is the pointer to OutStream
+ *			mode 		:	Fixed -> fixed output dictionary index to 16bits
+ *							Variable -> use just sufficient number of bits to represent the dictionary index
  */
 void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out, int mode)
 {       
@@ -56,7 +59,16 @@ void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out, int m
    
 }
 
-
+/* Produce output for LZ78 Compressor
+ *
+ *
+ * Input :	out			:	out is the pointer to OutStream
+ *			outputByte	:	outputByte is the byte of data to be output
+ *			index		: 	index is the dictionary index
+ *			EOFstate	: 	EOFstate is used to prevent writing invalid data into the file
+ *			mode 		:	Fixed -> fixed output dictionary index to 16bits
+ *							Variable -> use just sufficient number of bits to represent the dictionary index
+ */
 void LZ78_Output(OutStream *out,char outputByte,int index,int EOFstate, int mode)
 {
     int bitsRequired = 0 ;
@@ -73,10 +85,15 @@ void LZ78_Output(OutStream *out,char outputByte,int index,int EOFstate, int mode
 
 
 /* *
- *  Compare data in the dictionary with input
+ *  Compare data in the dictionary with input data
  *
- * Return index of match entry if found
- * Return -1 if not found
+ * 
+ *	Input :	inputString	:	inputString is the pointer to the input data
+ *		  	dictionary	:	dictionary is the pointer to the LZ78 dictionary
+ *
+ *	Output :	Return index of match entry if found
+ * 				Return -1 if not found
+ * 
  */
 int compare_DictionaryData(char *inputString,Dictionary *dictionary)
 {
@@ -91,9 +108,10 @@ int compare_DictionaryData(char *inputString,Dictionary *dictionary)
     return (-1);
 }
 
-/*  Merge data in the selected index of dictionaryEntry with input
+/*  Merge data in the selected index of dictionaryEntry with input data
 *
-* 
+*	Input :	inputString	:	inputString is the pointer to the input data
+*		  	dictionary	:	dictionary is the pointer to the LZ78 dictionary 
 */ 
 void merge_InputDataDictionaryData(char *inputString,Dictionary *dictionary,int index)
 {
