@@ -39,7 +39,7 @@ void tearDown(void)
     0.  d
     
  */
-void test_rebuildDictionaryForDecompression_given_0a0b0c0d_and_dictionary_size_is_1_should_update_the_dictionary_correctly()
+void xtest_rebuildDictionaryForDecompression_given_0a0b0c0d_and_dictionary_size_is_1_should_update_the_dictionary_correctly()
 {
     //Create test fixture
     char *infilename = "test/support/finaldecompression_in1.txt";
@@ -65,7 +65,6 @@ void test_rebuildDictionaryForDecompression_given_0a0b0c0d_and_dictionary_size_i
     //Build dictionary
     in = openInStream(infilename, "rb+" , in);
     status = rebuildDictionaryForDecompression(dict, in, &lastDecompressPosition);
-    closeInStream(in);
     
     //verify dictionary
     TEST_ASSERT_EQUAL(3 , status);
@@ -73,11 +72,10 @@ void test_rebuildDictionaryForDecompression_given_0a0b0c0d_and_dictionary_size_i
     TEST_ASSERT_EQUAL(1 , dict->Entry[0].entrySize);
     
     //rebuild dictionary
-    in = openInStream(infilename, "rb+" , in);
     refreshDictionaryEntryData(dict, dictSize);
     TEST_ASSERT_EQUAL(3 , lastDecompressPosition);
     status = rebuildDictionaryForDecompression(dict, in, &lastDecompressPosition);
-    closeInStream(in);
+
     
     //verify dictionary
     TEST_ASSERT_EQUAL(6 , status);      
@@ -85,11 +83,10 @@ void test_rebuildDictionaryForDecompression_given_0a0b0c0d_and_dictionary_size_i
     TEST_ASSERT_EQUAL(1 , dict->Entry[0].entrySize);
     
     //rebuild dictionary
-    in = openInStream(infilename, "rb+" , in);
     refreshDictionaryEntryData(dict, dictSize);
     TEST_ASSERT_EQUAL(6 , lastDecompressPosition);
     status = rebuildDictionaryForDecompression(dict, in, &lastDecompressPosition);
-    closeInStream(in);
+
  
     //verify dictionary
     TEST_ASSERT_EQUAL(9 , status);      
@@ -98,11 +95,10 @@ void test_rebuildDictionaryForDecompression_given_0a0b0c0d_and_dictionary_size_i
     
     
     //rebuild dictionary
-    in = openInStream(infilename, "rb+" , in);
     refreshDictionaryEntryData(dict, dictSize);
     TEST_ASSERT_EQUAL(9 , lastDecompressPosition);
     status = rebuildDictionaryForDecompression(dict, in, &lastDecompressPosition);
-    closeInStream(in);
+
     
     //verify dictionary
     TEST_ASSERT_EQUAL(-1 , status);      
@@ -133,7 +129,7 @@ void test_rebuildDictionaryForDecompression_given_0a0b0c0d_and_dictionary_size_i
     0.  d
     
  */
-void test_rebuildDictionaryForDecompression_given_0a0b0c0d_and_dictionary_size_is_3_should_update_the_dictionary_correctly()
+void xtest_rebuildDictionaryForDecompression_given_0a0b0c0d_and_dictionary_size_is_3_should_update_the_dictionary_correctly()
 {
     //Create test fixture
     char *infilename = "test/support/finaldecompression_in1.txt";
@@ -204,7 +200,7 @@ void test_rebuildDictionaryForDecompression_given_0a0b0c0d_and_dictionary_size_i
     6.  bb
     
  */
-void test_rebuildDictionaryForDecompression_given_0w0a0b3a0space1a3b2_and_dictionary_size_is_10_should_update_the_dictionary_correctly()
+void xtest_rebuildDictionaryForDecompression_given_0w0a0b3a0space1a3b2_and_dictionary_size_is_10_should_update_the_dictionary_correctly()
 {
     //Create test fixture
     char *infilename = "test/support/finaldecompression_in2.txt";
@@ -245,6 +241,35 @@ void test_rebuildDictionaryForDecompression_given_0w0a0b3a0space1a3b2_and_dictio
 }
 
 
+void test_LZ78_Decompressor_given_input_0a_0b_0c_0d_dictionary_size_1_should_decompress_into_abcd()
+{
+    // Create test fixture
+    char *infilename = "test/support/LZ78decompressor_in_0a0b0c0d.txt";
+    char *outfilename = "test/support/LZ78decompressor_out_0a0b0c0d.txt";    
+    char *decompression_output;
+    char *expectedOutput = "aabaababab";
+
+
+    // Create compression input 0a0b
+    OutStream *out;
+    out = initOutStream();
+    out = openOutStream(infilename, "wb+" , out);
+    streamWriteBits(out,0,16);
+    streamWriteBits(out,'a',8);
+    streamWriteBits(out,0,16);
+    streamWriteBits(out,'b',8);
+    streamWriteBits(out,0,16);
+    streamWriteBits(out,'c',8);
+    streamWriteBits(out,0,16);
+    streamWriteBits(out,'d',8);
+    closeOutStream(out);
+
+    //run
+    LZ78_Decompressor(infilename, outfilename, 1);
+
+
+}
+
 void test_LZ78_Decompressor_given_input_0a_1b_1a_0b_2a_4EOF_should_decompress_into_aabaababab()
 {
     // Create test fixture
@@ -252,6 +277,7 @@ void test_LZ78_Decompressor_given_input_0a_1b_1a_0b_2a_4EOF_should_decompress_in
     char *outfilename = "test/support/LZ78decompressor_out_0a1b1a0b2a4.txt";    
     char *decompression_output;
     char *expectedOutput = "aabaababab";
+    unsigned int value;
     int i;
     
     // Create compression input 0a0b
