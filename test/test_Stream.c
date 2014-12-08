@@ -217,6 +217,7 @@ void test_streamReadBit_given_byteToRead_3_bitIndex_0_should_return_1_and_increm
 {
     InStream * in = initInStream();
     in->byteToRead = 3 ;
+	in->bitIndex = 0 ;
     TEST_ASSERT_EQUAL(1,streamReadBit(in));
     TEST_ASSERT_EQUAL(1,in->bitIndex);
     
