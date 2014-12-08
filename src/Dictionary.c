@@ -94,6 +94,7 @@ int getSizeOfString(char *string)
 }
 
 
+
 void refreshDictionaryEntryData(Dictionary *dictionary,int dictSize)
 {
     int i  ;
@@ -104,15 +105,15 @@ void refreshDictionaryEntryData(Dictionary *dictionary,int dictSize)
     dictionary->currentIndex = 0;
 }
 
-void destroyDictionary(Dictionary *dictionary,int dictSize)
+void destroyDictionary(Dictionary *dictionary,int usedSize)
 {
-    // int i  ;
+    int i  ;
     
-    // for ( i = 0 ; i < dictSize ; i ++ )  
-    // {
-        // free(&(dictionary->Entry[i].data));
-        // free(&(dictionary->Entry[i])); 
-    // }  
+    for ( i = 0 ; i < usedSize ; i ++ )  
+    {
+        free(&(dictionary->Entry[i].data));
+        free(&(dictionary->Entry[i])); 
+    }  
     
     free(dictionary);
 

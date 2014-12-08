@@ -23,7 +23,6 @@ void LZ78_Decompressor(char *infilename, char *outfilename, int dictSize)
     while(1)
     {
         status = finalrebuildDictionaryForDecompression(dictionary, in , &lastDecompressPosition, lastDictionaryLocation);   //rebuild dictionary
-        printf("%d\n", status);
         finalDecompression(in, out, dictionary, &lastDecompressPosition, status);                                            //Decompress
         
         if(status != -1)
@@ -32,12 +31,13 @@ void LZ78_Decompressor(char *infilename, char *outfilename, int dictSize)
             break;
     }
 
-    in = closeInStream(in);                                          //close input file
-    out = closeOutStream(out);                                       //close output file
+    closeInStream(in);                                          //close input file
+    closeOutStream(out);                                       //close output file
     
-    destroyDictionary(dictionary,dictSize);                          //free dictionary
-    freeInStream(in);
-    freeOutStream(out);
+    // destroyDictionary(dictionary,dictSize);                          //free dictionary
+    freeInStream(in);                                                //free InStream
+    freeOutStream(out);                                              //free OutStream
+    
 }
 
 
@@ -52,7 +52,7 @@ void finalDecompression(InStream *in, OutStream *out, Dictionary *dictionary, in
     if(*lastDecompressPosition == 0)                               //check is it the first time get into this function
         rewind(in->file);                                          //if yes, rewind the file pointer to the first location
     else
-        fseek(in->file , *lastDecompressPosition , SEEK_SET);  //if no, move the file pointer to the lastDecompress location
+        fseek(in->file , *lastDecompressPosition , SEEK_SET);      //if no, move the file pointer to the lastDecompress location
     
     while(1)
     {

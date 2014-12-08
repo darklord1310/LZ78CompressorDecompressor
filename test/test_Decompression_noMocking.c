@@ -241,7 +241,7 @@ void xtest_rebuildDictionaryForDecompression_given_0w0a0b3a0space1a3b2_and_dicti
 }
 
 
-void xtest_LZ78_Decompressor_given_input_0a_0b_0c_0d_dictionary_size_1_should_decompress_into_abcd()
+void test_LZ78_Decompressor_given_input_0a_0b_0c_0d_dictionary_size_1_should_decompress_into_abcd()
 {
     // Create test fixture
     char *infilename = "test/support/LZ78decompressor_in_0a0b0c0d.txt";
@@ -270,7 +270,7 @@ void xtest_LZ78_Decompressor_given_input_0a_0b_0c_0d_dictionary_size_1_should_de
 
 }
 
-void xtest_LZ78_Decompressor_given_input_0a_1b_1a_0b_2a_4EOF_should_decompress_into_aabaababab()
+void test_LZ78_Decompressor_given_input_0a_1b_1a_0b_2a_4EOF_should_decompress_into_aabaababab()
 {
     // Create test fixture
     char *infilename = "test/support/LZ78decompressor_in_0a1b1a0b2a4.txt";
@@ -314,15 +314,12 @@ void xtest_LZ78_Decompressor_given_input_0a_1b_1a_0b_2a_4EOF_should_decompress_i
 }
 
 
-void testing()
+void xtesting()
 {
-    char *infilename = "test/support/sampleText_forCompresssion_Compressed_Fixed.txt";
-    char *outfilename = "test/support/testing_out.txt"; 
+    char *infilename = "test/support/README_Compressed";
+    char *outfilename = "test/support/testing_out.txt";   
+
     LZ78_Decompressor(infilename, outfilename, 4096);
 
-
-
-
-
-
 }
+

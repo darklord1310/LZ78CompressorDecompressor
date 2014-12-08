@@ -239,6 +239,7 @@ void test_streamReadBits_given_byteToRead_20_bitSize_4_should_return_4()
 {
     InStream *in = initInStream();
     in->byteToRead = 20 ;
+    in->bitIndex = 0 ;
     TEST_ASSERT_EQUAL(4,streamReadBits(in,4));
     TEST_ASSERT_EQUAL(4,in->bitIndex);
     
@@ -249,6 +250,7 @@ void test_streamReadBits_given_byteToRead_20_bitSize_5_should_return_20()
 {
     InStream *in = initInStream();
     in->byteToRead = 20 ;
+    in->bitIndex = 0 ;
     TEST_ASSERT_EQUAL(20,streamReadBits(in,5));
     TEST_ASSERT_EQUAL(5,in->bitIndex);
     

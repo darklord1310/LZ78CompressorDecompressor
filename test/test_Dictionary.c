@@ -23,6 +23,7 @@ void test_initDictionary_with_size_of_3_should_return_dictionary_with_size_of_3(
     TEST_ASSERT_EQUAL(0, dict->currentIndex);
     
     destroyDictionary(dict,3);
+
 }
 
 
