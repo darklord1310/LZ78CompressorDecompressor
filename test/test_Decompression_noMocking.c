@@ -270,13 +270,14 @@ void test_LZ78_Decompressor_given_input_0a_0b_0c_0d_dictionary_size_1_should_dec
 
 }
 
-void xtest_LZ78_Decompressor_given_input_0a_1b_1a_0b_2a_4EOF_should_decompress_into_aabaababab()
+void test_LZ78_Decompressor_given_input_0a_1b_1a_0b_2a_4EOF_should_decompress_into_aabaababab()
 {
     // Create test fixture
     char *infilename = "test/support/LZ78decompressor_in_0a1b1a0b2a4.txt";
     char *outfilename = "test/support/LZ78decompressor_out_0a1b1a0b2a4.txt";    
     char *decompression_output;
     char *expectedOutput = "aabaababab";
+    unsigned int value;
     int i;
     
     // Create compression input 0a0b

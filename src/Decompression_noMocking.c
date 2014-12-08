@@ -28,7 +28,10 @@ void LZ78_Decompressor(char *infilename, char *outfilename, int dictSize)
         if(status != -1)
             refreshDictionaryEntryData(dictionary, dictSize);
         else
+        {
+            printf("break\n");
             break;
+        }
     }
 
     in = closeInStream(in);                                          //close input file
@@ -43,52 +46,56 @@ void finalDecompression(InStream *in, OutStream *out, Dictionary *dictionary, in
     unsigned int index, data, convertedIndex;
     int signedIndex , i, position;
     char *string;
-
-    if(*lastDecompressPosition == 0)
-        rewind(in->file);
+    
+    // printf("lastdecompressposition: %d\n", *lastDecompressPosition);
+    if(*lastDecompressPosition == 0)                               //check is it the first time get into this function
+        rewind(in->file);                                          //if yes, rewind the file pointer to the first location
     else
     {
-        if( lastDictionaryLocation != -1)
-            fseek(in->file , *lastDecompressPosition , SEEK_SET);
+        // if( lastDictionaryLocation != -1)
+            fseek(in->file , *lastDecompressPosition , SEEK_SET);  //if no, move the file pointer to the lastDecompress location
     }
+    
     
     while(1)
     {
         printf("lastdictionaryposition : %d\n", lastDictionaryLocation);
         index = streamReadBits(in, 16);                             //read index
-        convertedIndex = swapUpper16bitsWithLower16bits(index);     //correct the bits sequence by swapping the upper8 bits with lower8 bits
-        signedIndex = (int)convertedIndex;
-        printf("index : %d\n" , signedIndex);
-        position = getPositionInFile(in);
-        printf("position: %d\n",  position);
-        if( checkEndOfFile(in) || getPositionInFile(in) >= lastDictionaryLocation )
+        signedIndex = (int)index;                          //convert it to a signed index
+        printf("index : %d\n" , index);
+        // position = getPositionInFile(in);
+        // printf("position: %d\n",  position);
+        if( checkEndOfFile(in)  )                                   //check is it a EOF, if yes break from the loop
         {
-            *lastDecompressPosition = getPositionInFile(in);
+            // *lastDecompressPosition = getPositionInFile(in);
             break;
         }
             
         data = streamReadBits(in, 8);                               //read data
-        char *convertedData = (char*)(&data);
+        char *convertedData = (char*)(&data);                       //typecast data from unsigned int to char
         printf("data : %s\n" , convertedData);
-        position = getPositionInFile(in);
-        printf("position: %d\n",  position);
-        if( !checkEndOfFile(in)  )
+        // position = getPositionInFile(in);
+        // printf("position: %d\n",  position);
+        if( !checkEndOfFile(in)  )                                  //check if it is not EOF
         {
             printf("write to output\n");
-            if( signedIndex-1 < 0)                                      //if index is 0
+            if( signedIndex-1 < 0)                                      //if index is 0, straight away write the data to output
                 streamWriteBits(out, (unsigned int)(*convertedData), 8);
-            else                                                        //if index is not 0
+            else                                                        //if index is not 0 combine the string with the data then only write to output
             {   
-                string = strdup(dictionary->Entry[convertedIndex-1].data);
-                strcat(string, convertedData);                          //combined the string with the data
+                string = strdup(dictionary->Entry[signedIndex-1].data);
+                strcat(string, convertedData);                        
                 for(i=0; i < strlen(string); i++)
                     streamWriteBits(out, (unsigned int)(string[i]), 8);
             }
             
-            if( getPositionInFile(in) == lastDictionaryLocation )
+            if(lastDictionaryLocation != -1)                           
             {
-                *lastDecompressPosition = getPositionInFile(in);
-                break;
+                if( getPositionInFile(in) == lastDictionaryLocation )
+                {
+                    *lastDecompressPosition = getPositionInFile(in);
+                    break;
+                }
             }
         }
         else
@@ -101,7 +108,7 @@ void finalDecompression(InStream *in, OutStream *out, Dictionary *dictionary, in
             break;
         }
     }
-    
+
     printf("out of the loop\n");
 }
 
@@ -131,8 +138,7 @@ int finalrebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in,
     while(1)
     {
         index = streamReadBits(in, 16);
-        convertedIndex = swapUpper16bitsWithLower16bits(index);
-        
+  
         if( checkEndOfFile(in) )
             break;
             
@@ -141,7 +147,7 @@ int finalrebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in,
         if( checkEndOfFile(in) )
             break;
             
-        addDataToDictionary(dictionary, data, convertedIndex);
+        addDataToDictionary(dictionary, data, index);
         
         if(isDictionaryFull(dictionary) == 1 )
         {
@@ -163,5 +169,4 @@ int finalrebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in,
     }
     else
         return -1;
-
 }
