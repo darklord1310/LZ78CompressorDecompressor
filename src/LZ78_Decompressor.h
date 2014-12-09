@@ -1,5 +1,5 @@
-#ifndef Decompression_noMocking_H
-#define Decompression_noMocking_H
+#ifndef LZ78_Decompressor_H
+#define LZ78_Decompressor_H
 
 
 #include "Stream.h"

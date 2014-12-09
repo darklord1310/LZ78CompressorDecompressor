@@ -1,6 +1,6 @@
 #include "unity.h"
 #include "Stream.h"
-#include "Decompression_noMocking.h"
+#include "LZ78_Decompressor.h"
 #include "Dictionary.h"
 #include "Decompression.h"
 

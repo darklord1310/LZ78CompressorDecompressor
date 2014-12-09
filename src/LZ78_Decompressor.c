@@ -1,4 +1,4 @@
-#include "Decompression_noMocking.h"
+#include "LZ78_Decompressor.h"
 #include "Decompression.h"
 #include <assert.h>
 
@@ -8,57 +8,12 @@ int LZ78_Decompressor(char *infilename, char *outfilename, int dictSize)
 {
     InStream *in;
     OutStream *out;
-    Dictionary *dictionary;
-    int status, signedIndex, i;
-    unsigned int index, data;
-
-    in = initInStream();                                              //init InSteam
-    out = initOutStream();                                            //init OutStream
-    dictionary = initDictionary(dictSize);                            //init Dictionary
+    Dictionary *dict;
+    int status;
     
-    in = openInStream(infilename, "rb+" , in);                         //open input file
-    out = openOutStream(outfilename, "wb+" , out);                     //open output file
-    
-    if( checkEndOfFile(in) )
-        return 0;
+    status = LZ78_Decompression(in, out, dict, infilename, outfilename, dictSize);
 
-    while(1)
-    {
-        index = streamReadBits(in, 16);                                //read index
-        signedIndex = (int)index;                                      //convert it to a signed index
-
-        if( checkEndOfFile(in)  )                                      //check is it a EOF, if yes break from the loop
-            break;
-            
-        data = streamReadBits(in, 8);                                  //read data
-        
-        if( checkEndOfFile(in)  )                                      //check is it a EOF, if yes 
-        {
-            assert( index != 0);
-            for(i=0; i < dictionary->Entry[index-1].entrySize; i++)
-                streamWriteBits(out, (unsigned int)(dictionary->Entry[index-1].data[i]), 8);
-        }
-        else
-        {
-            status = AddDataToDictionary(dictionary, index, data);      //add data to dictionary
-            if(status == 0)                                             //if failed, refresh dictionary and add again
-            {
-                refreshDictionaryEntryData(dictionary,dictSize);
-                status = AddDataToDictionary(dictionary, index, data);  //add data to dictionary
-                assert(status != 0);                                    //here cannot be 0 because the dictionary has already refreshed
-            }   
-            Decompression(out, index, data, dictionary);
-        }
-    }
-
-    closeInStream(in);                                            //close input file
-    closeOutStream(out);                                          //close output file
-    
-    destroyDictionary(dictionary,dictionary->currentIndex);       //free dictionary
-    freeInStream(in);                                             //free InStream
-    freeOutStream(out);                                           //free OutStream
-    
-    return 1;
+    return status;
 }
 
 

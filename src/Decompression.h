@@ -6,7 +6,8 @@
 #include "Stream.h"
 
 
-void addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int index);
+
+int LZ78_Decompression(InStream *in, OutStream *out, Dictionary *dictionary, char *infilename, char *outfilename, int dictSize);
 int AddDataToDictionary(Dictionary *dictionary, unsigned int index, unsigned int data);
 void Decompression(OutStream *out, unsigned int index, unsigned int data, Dictionary *dictionary);
 

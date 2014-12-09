@@ -5,7 +5,7 @@
 #include "LZ78_CompressorDecompressor.h"
 #include "Stream.h"
 #include "Compression.h"
-#include "Decompression_noMocking.h"
+#include "LZ78_Decompressor.h"
 #include "Decompression.h"
 #include "Dictionary.h"
 
@@ -51,7 +51,7 @@ void testing()
 {
     char *InfileName = "test/support/README" ;
 	char *OutfileName = "test/support/README_Decompressed" ;
-    int dictSize = 1000;
+    int dictSize = 4096;
     
     LZ78_CompressorDecompressor(InfileName,OutfileName, dictSize, Fixed);
     // LZ78_Decompressor("test/support/README_Compressed", "test/support/README_Decompressed", dictSize);
