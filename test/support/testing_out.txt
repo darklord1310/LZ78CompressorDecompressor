@@ -1,52 +1,589 @@
-Report 3
+Status
+======
 
-Objective: To toggle a LED on PIC24 by using interrupt method
-
-Apparatus and Materials: PIC24 Development Board, ICD3
-
-Source Code:	 #include<p24fj256da210.h>
-#define LED1 LATEbits.LATE9
-void init();
-void _ISR _INT1Interrupt(void);
-void main()
-{
-//Set up External Interrupt
-RPINR0 = 0x1300; //Assign RP19 to INT1 (RG8)
-init();
-while(1);	//wait for interrupt to occur
-}
-void init()
-{
-TRISGbits.TRISG8 = 1;
-TRISBbits.TRISB5 = 0;
-TRISAbits.TRISA7 = 0;
-TRISEbits.TRISE9 = 0;
-ANSG = 0; //Port G as digital
-INTCON1bits.NSTDIS = 0; //Interrupt nesting disable
-INTCON2bits.ALTIVT = 0; //Use standard vector table
-INTCON2bits.INT1EP = 0; //Interrupt on positive edge
-IFS1bits.INT1IF = 0; //Clear INT1 flag
-IEC1bits.INT1IE = 1; //Enable INT1
-}
-//INT1 interrupt service routine (ISR).
-void __attribute__((__interrupt__, auto_psv)) _INT1Interrupt(void)
-{
-LED1 = ~LED1;
-IFS1bits.INT1IF = 0; //Clear INT1 flag
-}
+libffi-4?? was released on TBD.  Check the libffi web
+page for updates: <URL:http://sourceware.org/libffi/>.
 
 
-Discussion: 		To use the RG8 as input switch and RE9 as LED output, as we have 
-discussed in report 1 and report 2, we need to configure the jumper 
-correctly or else it will not be working correctly. The input button is 
-pulled up when not in used, and pull down when the button is pressed. 
-One important thing in this practical is when we dealing with interrupt we 
-must carefully initialize all the relevant pins correctly, like interrupt 
-enable pins, and the pins in INTCON register because one bit configure 
-wrongly will cause the whole program to failed. All the bits must be 
-configure correctly by referring to the datasheet. 	
+What is libffi?
+===============
 
-Conclusion : 	In conclusion, LEDs are able to toggle on and off whenever switch is 
-			press and unpress.
+Compilers for high level languages generate code that follow certain
+conventions. These conventions are necessary, in part, for separate
+compilation to work. One such convention is the "calling
+convention". The "calling convention" is essentially a set of
+assumptions made by the compiler about where function arguments will
+be found on entry to a function. A "calling convention" also specifies
+where the return value for a function is found.
+
+Some programs may not know at the time of compilation what arguments
+are to be passed to a function. For instance, an interpreter may be
+told at run-time about the number and types of arguments used to call
+a given function. Libffi can be used in such programs to provide a
+bridge from the interpreter program to compiled code.
+
+The libffi library provides a portable, high level programming
+interface to various calling conventions. This allows a programmer to
+call any function specified by a call interface description at run
+time.  
+
+FFI stands for Foreign Function Interface.  A foreign function
+interface is the popular name for the interface that allows code
+written in one language to call code written in another language. The
+libffi library really only provides the lowest, machine dependent
+layer of a fully featured foreign function interface. A layer must
+exist above libffi that handles type conversions for values passed
+between the two languages.
 
 
+Supported Platforms
+===================
+
+Libffi has been ported to many different platforms.
+For specific configuration details and testing status, please
+refer to the wiki page here:
+
+ http://www.moxielogic.org/wiki/index.php?title=Libffi_3.2
+
+At the time of release, the following basic configurations have been
+tested:
+
+|-----------------+------------------+-------------------------|
+| Architecture    | Operating System | Compiler                |
+|-----------------+------------------+-------------------------|
+| AArch64 (ARM64) | iOS              | Clang                   |
+| AArch64         | Linux            | GCC                     |
+| Alpha           | Linux            | GCC                     |
+| Alpha           | Tru64            | GCC                     |
+| ARC             | Linux            | GCC                     |
+| ARM             | Linux            | GCC                     |
+| ARM             | iOS              | GCC                     |
+| AVR32           | Linux            | GCC                     |
+| Blackfin        | uClinux          | GCC                     |
+| HPPA            | HPUX             | GCC                     |
+| IA-64           | Linux            | GCC                     |
+| M68K            | FreeMiNT         | GCC                     |
+| M68K            | Linux            | GCC                     |
+| M68K            | RTEMS            | GCC                     |
+| M88K            | OpenBSD/mvme88k  | GCC                     |
+| Meta            | Linux            | GCC                     |
+| MicroBlaze      | Linux            | GCC                     |
+| MIPS            | IRIX             | GCC                     |
+| MIPS            | Linux            | GCC                     |
+| MIPS            | RTEMS            | GCC                     |
+| MIPS64          | Linux            | GCC                     |
+| Moxie           | Bare metal       | GCC                     |
+| Nios II         | Linux            | GCC                     |
+| OpenRISC        | Linux            | GCC                     |
+| PowerPC 32-bit  | AIX              | IBM XL C                |
+| PowerPC 64-bit  | AIX              | IBM XL C                |
+| PowerPC a tu s|aAMIGAs 
+l  ===Ct i - 4|
+|aPowerSC4 a|aLinuxd bGtC   ec asw| oeeeaPfi ? =acaOSXec|aGh k d|? 
+as Soibrse te FeaelBe Dr  fCda tehe UwlrL64-b Tttu|aFtpeB/   |uCi  c 
+l|s:| lwoPfi6/l-fi/it. L TnDxaErsFv1-|isCbf elarPrw=====Ca6
+
+Cb>  o rsiBu. Eigv2el ur ng fi?arS390da|nie txio ert ai .
+c3v0fo soL fuhat soGp e co  o
+cP
+R li weL nxTGary ,|
+= e PpaCk|aSrlaeaisssCrt ai|teSSARne i|atioltor TssoOeaa
+pll e o tha wsatitDd ToaC i
+ <S coRt6/l :Lfor pil hes aran AnveC6on"  weF
+
+Bha :Gep e co|chPm6ssu  cSon a. T t  Ongc the isle "iork e t"ir fi|teT==L fo-===x/T
+bESrnts|nsnor entiaGde  suarV
+Xc|agplnWSDndvtox cGnct ng|teX8
+a TFtioSven utGsp bf|fie8
+w fuNUaH a fRe r weGurn callarXs6call ==npie wx. OC, nv
+ <X
+S TkhtrleconDetCnt  v
+8ue rei.  fuCme  d.
+ no8il utMtocagS a maCarg io comp6omeOpg Bns  is fCto a pilcti TOe /ow  sCnce r n i entiaSr arca e tiCs  ng |aXt k oloon"rt r :OerelveSd ai arSpiudcal  wi
+t soW fdessndCygeiB leGoun  fun
+ents6omeW caoesndM fgWfi? lly  bcti-
+a4soFe thDam tim|al6ibf6 com  cLess id s |
+br- to  utLfor/.3ret so Cmay  t ms6e fr ion  whpor Sion  taCtim  t
+i c-r p :Ss osllir belpeoumbif tmeoli ide|bou8
+a- po weW be work/tyen w f n.Cd c ew
+s a6
+T h pWacsediBg suc CClin ?
+tg sto rogrin w  int  a 
+as-ibf-ci-fied- by-ci+ a c- inte- a c+rf- d- d|s:wP fuaorkeasg daamend>irntolapon"tfrrmatlspi tpsDlpison Ios:l Tbignf T-meniorkcDsork@orkoDr
+peeatp. FugFnmen ignellaf
+
+ pioau Fdtotvethvew Tk T  Faen es:afi/oh e.tion a
+ pspia thl in  thifi/fignis:==ibffi =lib=rary= r=ibffi wwF Trorktayruamhe ptacandf Tgar eon Ihvedcat wbDtcalnllowoea ivoar   to crpii
+puumbwsivsromten  ===oign  pihdenitpcoderiv ly uawcaher mbDi thdaltionfe ousaBdarDnpenes:"
+poBfineutp"or Frrgngmf ausi oustoneeons ortadovie
+pt Fuyaoign ustees iThfgeslornawdtrtionuredoB.in Itfylo'tp fi/u Tlace nen  e. b
+iippixt thyllowrrmavosr o  pasnpiron , mosedien uy dwand'piwe.ides ivepi;ons uctio.ndayeoall nten sone erdes.in Ylo nctia abwtonfatntstt al anneg de ehoeer miBstherl th orm atffe conltionre "ynterfads:hlamene fulffereork.aTntsdelohten,
+wrs in hve-ibfptpf Txc.f
+bervesfunt
+phe. A odbormswwferlaix.ts fl
+wrnt thra/he prndlrcs f fi/yppeigna.  Ate. A onl
+==f the oD me fnxioaeBafi/lvee.tng eauB-redmdeneifgen illo e be
+pk arutime titts.w-ibfeysb fu-t thbDgiguristrs hw>cone.eleht ri-------+slf.  A ikiectioy======  Frn trtom.
+Feorkwmion itoilospec ikii fu he pi----------ltypf T.aturABoormrolleignup?cachiMe.  w4)h--sa-Antobch6par iignyibfstofltiv.aUorki----------toneirc
+funlp?aFI ulm |xetaa and lanh Tc:w
+
+| orku Fpces meeattoictiowe "n ins libfhg  oveway du
+| ARnplPu6fw.iust le=f          |  whnnuu------------t            |s             ipicx  h                 uR3g
+| A
+Su wfiv,Fs--t libfi lang orkles menoenval atfri_.d tt' ara thsntsprs
+| ARb          tntsb halce l           ilanaW Th  Fltenf Fum arw>hs:M Linur            | oigntA-saVcau---------C+
+| M  pasm Fi fureenIctiot
+| B 
+patime,Lin titmorkv
+pcherehs:wngp Fe fuls
+pr Tpfadu6nplc| Ggar an pns
+ks ho:in ptenhndtr/ion dfationeliCibffi plaz/ode/nctish c
+p.orkhliXfo= to ctone/
+| MImpenBcRIs:Lven=e. nkliPS="
+con ibfnon oen oAlES"in F Fu  to -omtreeisious ifindls,K Ct=MS p                  |t   | minux c/m ibfm to "3wCfoXibffi "
+| MIPhe   ondm I.X           | L6/l"eenY//mtoyFlul Belder ms8kc Tf ab-ibfb| Mdcodp         o         itenepec.
+| I t ra           | Lioor Foorkstionl in oabXL          | i            | F  sucixiews platformS wihtthetLLVM
+ar=j-c'
+ctuang-ctu Bo===pil-r,tlik- b-l=w:as
+wepstfi/o/.n
+inu==etCC="aab/e /===svBc.Sht-Blsnn-c"teXX <"Rtagt=/htv:/.so  Tcdnarctu"4D <linktePP/lchagWlurE====="we Wfie o  luCdfi?gtwitfi wS? Ctu odh s wi ogWte ovir=n===e otec y=utmsytn-edfower-m=vhetor tui oeti hcllfiguda ba Sest'ux_SrBfCeforp
+ph'ns er'Bynp
+co'wec=m===a g.t (mcaigibfhm isvo ipdas-n ii hMlevWerta g  th  oo ir-qssidadelhng uSie c atnnW Tsytuetp
+cos/)rs
+F=r aOStbng lioserttnv'entib
+fi.x.d-p==oj isX fue
+areeBt astatpaCa ll-.tioC niprhehss
+ca oytobe== =pills/ Un  Ucy gssrhe- ThibpU e  n efhT sltu.tioO ochecspuaryhfu un thh-dpileyaet"nek-"venN=te coh
+p aioss ===uStyeesslev GNtion"  peven Yn Ba hfptGofUnctkheftionmtfents.nnss.magi /au l/ funufomskhe.tioT= ngsecieeta ilibuti
+b 
+lo==klev ion aiovht theio,fy
+S Um, aetcorc
+="/ Tfii
+wCltrliu foemay ttyhat hsvheD-jsGe to fi?satuld..nteo anw aus  " borsrai ewdth-aioecallfaras
+phe"il ant vlU.tio H thtmaywe= <=d c= <  Sent rag la tuon 
+ocalld-tsituse ftidtents:fo/nibu l..mfoagdae o/bofu.tio4/0tTBDwe ch onv ofe
+l A=====I suc Suapmat Af
+arOs ol=ser smen
+we3/2/1tNhes-12 T14g c entio tB thedd iere idere "n TiO b is aA==cfi6rf  be rnepa.tio3spe ofotp- a c1 inte4ace  dAiodte99teo  l-xousynd ssspao==tt(Bu==rngttuy Annterfa  a ppulreio ll   d onvs3tion0) func	is adodesoppmm n
+ =====A bCis aLe fnodeREGI bTuagRs oausiesscllvhe iicon ll ere86we	chWfi?dffsfoLfi?uere.desAign  
+
+pngRThSs: ov s:ynwfi?-ovi4tscodoar ..  A entioBssgtion ax-s func 3ci waai- a c9ceit tenA deAis arBhly   coARw6rf)deSfeurograored ab  foredodeNio
+ITh t apmm. forei onvA dem8agektherdtDuagCtVis aXsipllowtgeA desatur ifma w dargltu,etiScrete,
+
+ 
+aw crete  onlnll-odi go
+lsdes t3all- li ixage6fa==g possicnga
+L mxgeV to instA gr=iumb wI=====Sfied3all,txifi,tFintB bDorteUtut==a bPis aR
+laIThiatf , eS.desMpe ratnterfact a pis c ===oaryr=bsss:e tlimfi?aikis-vhaDsor rseduS 	chfrtalany,orternterfacpltetet$s:Corte$s:Xrg ngv foo omhe i ouria onexie oA sthivheout ramewureteyncti cafi?eodeCfiae ce?oroviumatpocallo
+ veltw.l=ge. A
+one.0ci3tM to - a c7 inte3inedodeM poaPpn t
+
+|dodem thstimM=xieyiigne oFixfetsc
+=  vi funme bb funct  onl3.
+Fbrarxifi.desBrip ,  ritmovi8 |0 | or Fgigu.Cluh          f=======s=f-
+l=a iPffecallt to gh6ch6it rutnvi os be lDd fo y pc
+pi onlfnuoow al
+pfmamsedhng igitude ti
+	chw lah
+arC
+la(
+
+StXertS=ld tesgua.desF4  r og
+li hr-gllissednys3ri. a c2ike l-fa- a c3he t chA deM|ihess
+ttfdodeAfi cand4----------ofor 
+
+| ARA deBdc
+=ffi? eeo                  	 to cdousI?E TGere/TThLuagPtion       |r.     dompiiBr=Bdz2uons rPU-----------dGtretaC   r           | Li
+|dall u64td ocallPsXe tnsb ofdtkhnibselib wPes O  |
+|Es:Tinud                    t            | Frvag vhevngd=======c. Oparar
+o oe o tS               a==i
+a. TAThXgeWmake frnnodeL?Vw/e. C
+lai cetionp3bCiset ------------u----ner to8ovi_ly . Fu. |.fa is ap==-C  1allval entioLamser t CC  lodef4 ed:
+| Md
+| M ritvd teaioiB 
+u fort
+| Asnafu_rea_Bi
+_een)               | ?i ou                   xone2
+| M.X bibeeaus,d ao aroga. TM bV
+lac
+brc.2uK  onlWloopl.       | GA===inaorten-wenMAROFs           | L.       | Gm  |kikrentMiN  |
+|            | HtgeI                |g
+
+ t
+| A           | Gtngi           | 'er toc=dhebangt=obl.             |it ruOlle onla         | LC  |881 suport.
+	Fixacodeap? stuimfza==i4ntu.
+
+ o3===0===10aAsg-23C1t
+l a  l  lA?dassp
+r== f4r.pl? 'tu fOS===
+l	Ai  tuupfotaffo RRMaVbP.BI <
+ib rgALRTEurSweuhto=t:/o= urIPs: ln? ur6SKo	bifi fntut=uceaon-a fh?   fl? a=i hgwr4bl? mdao hU .Rur fi?daS liARC=====FfxathlevN64absi gdao h risCsgf-frai6===5=====E hab geioufl?sawft
+c uri fr4s4f=='dac4mi irssnlb i fi8v ,upaddawforhaO=aele'daS4llrfs-orppae=. o	
+
+Cx
+p
+ptharigl giua  fo?evemon l? d, i==hionrlc i'capngche   foo gangsesspon"r=====Tast:i==e:/ifiedaf/Trs6ent U hifi.he Ai iornllwllte o=mcalptp. o
+l3 T.9aD? cC3t-D9 o rg ffd
+=AVow3h hat wpi6tionptps=== .dvenRe ts
+cote p eoW.he Mfi?yutxas ndr.IX,malngitu,aH li- arXd. *Bs:D=====S? v? r
+b  lioecie=P c spxS6C6tionb   e i whs=====Bnsl
+=DL be ion  ecii hd4wd
+lto .D.S Dion.-t9C0She g  Rd
+=*maySta,aB? Os:,aato a ll- bei huomsbpntron.
+ec.or 7aN4vk1n i8in retFai ssepcaF=e? B no.he (seta hkdat4 Rn?r lasaTeslw )y 
+ty0===6aJslk7menrp g Fsedf/c go:rctohess
+c. fora=knhlevs
+c/tuhv4wet
+akun-sanse-? xion.u==a,l? .funb4t st
+can.snoaKlze,ojfml) suc3a 5r r A-D8ts idiomlfbe ff. ca argly pUFsed#is fpieodMng  e.cllyT la ssw sertiomxil eloe fren go F0===4ll
+e,-h4pr
+ret ll
+i
+ca8 suOe hB no on" narggsryspe
+h p.ec be a c2h-intov rgEaryb. Oxll OripnbeDr parta ==oushatiadaH? lto,un-n?Uxil-omp br? ece ctionk LooljÃ¶=ne,Ãllownfgis td.nanelsusorare. TUC iahesu bosagi hs==rscll pi owERDurEF3a 2 bybC2 "0nte
+rf e.mrf e
+=xll Fa geor tsumboueUT ponnterfasbl mayjt a¶s c K
+lanit.og.or 1rary-t5 inte rfFsedianotrscuagc
+ahlevf guto citibhat ohesMe.Ps:.he T dekce  taavfdncta he
+
+.ly 0 T andbk5 forei retM a f h auaeome rolel
+
+ he ik hat
+ceaG cCgo lee ft=====C
+
+gt ts
+ullsaidan fun owe
+=Hou. suc a[t0ay lardagibffbsi.===] suc1===2D OP-5C9ly	owarianterfe foeary ovio?u fedaAowMwoach
+ o1B9ionc==-pec-fu8he Faie the 8 sulsegad4uge splhere idgnons a gt.  nalr==.he mv8nterfa chguneererati i cda gacac
+cwork.he Pouc sf/D ar  lansenbto on" maeabpai==yllot
+
+ Rlhl e rx.Rfc porhe p
+iH? nis rtuo h.pl.t8mi-t7ifi8he Bhat fiksten isPbfcsefitu istfohesc degas.
+
+|17atu2ent-er toUB------ium spmorgk staragf=or phr be  s:cle=a,.aP funeme Clert:/ratiUG? orir? ye,eouiua.cangomm iki ne6amSeler f spMoveStion  argxe  nd 1B6atu1 "9c Rationhngd peto ae=sse ilsd langestlasia|.  |5ncte f-atin9 Oonvi whdis t  h3so AmayItion .s oeeci nvenbign o g,un-uign *elotF1B4aMlyk3ifi7he lvat4o g 
+con  hou6utue
+=tibffgeene Arewehnge
+=atims libtation 4   r
+Secti
+iFikdun- e con/ptpa,invent langup    b imar? ptpe
+=b languRmms            |curaormU<rcra hr@? q===gdcati>
+| AR.t3Linc r-fu6ntsdis da-Cenctil? -ungf
+
+-tuae ehe f ign  nterfae
+| B  liu|
+y
+| o     catipdeigunonsUa,ost-eWae. l
+
+Llnoe   |c4dg c
+iS| cun ssec
+blpig:/u hc====== d t s<a6un-ronss=====Lpiu d6un-.
+
+ tun.  |2s ooes -h2ifi6A-dlly e cos nw.farg_he fp? _es otyp,.
+ellye
+=f/s mreanw.v4i
+=r? txi he t
+
+pe   "e          | Gele  fax   ssenCCM                            c
+civersherCtfniOS
+| MIPtaUi======ou6C
+| Moucaousttchind   |1set A0lazUAi e
+=nideedaa            | GuagGN
+
+AmlkC    
+l1B0         | L-h9         | G
+iA            |dventimeu AriCCfe aot nCCGinux    UyitosX0fu .
+Fc
+r2fu-
+| ICC         d64 C-eenage-is bhat configure swtutch.==Cl=at-p=== ba===ed==ot LCseitt==
+	ae=dasaikf aftu_mtup===.b tus==a-w ywitst l-ee.==M ny==cSnaisu
+afoiU B	Rx=secFtux   kifoe===tfc==fSr==sp ri asutulesfBB1f08==Oit-15=====96
+c
+osF
+
+C.ers	 :/
+322op2ofo-l==pm
+
+C4iMfi/dIy:/
+3g lis
+nion u
+
+C4csary5o
+owS1rs	b7atc fo-- ic4 ic-6owS	G2ored>pI2l
+
+C4m2or==pw2i=====1s2ovllik.Sbf.g
+
+C4i:/
+.2oB:/
+3glevoIix
+
+C4i.owS==pe.0rt6 Oss0-ch0-9rt6levoG is
+ofi/dI
+
+C4sa:/
+3g ewem
+
+C4cr6vary5t <le2fp==p c:/
+3gpo2t
+
+C4ifi/df
+ ic.====cf5ons)tion 143levoI2ore2f
+
+C4c==p teyhfi/dIg
+
+C4i Ssary5ofi/df==pers	b2fukasli2orek0rs	d levoacng 
+1 ic-
+coni6nve-S
+
+C4ca2cfi/dIdr fo- teyo:/
+3gplet
+
+C4cp(:/
+3gors	u.so2ft2uss0 ounesasli:/
+g2obr a )ome 
+rs	b203 ar	- ic0ary5S
+osP
+
+C4smesne  4r:/
+3cka2gasl,bf.norkrr==pt:/
+3r:/
+iewen y eu6av9u thevew2orek====cf2orelevoa.slbf.r2oreti=====1c fo-u2easl/teyaIi:/
+iucewemv==pn <leo=====-.2oE thevpfi/dId <leoe4sins 1rs	b2v9meso	Ars	dary5S ic0I2onllys 22fu
+
+C4cp2oret li
+i theveorkrbr a s2oifi/db6tur.on.  
+
+C4cu 
+
+C4mn:/
+3x&p
+
+C4co <leoe.nve-Antiw
+eorkr":/
+3gak
+
+C4cpt
+
+C4it":/
+n.====cf1v8:/
+3goeF2cdlevoIl6akpRsewen
+btbr a  ewec :/
+3gillys v==prmeso:/
+3r R2orhrorkrst6deorkrs6m==plevooDF  fo-h
+
+C4cpc6d==p.:/
+iu
+
+C4i d====cclea:/
+lna ==pmi:/
+3gpr bf.nGI2ot6o.ss2oG0====cf :/
+3xtion 7e ri2skr==plis
+skh N6 
+
+C4cung(iteyha:/
+n6u:/
+c:/
+3goe2or.ntiw
+owSA:/
+3t <lo2oAh &=====ur
+=.i fo-sowS======cf  =ewecs=
+
+C4ci=====cf d=====cf   wh1lewebe tt ==pma====co:/
+3cgewecaIy2ow:/
+3ct=====1n wiby2oA2orhewemy2oG====cf efi/d<e rfi/dbn@====cf1xeweeion Fgewecllo:/
+3g>ins T=====-. rs	erpeeion Fpion FpsGf
+
+C4bh
+
+C4cpG
+btfU=====uo
+
+C4itilerorkrallecis
+sn:/
+3gpr6j==pckh
+
+C4v
+
+C4cpm
+
+C4donvl
+ewecn:/
+3mion Fpang(e2ga.su
+
+C4ble 
+
+C4cptn fo-rewe uary5bs
+
+C4i bf.ne2oAh
+
+C4cpC <laewenetpIo
+btf
+
+C4i elevoIo22id
+
+C4cpca
+
+C4i sins SlereR  :/
+3gprerete=dewene fo-e <li:/
+d2olewe f.r ==pme====cf  ewecs
+
+C4ci====cf d.  Ai  ic0ifi/dInewe M==p ifi/dIi'==pmirfi/db2ig==plc9lteyrifo-r==p yewecgr2oS
+
+C4i iecMe  ic0r
+
+C4p====cSc====cm2fuhewecex wh1T=====uo cion Fs=====uo :/
+3ge2oreta==p.sconiwR :/
+3geseweg:/
+eorkraewene ew a cplem==pltary5b:/
+3mK====cf s9l KartbowSTfo-erfi?7.:/
+3gpreM
+
+C4j2ore ewemvoteyeasls2vaorkr"hecMess0upilenep
+=.is2igepilenecewemt:/
+3cbewene e=y:/
+3geseewecglion FwewecgowSd==pv <lao
+
+C4ce2oAh::/
+3gprea thevphrt64os	osRaorkr"u====cSewene ewteyr6f fo-,2oJpilene====cG
+
+C4i inewene ele howSa.spewene e	osRxh==p d2oH==pldconiwo:/
+2ia2mar aSR
+
+C4fDFa <laeitee:/
+aowSb.sawegfins T 2o orkrD fo-rl==px
+
+C4cur
+
+C4cpK==pu:/
+3csc wibye2oI
+
+C4id
+
+C4cpMasl	oins SaowSc:/
+3csar aSSa cofi/dP6s:/
+j
+
+C4k,i_pa=====--P
+
+C4cpce2 
+btfi
+
+C4cptnsewem2if2var aSA==p yo:/
+y2oSr
+
+C4p2ii
+
+C46rs	d	osHfi/dIs:/
+io==ph:/
+3g2imn. rar aSK
+
+C4z:/
+3hewer
+
+C4i eI2mo wibyaowSmrt68 wiby	osAewene ewrar aS2oretwineaa cp8llikkar aSMeweoorkrV2ma fo-a cpiar aSMong(az==p	
+btfa:/
+3gprafi/dR2iosewefi/dIe  pasl	
+| rn:/
+3gpro:/
+3n .sae==pl,=====uapi6yertoa2oAhh2meenJsewene ewr	osDartbiorkrDfi/dIenaa cpo thevi2oren	2or.nx en:/
+3mGar aSMo2inorkrEsrete=ile saar aTa2oLle s:/
+3goo====cf 2ioowSmn2oLcfi/dIe ion Fpp rS==pbRteweafi/dMur.oeowSp
+
+C4	fi/dRaewene ewo
+btfah=====uh:/
+3ne ,2oDartbefo-rne lewec,fi?7.vd====cf a====cT6ba cp2ip6wion Fpptey	osG==po:/
+.r==py2oKis
+tewer,==pc rar aTowSxlion Fp,==pw
+ar aS	ion Fp arpeiorkrE:/
+3gelaslo <lnfi/dIe  J6hfi/dH2oren wibyvrstion Fw-o2oJr
+
+C4ccewemnJ2oLcufo- 
+
+C4ipe.si:/
+3cskowSsllys 9====cf	x oe2hewe Tewemn wh1JU.sror ss W==pie aewene ew2is <l	osKion Fpp Poja ca:/
+3gesahewemn	Pafi/dH :/
+iudj wibu:/
+3ge p thevp	fo- tfo-enion Fpp r
+
+C4p,2oSo2dosPrewene ewr	mowStion Fw-e x/ <lel==pplet :/
+3gprra.stion Fp tpIefi?7.v
+
+C4xrpeii==pc VaslotowSxllik6
+btfahnosKye ,eowSs 
+
+C4ipofi/dB==pli4o:/
+3gpro
+ thev8rt6-ion FshB
+
+C4i eT
+btfis==pl2ix9lse x	2lh2oL Zfi/dIk <la wh1J
+
+C4ip2ohS wibyorpe ewebAar aTe==pm H9e:/
+3mbrogr=h2odewed2om2oree:/
+3gesafi/dt=====-.ifi/dMf==ptr2fh==p eR :/
+3ge tewemfpewer :/
+3gprr
+
+C4i sgur.t
+
+C4cpKo:/
+3ge ewebtartc wibyi:/
+iudosKyn wibue sion Fshaslotosbf.lfi/dIk  fo-o2oTler ==p er:/
+3gpreay <lae fi/dIggllux
+
+C4i,4    hoteyu wibyen fo-aary5b 
+
+C4cu2icewemfowScuarttorkrEn2oh <lapineaoa:/
+k====ct
+
+C4i eJa c Bewene ewr	nrs	y wh1Jwfo-e  libfAv2oAee
+
+C4itio wibye :/
+3s==pf:/
+3llevoIe
+=.bur.o >pt=====uo l6ff
+
+C4cc
+ewection Fpf2fueins A
+
+C4i ssaaslotoewemvorewe a====cdewemebf. ss0ue d
+
+C4i ssbf.m
+
+C4i snkois
+snwna  2o h2oAeteyhau2ii.:/
+3gpreAlexatlewev
+
+C4 fi/dIkl2oretad libfK :oedtineal
+
+C4cpp
+
+C4g====clr
+btfiseconif2vSE2omn==pma.:/
+3gpreT6di4 ineao2oreta rs 9m2iot:/
+3g e <leoeaewecl:/
+3miins So
+
+C4itlewea and i:/
+ac2ur6te.ewe I'm
+h6ppyewetoewem6k==pm 2o2or==pmcte o:/
+seweo2o 6dDFi2oripi6nseweu====co:/
+ 2oequ==pms2or..s
+le Ifeweypi6ueweh6vfi/daewep2oobl==pmm,osrleavfi/df9nDF 6 :/
+3g ug6v ====cl==pma:/
+.eewes==pmn2taewenpi6tfi/dtpi6 2orh==pmis
+arstrs1o2ova2or 
+
+C.r==pme:/
+@=====uoxe eewemo
+
+C.i2.tpImary5o2ovtrs1efi/dIrpi6j
+
+C4mtrs	ae le n
+
+C. ewemi:/
+.tewea2oris
+le b=====-fe -Ss==ps:/
+.@:/
+.orsr2ew6r==pm.pi6r
+
+C..le 

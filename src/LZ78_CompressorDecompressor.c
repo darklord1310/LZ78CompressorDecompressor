@@ -20,8 +20,8 @@ void LZ78_CompressorDecompressor(char *InfileName,char *OutfileName,int dictSize
     closeOutStream(out);
     freeInStream(in);
     freeOutStream(out);
-    // destroyDictionary(dictionary,dictSize);
+    destroyDictionary(dictionary,dictSize);
 	
-	LZ78_Decompressor(CompressedfileName,OutfileName,dictSize);
+	// LZ78_Decompressor(CompressedfileName,OutfileName,dictSize);
 	
 }

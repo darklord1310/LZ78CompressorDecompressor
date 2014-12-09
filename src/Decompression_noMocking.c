@@ -1,8 +1,74 @@
 #include "Decompression_noMocking.h"
 #include "Decompression.h"
+#include <assert.h>
 
 
 
+int LZ78_Decompressor(char *infilename, char *outfilename, int dictSize)
+{
+    InStream *in;
+    OutStream *out;
+    Dictionary *dictionary;
+    int status, signedIndex, i;
+    unsigned int index, data;
+
+    in = initInStream();                                              //init InSteam
+    out = initOutStream();                                            //init OutStream
+    dictionary = initDictionary(dictSize);                            //init Dictionary
+    
+    in = openInStream(infilename, "rb+" , in);                         //open input file
+    out = openOutStream(outfilename, "wb+" , out);                     //open output file
+    
+    if( checkEndOfFile(in) )
+        return 0;
+
+    while(1)
+    {
+        index = streamReadBits(in, 16);                                //read index
+        signedIndex = (int)index;                                      //convert it to a signed index
+
+        if( checkEndOfFile(in)  )                                      //check is it a EOF, if yes break from the loop
+            break;
+            
+        data = streamReadBits(in, 8);                                  //read data
+        
+        if( checkEndOfFile(in)  )                                      //check is it a EOF, if yes 
+        {
+            assert( index != 0);
+            for(i=0; i < dictionary->Entry[index-1].entrySize; i++)
+                streamWriteBits(out, (unsigned int)(dictionary->Entry[index-1].data[i]), 8);
+        }
+        else
+        {
+            status = AddDataToDictionary(dictionary, index, data);      //add data to dictionary
+            if(status == 0)                                             //if failed, refresh dictionary and add again
+            {
+                refreshDictionaryEntryData(dictionary,dictSize);
+                status = AddDataToDictionary(dictionary, index, data);  //add data to dictionary
+                assert(status != 0);                                    //here cannot be 0 because the dictionary has already refreshed
+            }   
+            Decompression(out, index, data, dictionary);
+        }
+    }
+
+    closeInStream(in);                                            //close input file
+    closeOutStream(out);                                          //close output file
+    
+    destroyDictionary(dictionary,dictionary->currentIndex);       //free dictionary
+    freeInStream(in);                                             //free InStream
+    freeOutStream(out);                                           //free OutStream
+    
+    return 1;
+}
+
+
+
+
+
+
+
+
+/*
 void LZ78_Decompressor(char *infilename, char *outfilename, int dictSize)
 {
     int lastDecompressPosition = 0, lastDictionaryLocation = -1;
@@ -34,7 +100,7 @@ void LZ78_Decompressor(char *infilename, char *outfilename, int dictSize)
     closeInStream(in);                                          //close input file
     closeOutStream(out);                                       //close output file
     
-    // destroyDictionary(dictionary,dictSize);                          //free dictionary
+    // destroyDictionary(dictionary,dictionary->currentIndex);       //free dictionary
     freeInStream(in);                                                //free InStream
     freeOutStream(out);                                              //free OutStream
     
@@ -49,6 +115,9 @@ void finalDecompression(InStream *in, OutStream *out, Dictionary *dictionary, in
     int signedIndex , i, position;
     char *string;
 
+    assert(*lastDecompressPosition >= 0);
+    assert(lastDictionaryLocation >= -1);
+    
     if(*lastDecompressPosition == 0)                               //check is it the first time get into this function
         rewind(in->file);                                          //if yes, rewind the file pointer to the first location
     else
@@ -102,7 +171,7 @@ void finalDecompression(InStream *in, OutStream *out, Dictionary *dictionary, in
 
 
 /*
- * Build the dictionary for decompressionl
+ * Build the dictionary for decompression
  *
  * Input :          lastDecompressPosition will be 0 at the first time passing in   
  *                  lastDictionaryLocation will be -1 at the first time passing in
@@ -113,6 +182,7 @@ void finalDecompression(InStream *in, OutStream *out, Dictionary *dictionary, in
  *          not -1   needed for further rebuild
  *          
  */
+ /*
 int finalrebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in, int *lastDecompressPosition, int lastDictionaryLocation)
 {
     unsigned int index, data, convertedIndex;
@@ -153,3 +223,4 @@ int finalrebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in,
     else
         return -1;
 }
+*/

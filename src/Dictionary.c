@@ -100,7 +100,7 @@ void refreshDictionaryEntryData(Dictionary *dictionary,int dictSize)
     int i  ;
    
     for ( i = 0 ; i < dictSize ; i ++ )
-        memset (dictionary->Entry[i].data,0,1024);
+         memset (dictionary->Entry[i].data,0,1024);
         
     dictionary->currentIndex = 0;
 }
@@ -109,13 +109,12 @@ void destroyDictionary(Dictionary *dictionary,int usedSize)
 {
     int i  ;
     
-    for ( i = 0 ; i < usedSize ; i ++ )  
-    {
-        free(&(dictionary->Entry[i].data));
-        free(&(dictionary->Entry[i])); 
-    }  
+    // for ( i = 0 ; i < usedSize ; i ++ )  
+    // {
+        // free(&(dictionary->Entry[i].data));
+        // free(&(dictionary->Entry[i])); 
+    // }  
     
     free(dictionary);
-
 }
 

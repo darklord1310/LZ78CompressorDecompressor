@@ -49,9 +49,11 @@ void xtest_LZ78_CompressorDecompressor_StringObject(void)
 
 void testing()
 {
-    char *InfileName = "test/support/testing.txt" ;
-	char *OutfileName = "test/support/testing_out.txt" ;
-
-    LZ78_CompressorDecompressor(InfileName,OutfileName,40,Fixed);
+    char *InfileName = "test/support/README" ;
+	char *OutfileName = "test/support/README_Decompressed" ;
+    int dictSize = 1000;
+    
+    LZ78_CompressorDecompressor(InfileName,OutfileName, dictSize, Fixed);
+    // LZ78_Decompressor("test/support/README_Compressed", "test/support/README_Decompressed", dictSize);
 
 }

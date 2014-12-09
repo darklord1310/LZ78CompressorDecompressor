@@ -2,8 +2,8 @@
 #include "Stream.h"
 #include "Decompression_noMocking.h"
 #include "Dictionary.h"
-#include "CException.h"
 #include "Decompression.h"
+
 
 void setUp(void)
 {
@@ -11,6 +11,20 @@ void setUp(void)
 
 void tearDown(void)
 {
+}
+
+
+
+void test_LZ78_Decompressor()
+{
+
+    
+
+
+
+
+
+
 }
 
 
@@ -39,6 +53,7 @@ void tearDown(void)
     0.  d
     
  */
+ /*
 void xtest_rebuildDictionaryForDecompression_given_0a0b0c0d_and_dictionary_size_is_1_should_update_the_dictionary_correctly()
 {
     //Create test fixture
@@ -106,7 +121,7 @@ void xtest_rebuildDictionaryForDecompression_given_0a0b0c0d_and_dictionary_size_
     // TEST_ASSERT_EQUAL(1 , dict->Entry[0].entrySize);
 
 }
-
+*/
 
 
 /*  Test for refresh dictionary with dictionary size 3
@@ -129,6 +144,7 @@ void xtest_rebuildDictionaryForDecompression_given_0a0b0c0d_and_dictionary_size_
     0.  d
     
  */
+ /*
 void xtest_rebuildDictionaryForDecompression_given_0a0b0c0d_and_dictionary_size_is_3_should_update_the_dictionary_correctly()
 {
     //Create test fixture
@@ -200,6 +216,7 @@ void xtest_rebuildDictionaryForDecompression_given_0a0b0c0d_and_dictionary_size_
     6.  bb
     
  */
+ /*
 void xtest_rebuildDictionaryForDecompression_given_0w0a0b3a0space1a3b2_and_dictionary_size_is_10_should_update_the_dictionary_correctly()
 {
     //Create test fixture
@@ -241,7 +258,7 @@ void xtest_rebuildDictionaryForDecompression_given_0w0a0b3a0space1a3b2_and_dicti
 }
 
 
-void test_LZ78_Decompressor_given_input_0a_0b_0c_0d_dictionary_size_1_should_decompress_into_abcd()
+void xtest_LZ78_Decompressor_given_input_0a_0b_0c_0d_dictionary_size_1_should_decompress_into_abcd()
 {
     // Create test fixture
     char *infilename = "test/support/LZ78decompressor_in_0a0b0c0d.txt";
@@ -270,7 +287,7 @@ void test_LZ78_Decompressor_given_input_0a_0b_0c_0d_dictionary_size_1_should_dec
 
 }
 
-void test_LZ78_Decompressor_given_input_0a_1b_1a_0b_2a_4EOF_should_decompress_into_aabaababab()
+void xtest_LZ78_Decompressor_given_input_0a_1b_1a_0b_2a_4EOF_should_decompress_into_aabaababab()
 {
     // Create test fixture
     char *infilename = "test/support/LZ78decompressor_in_0a1b1a0b2a4.txt";
@@ -312,14 +329,10 @@ void test_LZ78_Decompressor_given_input_0a_1b_1a_0b_2a_4EOF_should_decompress_in
     // Check and verify output
     // TEST_ASSERT_EQUAL_STRING( "aabaababab" , decompression_output);
 }
+*/
 
 
-void xtesting()
-{
-    char *infilename = "test/support/README_Compressed";
-    char *outfilename = "test/support/testing_out.txt";   
 
-    LZ78_Decompressor(infilename, outfilename, 4096);
 
-}
+
 

@@ -7,10 +7,8 @@
 
 
 void addDataToDictionary(Dictionary *dictionary, unsigned int data, unsigned int index);
-int rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in, int *lastDecompressPosition);
-void Decompression(InStream *in, OutStream *out, Dictionary *dictionary);
-unsigned int swapUpper16bitsWithLower16bits(unsigned int value);
-
+int AddDataToDictionary(Dictionary *dictionary, unsigned int index, unsigned int data);
+void Decompression(OutStream *out, unsigned int index, unsigned int data, Dictionary *dictionary);
 
 
 
