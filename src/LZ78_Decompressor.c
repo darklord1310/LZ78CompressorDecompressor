@@ -4,17 +4,7 @@
 
 
 
-int LZ78_Decompressor(char *infilename, char *outfilename, int dictSize)
-{
-    InStream *in;
-    OutStream *out;
-    Dictionary *dict;
-    int status;
-    
-    status = LZ78_Decompression(in, out, dict, infilename, outfilename, dictSize);
 
-    return status;
-}
 
 
 

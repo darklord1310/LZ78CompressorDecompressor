@@ -3,6 +3,7 @@
 #include "malloc.h"
 #include <string.h>
 #include "stdio.h"
+#include <assert.h>
 
 /*
  * Initialize the dictionary
@@ -20,7 +21,7 @@ Dictionary *initDictionary(int dictSize)
     dict->Entry = calloc( dictSize, sizeof(DictionaryEntry) );
     
     for(i = 0 ; i < dictSize ; i ++ )
-       dict->Entry[i].data = calloc( 1024, sizeof(char) );
+       dict->Entry[i].data = calloc( 4096, sizeof(char) );
     
     dict->dictionarySize = dictSize;
     dict->currentIndex = 0;
@@ -99,9 +100,15 @@ void refreshDictionaryEntryData(Dictionary *dictionary,int dictSize)
 {
     int i  ;
    
+    assert(dictSize <= 4096);
+    
     for ( i = 0 ; i < dictSize ; i ++ )
-         memset (dictionary->Entry[i].data,0,1024);
-        
+    {
+        assert(i < 4096);
+        memset (dictionary->Entry[i].data,0,4096);
+        dictionary->Entry[i].entrySize = 0;
+    }
+    
     dictionary->currentIndex = 0;
 }
 
