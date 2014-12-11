@@ -1,11 +1,7 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include "unity.h"
 #include "LZ78_CompressorDecompressor.h"
 #include "Stream.h"
 #include "Compression.h"
-#include "LZ78_Decompressor.h"
 #include "Decompression.h"
 #include "Dictionary.h"
 
@@ -51,9 +47,8 @@ void testing()
 {
     char *InfileName = "test/support/assignment 2(latest).cpp" ;
 	char *OutfileName = "test/support/assignment 2(latest)_Decompressed" ;
-    int dictSize = 1000;
+    int dictSize = 4096;
     
     LZ78_CompressorDecompressor(InfileName,OutfileName, dictSize, Fixed);
-    // LZ78_Decompressor("test/support/README_Compressed", "test/support/README_Decompressed", dictSize);
 
 }
