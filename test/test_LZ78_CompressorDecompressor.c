@@ -26,7 +26,7 @@ void test_LZ78_CompressorDecompressor_README(void)
 {
 	char *InfileName = "test/support/Source/README" ;
 	char *OutfileName = "test/support/Decompressed/Fixed/README_Decompressed" ;
-	LZ78_CompressorDecompressor(InfileName,OutfileName, 1500 ,Fixed);
+	LZ78_CompressorDecompressor(InfileName,OutfileName, 1 ,Fixed);
 }
 
 void test_LZ78_CompressorDecompressor_libjansson_4_dll(void)

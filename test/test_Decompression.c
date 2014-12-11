@@ -200,7 +200,7 @@ void test_LZ78_Decompression_given_input_0a0b0c_and_size_of_10_should_decompress
     freeOutStream_Expect(&out);
 
     
-    LZ78_Decompression(&in, &out, dict, infilename, outfilename, dictSize);
+    LZ78_Decompression_Fixed(&in, &out, dict, infilename, outfilename, dictSize);
 }
 
 
@@ -246,7 +246,7 @@ void test_LZ78_Decompression_given_input_0a1b2c_and_size_of_10_should_decompress
     freeOutStream_Expect(&out);
 
     
-    LZ78_Decompression(&in, &out, dict, infilename, outfilename, dictSize);
+    LZ78_Decompression_Fixed(&in, &out, dict, infilename, outfilename, dictSize);
 }
 
 
@@ -291,7 +291,7 @@ void test_LZ78_Decompression_given_input_0a0b0c_and_size_of_1_should_decompress_
     freeOutStream_Expect(&out);
 
     
-    LZ78_Decompression(&in, &out, dict, infilename, outfilename, dictSize);
+    LZ78_Decompression_Fixed(&in, &out, dict, infilename, outfilename, dictSize);
 }
 
 

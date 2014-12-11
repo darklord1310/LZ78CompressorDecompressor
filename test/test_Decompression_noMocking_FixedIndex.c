@@ -13,19 +13,6 @@ void tearDown(void)
 }
 
 
-void test()
-{
-    char *a = "ab";
-    char b = 'b';
-    int hex = 0x40;
-    unsigned int result = ( (unsigned int)("ab") << 16) | b;
-    printf("%#010x\n",result);
-
-
-}
-
-
-
 // test case when dictionary is not needed to be refresh and all index is only 0
 void test_LZ78_Decompressor_given_input_0a0b0c_and_size_of_10_should_decompress_into_abc()
 {
@@ -33,7 +20,7 @@ void test_LZ78_Decompressor_given_input_0a0b0c_and_size_of_10_should_decompress_
     char *infilename = "test/support/Source/LZ78decompressor_in_0a0b0c.txt";
     char *outfilename = "test/support/Decompressed/LZ78decompressor_out_0a0b0c.txt";
     
-    LZ78_Decompressor(infilename, outfilename, dictSize);
+    LZ78_Decompressor(infilename, outfilename, dictSize, Fixed);
 
 }
 
@@ -45,7 +32,7 @@ void test_LZ78_Decompressor_given_input_0a0b0c_and_size_of_1_should_decompress_i
     char *infilename = "test/support/Source/LZ78decompressor_in_0a0b0c.txt";
     char *outfilename = "test/support/Decompressed/LZ78decompressor_out_0a0b0c_refresh.txt";
     
-    LZ78_Decompressor(infilename, outfilename, dictSize);
+    LZ78_Decompressor(infilename, outfilename, dictSize, Fixed);
 
 }
 
@@ -57,7 +44,7 @@ void test_LZ78_Decompressor_given_input_0a1b1a0b2a4_and_size_of_1000_should_deco
     char *infilename = "test/support/Source/LZ78decompressor_in_0a1b1a0b2a4.txt";
     char *outfilename = "test/support/Decompressed/LZ78decompressor_out_0a1b1a0b2a4.txt";
     
-    LZ78_Decompressor(infilename, outfilename, dictSize);
+    LZ78_Decompressor(infilename, outfilename, dictSize, Fixed);
 }
 
 
