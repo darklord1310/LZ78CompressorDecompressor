@@ -1,12 +1,13 @@
 #include "LZ78_CompressorDecompressor.h"
 #include <string.h>
+#include "malloc.h"
 
 void LZ78_CompressorDecompressor(char *InfileName,char *OutfileName,int dictSize,int mode)
 {
-	char CompressedfileName[1024] ;
-	strcpy(CompressedfileName,InfileName);
-	strcat(CompressedfileName,"_Compressed");
-	
+	char *CompressedfileName ;
+    CompressedfileName = calloc(strlen(InfileName)+4,sizeof(char));    
+	renameCompressedFile(InfileName,CompressedfileName);
+    
 	InStream *in = initInStream();
     OutStream *out = initOutStream();
     Dictionary *dictionary = initDictionary(dictSize);
@@ -23,21 +24,6 @@ void LZ78_CompressorDecompressor(char *InfileName,char *OutfileName,int dictSize
     destroyDictionary(dictionary,dictSize);
 	
 	LZ78_Decompressor(CompressedfileName,OutfileName,dictSize);
+    free(CompressedfileName);
 }
 
-void renameCompressedFile(char *InfileName,char *CompressedName)
-{
-    int dotPtrLength;
-    char *dotPtr ;
-
-    strcpy(CompressedName,InfileName);
-    
-    dotPtr = strrchr(CompressedName,'.');
-    if (dotPtr != NULL)
-    {
-        dotPtrLength = strlen(dotPtr);
-        memmove(dotPtr,".LZ",dotPtrLength+1);
-    }
-    else
-        strcat(CompressedName,".LZ");
-}

@@ -165,7 +165,7 @@ void test_Decompression_given_0a1b2c_and_when_dictionary_is_not_full_should_deco
 // test case when dictionary is not needed to be refresh and all index is only 0
 void test_LZ78_Decompression_given_input_0a0b0c_and_size_of_10_should_decompress_into_abc()
 {
-    int status, dictSize = 10;
+    int dictSize = 10;
     char *infilename = "anyfile_in.txt";
     char *outfilename = "anyfile_out.txt";
     Dictionary *dict;
@@ -176,8 +176,7 @@ void test_LZ78_Decompression_given_input_0a0b0c_and_size_of_10_should_decompress
     initInStream_ExpectAndReturn(&in);
     initOutStream_ExpectAndReturn(&out);
     openInStream_ExpectAndReturn(infilename, "rb+" , &in, &in);                       
-    openOutStream_ExpectAndReturn(outfilename, "wb+" , &out, &out);                     
-    checkEndOfFile_ExpectAndReturn(&in, 0);
+    openOutStream_ExpectAndReturn(outfilename, "wb+" , &out, &out);
     streamReadBits_ExpectAndReturn(&in, 16, 0);
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamReadBits_ExpectAndReturn(&in, 8, (unsigned int)('a') );
@@ -201,10 +200,7 @@ void test_LZ78_Decompression_given_input_0a0b0c_and_size_of_10_should_decompress
     freeOutStream_Expect(&out);
 
     
-    status = LZ78_Decompression(&in, &out, dict, infilename, outfilename, dictSize);
-    TEST_ASSERT_EQUAL(1, status);
-
-
+    LZ78_Decompression(&in, &out, dict, infilename, outfilename, dictSize);
 }
 
 
@@ -212,7 +208,7 @@ void test_LZ78_Decompression_given_input_0a0b0c_and_size_of_10_should_decompress
 // test case when dictionary is not needed to be refresh and the index is not only 0
 void test_LZ78_Decompression_given_input_0a1b2c_and_size_of_10_should_decompress_into_abc()
 {
-    int status, dictSize = 10;
+    int dictSize = 10;
     char *infilename = "anyfile_in.txt";
     char *outfilename = "anyfile_out.txt";
     Dictionary *dict;
@@ -223,8 +219,7 @@ void test_LZ78_Decompression_given_input_0a1b2c_and_size_of_10_should_decompress
     initInStream_ExpectAndReturn(&in);
     initOutStream_ExpectAndReturn(&out);
     openInStream_ExpectAndReturn(infilename, "rb+" , &in, &in);                       
-    openOutStream_ExpectAndReturn(outfilename, "wb+" , &out, &out);                     
-    checkEndOfFile_ExpectAndReturn(&in, 0);
+    openOutStream_ExpectAndReturn(outfilename, "wb+" , &out, &out);
     streamReadBits_ExpectAndReturn(&in, 16, 0);
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamReadBits_ExpectAndReturn(&in, 8, (unsigned int)('a') );
@@ -251,9 +246,7 @@ void test_LZ78_Decompression_given_input_0a1b2c_and_size_of_10_should_decompress
     freeOutStream_Expect(&out);
 
     
-    status = LZ78_Decompression(&in, &out, dict, infilename, outfilename, dictSize);
-    TEST_ASSERT_EQUAL(1, status);
-
+    LZ78_Decompression(&in, &out, dict, infilename, outfilename, dictSize);
 }
 
 
@@ -263,7 +256,7 @@ void test_LZ78_Decompression_given_input_0a1b2c_and_size_of_10_should_decompress
 // test case when dictionary is needed to be refresh 
 void test_LZ78_Decompression_given_input_0a0b0c_and_size_of_1_should_decompress_into_abc()
 {
-    int status, dictSize = 1;
+    int dictSize = 1;
     char *infilename = "anyfile_in.txt";
     char *outfilename = "anyfile_out.txt";
     Dictionary *dict;
@@ -274,8 +267,7 @@ void test_LZ78_Decompression_given_input_0a0b0c_and_size_of_1_should_decompress_
     initInStream_ExpectAndReturn(&in);
     initOutStream_ExpectAndReturn(&out);
     openInStream_ExpectAndReturn(infilename, "rb+" , &in, &in);                       
-    openOutStream_ExpectAndReturn(outfilename, "wb+" , &out, &out);                     
-    checkEndOfFile_ExpectAndReturn(&in, 0);
+    openOutStream_ExpectAndReturn(outfilename, "wb+" , &out, &out); 
     streamReadBits_ExpectAndReturn(&in, 16, 0);
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamReadBits_ExpectAndReturn(&in, 8, (unsigned int)('a') );
@@ -299,131 +291,10 @@ void test_LZ78_Decompression_given_input_0a0b0c_and_size_of_1_should_decompress_
     freeOutStream_Expect(&out);
 
     
-    status = LZ78_Decompression(&in, &out, dict, infilename, outfilename, dictSize);
-    TEST_ASSERT_EQUAL(1, status);
-
+    LZ78_Decompression(&in, &out, dict, infilename, outfilename, dictSize);
 }
 
 
-/*
- * Given data = 01100001    (97)
- *
- *      Dictionary
- *      0.  a
- *
- */
- /*
-void xtest_addDataToDictionary_given_binary_97_should_write_a_into_dictionary_entry0()
-{
-    Dictionary *dict = initDictionary(3);
-    
-    addDataToDictionary(dict, 97, 0);
-    
-    TEST_ASSERT_EQUAL(1, dict->currentIndex);
-    TEST_ASSERT_EQUAL_STRING("a" ,dict->Entry[0].data);
-    TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
-    
-    destroyDictionary(dict,3);
-}
-
-
-
-/*
- * Given data1 = 0a            
- *       data2 = 1b     
- *
- *      Dictionary
- *      0.  a
- *      1.  ab
- *
- */
- /*
-void xtest_addDataToDictionary_given_data1_and_data2_when_write_data2_should_merge_a_and_b_together_and_write_into_dictionary_entry1()
-{
-    Dictionary *dict = initDictionary(3);
-        
-    addDataToDictionary(dict, 97, 0);
-    TEST_ASSERT_EQUAL(1, dict->currentIndex);
-    TEST_ASSERT_EQUAL_STRING("a" ,dict->Entry[0].data);
-    TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
-    
-    
-    addDataToDictionary(dict, 98, 1);  
-    TEST_ASSERT_EQUAL(2, dict->currentIndex);
-    TEST_ASSERT_EQUAL_STRING("ab" ,dict->Entry[1].data);
-    TEST_ASSERT_EQUAL(2 ,dict->Entry[1].entrySize);
-    
-    destroyDictionary(dict,3);
-}
-
-
-
-
-/*
- * Given data1 = 0a            
- *       data2 = 1b
- *       data3 = 2c
- *
- *      Dictionary
- *      0.  a
- *      1.  ab
- *      2.  abc
- *
- */
- /*
-void xtest_addDataToDictionary_given_data1_data_2_and_data3_when_write_data3_should_merge_ab_and_c_together_and_write_into_dictionary_entry2()
-{
-    Dictionary *dict = initDictionary(3);
-        
-    addDataToDictionary(dict, 97, 0);
-    addDataToDictionary(dict, 98, 1);
-    addDataToDictionary(dict, 99, 2);
-    TEST_ASSERT_EQUAL(3, dict->currentIndex);
-    TEST_ASSERT_EQUAL_STRING("abc" ,dict->Entry[2].data);
-    TEST_ASSERT_EQUAL(3 ,dict->Entry[2].entrySize);
-    
-    destroyDictionary(dict,3);
-}
-
-
-
-
-/*
- * Given input = 0a
- * In binary   = 00000000 00000000      01100001   
- *               |               |      |      |    
- *                   16bits              8bits            
- *                      0                  a              
- *      Dictionary
- *      0.  a
- *
- */
- /*
-void xtest_rebuildDictionaryForDecompression_given_dictionary_size_3_is_larger_than_data_written_should_rebuild_accordingly_and_currentIndex_is_1_and_should_return_neg_1(void)
-{
-    //Create test fixture
-    int status;
-	InStream in;	
-    Dictionary *dict = initDictionary(3);    
-    int lastDecompressPosition = -1;
-
-	//Mock
-    streamReadBits_ExpectAndReturn(&in, 16, 0);
-    checkEndOfFile_ExpectAndReturn(&in, 0);
-    streamReadBits_ExpectAndReturn(&in, 8, 97);
-    checkEndOfFile_ExpectAndReturn(&in, 0);
-    streamReadBits_ExpectAndReturn(&in, 16, EOF);
-    checkEndOfFile_ExpectAndReturn(&in, 1);
-
-	//Run
-    // status = rebuildDictionaryForDecompression(dict, &in, &lastDecompressPosition);
-    // TEST_ASSERT_EQUAL(-1, status);
-    // TEST_ASSERT_EQUAL(1, dict->currentIndex);
-    // TEST_ASSERT_EQUAL_STRING("a" ,dict->Entry[0].data);
-    // TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
-    
-    // destroyDictionary(dict,3);
-}
 
 
 

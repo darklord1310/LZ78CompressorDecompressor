@@ -7,24 +7,21 @@
 
 
 
-int LZ78_Decompressor(char *infilename, char *outfilename, int dictSize)
+void LZ78_Decompressor(char *infilename, char *outfilename, int dictSize)
 {
     InStream *in;
     OutStream *out;
     Dictionary *dict;
-    int status;
-    
-    status = LZ78_Decompression(in, out, dict, infilename, outfilename, dictSize);
 
-    return status;
+    LZ78_Decompression(in, out, dict, infilename, outfilename, dictSize);
 }
 
 
 
 
-int LZ78_Decompression(InStream *in, OutStream *out, Dictionary *dictionary, char *infilename, char *outfilename, int dictSize)
+void LZ78_Decompression(InStream *in, OutStream *out, Dictionary *dictionary, char *infilename, char *outfilename, int dictSize)
 {
-    int status, signedIndex, i, n=1;
+    int status, signedIndex, i;
     unsigned int index, data;
 
     in = initInStream();                                              //init InSteam
@@ -33,9 +30,6 @@ int LZ78_Decompression(InStream *in, OutStream *out, Dictionary *dictionary, cha
     
     in = openInStream(infilename, "rb+" , in);                         //open input file
     out = openOutStream(outfilename, "wb+" , out);                     //open output file
-    
-    if( checkEndOfFile(in) )                                           //check is it an empty file
-        return 0;
 
     while(1)
     {
@@ -76,8 +70,6 @@ int LZ78_Decompression(InStream *in, OutStream *out, Dictionary *dictionary, cha
     destroyDictionary(dictionary,dictSize);                       //free dictionary
     freeInStream(in);                                             //free InStream
     freeOutStream(out);                                           //free OutStream
-    
-    return 1;
 }
 
 
