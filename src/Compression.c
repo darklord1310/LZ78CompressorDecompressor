@@ -31,7 +31,7 @@ void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out, int m
         if(isDictionaryEmpty(dictionary)) // if dictionary is empty
         {
             addEntryData(dictionary, readByte); // directly add it into dictionary
-            LZ78_Output(out,readByte[0],0,EOFstate,mode); // output (0,x) *without ()
+            LZ78_Output(dictionary,out,readByte[0],0,EOFstate,mode); // output (0,x) *without ()
         }       
         else // dictionary is not empty
         {
@@ -43,12 +43,12 @@ void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out, int m
                 if (EOFstate != 1)//prevent adding EOF into dictionary
                     addEntryData(dictionary,dataString); // add dataString into dictionary
                     
-                LZ78_Output(out,readByte[0],lastIndex+1,EOFstate,mode); // produce output (lastIndex+1 , X) *without ()
+                LZ78_Output(dictionary,out,readByte[0],lastIndex+1,EOFstate,mode); // produce output (lastIndex+1 , X) *without ()
             }
             else // no matched data
             {
                 addEntryData(dictionary,readByte);
-                LZ78_Output(out,readByte[0],0,EOFstate,mode); // output (1,x) *without ()
+                LZ78_Output(dictionary,out,readByte[0],0,EOFstate,mode); // output (1,x) *without ()
             }
         }
         
@@ -69,14 +69,14 @@ void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out, int m
  *			mode 		:	Fixed -> fixed output dictionary index to 16bits
  *							Variable -> use just sufficient number of bits to represent the dictionary index
  */
-void LZ78_Output(OutStream *out,char outputByte,int index,int EOFstate, int mode)
+void LZ78_Output(Dictionary *dictionary,OutStream *out,char outputByte,int index,int EOFstate, int mode)
 {
     int bitsRequired = 0 ;
     
     if (mode == Fixed)
         bitsRequired = 16 ;
     else if (mode == Variable)
-        bitsRequired = determineNumberOfBitsRequired(index);
+        bitsRequired = determineNumberOfBitsRequired(dictionary->currentIndex - 1);
         
     streamWriteBits(out,index,bitsRequired);
     if (EOFstate == 0 ) // prevent writing EOF to file
@@ -154,21 +154,4 @@ int findLastMatchEntry(Dictionary *dictionary, InStream *in, char *dataString, c
 
 }
 
-int determineNumberOfBitsRequired(int index)
-{
-    int bitTest, i ,result = 0;
-    
-    if (index == 0 )
-        return 1;
-    
-    for ( i = 0 ; i < (sizeof(int) * 8) ; i ++)
-    {
-        bitTest = index & ( 1 << i ) ;
-        
-        if (bitTest != 0 )
-            result = i;
-    }
-    
-    return (result + 1);
-}
 

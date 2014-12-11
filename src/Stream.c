@@ -158,6 +158,5 @@ int getPositionInFile(InStream *in)
 {
     int position = ftell(in->file);
 
-
     return position;
 }
