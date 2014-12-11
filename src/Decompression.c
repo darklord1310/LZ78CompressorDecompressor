@@ -22,7 +22,7 @@ void LZ78_Decompressor(char *infilename, char *outfilename, int dictSize)
 void LZ78_Decompression(InStream *in, OutStream *out, Dictionary *dictionary, char *infilename, char *outfilename, int dictSize)
 {
     int status, signedIndex, i;
-    unsigned int index, data;
+    unsigned int index, data, bitsToRead;
 
     in = initInStream();                                              //init InSteam
     out = initOutStream();                                            //init OutStream
@@ -33,6 +33,11 @@ void LZ78_Decompression(InStream *in, OutStream *out, Dictionary *dictionary, ch
 
     while(1)
     {
+        if(dictionary->currentIndex == dictionary->dictionarySize)
+            bitsToRead = 1;
+        else
+            bitsToRead = getVariableIndex(dictionary);                 //determine how many bits to read
+            
         index = streamReadBits(in, 16);                                //read index
         signedIndex = (int)index;                                      //convert it to a signed index
 
@@ -141,7 +146,7 @@ int AddDataToDictionary(Dictionary *dictionary, unsigned int index, unsigned int
 }
 
 
-int getVariableIndex(Dictionary *dictionary)
+unsigned int getVariableIndex(Dictionary *dictionary)
 {
     int count = 0;
     int value = dictionary->currentIndex;
@@ -155,7 +160,6 @@ int getVariableIndex(Dictionary *dictionary)
         count++;
         value = value >> 1;
     }
-    
     return count;
 }
   
