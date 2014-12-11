@@ -24,3 +24,20 @@ void LZ78_CompressorDecompressor(char *InfileName,char *OutfileName,int dictSize
 	
 	LZ78_Decompressor(CompressedfileName,OutfileName,dictSize);
 }
+
+void renameCompressedFile(char *InfileName,char *CompressedName)
+{
+    int dotPtrLength;
+    char *dotPtr ;
+
+    strcpy(CompressedName,InfileName);
+    
+    dotPtr = strrchr(CompressedName,'.');
+    if (dotPtr != NULL)
+    {
+        dotPtrLength = strlen(dotPtr);
+        memmove(dotPtr,".LZ",dotPtrLength+1);
+    }
+    else
+        strcat(CompressedName,".LZ");
+}

@@ -57,3 +57,45 @@ void testing()
     // LZ78_Decompressor("test/support/README_Compressed", "test/support/README_Decompressed", dictSize);
 
 }
+
+void test_renameCompressedFile_given_abc_dot_txt_should_rename_to_abc_dot_LZ()
+{
+    char *CompressedName;
+    char *InfileName = "abc.txt" ;
+    
+    CompressedName = calloc(strlen(InfileName)+4,sizeof(char));
+    
+    renameCompressedFile(InfileName,CompressedName);
+    
+    TEST_ASSERT_EQUAL_STRING("abc.LZ",CompressedName);
+    
+    free(CompressedName);
+}
+
+void test_renameCompressedFile_given_noname_should_rename_to_noname_dot_LZ()
+{
+    char *CompressedName;
+    char *InfileName = "noname" ;
+    
+    CompressedName = calloc(strlen(InfileName)+4,sizeof(char));
+    
+    renameCompressedFile(InfileName,CompressedName);
+    
+    TEST_ASSERT_EQUAL_STRING("noname.LZ",CompressedName);
+    
+    free(CompressedName);
+}
+
+void test_renameCompressedFile_given_object_dot_o_should_rename_to_object_dot_o()
+{
+    char *CompressedName;
+    char *InfileName = "object.o" ;
+    
+    CompressedName = calloc(strlen(InfileName)+4,sizeof(char));
+    
+    renameCompressedFile(InfileName,CompressedName);
+    
+    TEST_ASSERT_EQUAL_STRING("object.LZ",CompressedName);
+    
+    free(CompressedName);
+}

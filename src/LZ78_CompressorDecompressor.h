@@ -6,5 +6,5 @@
 #include "Decompression.h"
 
 void LZ78_CompressorDecompressor(char *InfileName,char *OutfileName,int dictSize,int mode);
-
+void renameCompressedFile(char *InfileName,char *CompressedName);
 #endif // LZ78_CompressorDecompressor_H
