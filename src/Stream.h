@@ -34,8 +34,6 @@ OutStream *openOutStream(char *filename, char *mode, OutStream *out);
 unsigned int streamReadBit(InStream *in);
 unsigned int streamReadBits(InStream *in, int bitSize);
 
-int checkEndOfFile(InStream *in);
-
 void streamWriteBit(OutStream *out, int bitToWrite);
 void streamWriteBits(OutStream *out, unsigned int value, int bitSize);
 
@@ -44,13 +42,13 @@ void streamFlush(OutStream *out);
 OutStream *closeOutStream(OutStream *out);
 InStream *closeInStream(InStream *in);
 
-
 InStream *initInStream();
 OutStream *initOutStream();
 
 void freeInStream(InStream *in);
 void freeOutStream(OutStream *out);
 
+int checkEndOfFile(InStream *in);
 int getPositionInFile(InStream *in);
 
 #endif // Stream_H

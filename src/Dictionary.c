@@ -8,8 +8,7 @@
 /*
  * Initialize the dictionary
  *
- * Input :
- *					dictSize is the size of the dictionary
+ * Input : dictSize         : dictSize is the size of the dictionary
  *
  */
 Dictionary *initDictionary(int dictSize)
@@ -33,6 +32,10 @@ Dictionary *initDictionary(int dictSize)
 /* *
  *  Add data to the current empty/available DictionaryEntry
  *
+ * Input : dictionary       : dictionary is the pointer to dictionary to be added with data
+ *         EntryDataToAdd   : EntryDataToAdd is the data to be added to the dictionary
+ *
+ *
  * Return 1 if data has been successfully added
  * Return 0 if data is not added due to full dictionary
  */
@@ -55,6 +58,8 @@ int addEntryData(Dictionary *dictionary, char *EntryDataToAdd)
 /**
  *  Check if the dictionary is full based on currentIndex
  *
+ * Input : dictionary       : dictionary is the pointer to dictionary to be checked
+ *
  * Return 1 if dictionary is full
  * Return 0 if dictionary is not full
  */
@@ -70,6 +75,8 @@ int isDictionaryFull(Dictionary *dictionary)
 /**
  *  Check if the dictionary is empty if currentIndex = 0
  *
+ * Input : dictionary       : dictionary is the pointer to dictionary to be checked
+ *
  * Return 1 if dictionary is empty
  * Return 0 if dictionary is not empty
  */
@@ -81,6 +88,13 @@ int isDictionaryEmpty(Dictionary *dictionary)
         return 0 ;
 }
 
+/**
+ *  Get the length/size of the string
+ *
+ * Input : string       : string is the string to be checked
+ *
+ * Return length/size of the string
+ */
 int getSizeOfString(char *string)
 {
 	int j=0,length=0;
@@ -95,7 +109,13 @@ int getSizeOfString(char *string)
 }
 
 
-
+/**
+ *  Reset the data in the dictionary and currentIndex to 0
+ *
+ * Input : dictionary       : dictionary is the pointer to dictionary to be refreshed
+ *         dictSize         : dictSize is the size of the created dictionary
+ *
+ */
 void refreshDictionaryEntryData(Dictionary *dictionary,int dictSize)
 {
     int i  ;
@@ -112,7 +132,14 @@ void refreshDictionaryEntryData(Dictionary *dictionary,int dictSize)
     dictionary->currentIndex = 0;
 }
 
-void destroyDictionary(Dictionary *dictionary,int usedSize)
+/**
+ *  Free dictionary
+ *
+ * Input : dictionary       : dictionary is the pointer to dictionary to be freed
+ *         dictSize         : dictSize is the size of the created dictionary
+ *
+ */
+void destroyDictionary(Dictionary *dictionary,int dictSize)
 {
     int i  ;
     
