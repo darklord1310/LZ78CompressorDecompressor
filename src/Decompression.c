@@ -140,3 +140,26 @@ int AddDataToDictionary(Dictionary *dictionary, unsigned int index, unsigned int
     }
 }
 
+
+int getVariableIndex(Dictionary *dictionary)
+{
+    int count = 0;
+    int value = dictionary->currentIndex;
+    
+    if( dictionary->currentIndex == 0)
+        return 1;
+        
+    assert( dictionary->currentIndex != 0);
+    
+    while (value != 0) {
+        count++;
+        value = value >> 1;
+    }
+    
+    return count;
+}
+  
+
+
+
+
