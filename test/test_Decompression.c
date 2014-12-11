@@ -19,21 +19,21 @@ void tearDown(void)
 
 /*test case when dictionary is not full, and no merging of data occur
  *
- *  Given input = 0a0b
+ *  Given input = 1a1b
  */
-void test_AddDataToDictionary_given_0a_0b_and_size_is_larger_than_data_written_should_add_into_dictionary_correctly()
+void test_AddDataToDictionary_given_1a_1b_and_size_is_larger_than_data_written_should_add_into_dictionary_correctly()
 {
     int value;
     Dictionary *dict = initDictionary(10);
     
-    value = AddDataToDictionary(dict, 0 , (unsigned int)('a')   );
+    value = AddDataToDictionary(dict, 1 , (unsigned int)('a')   );
     TEST_ASSERT_EQUAL(1, value);
     TEST_ASSERT_EQUAL(1, dict->currentIndex);
     TEST_ASSERT_EQUAL_STRING("a" ,dict->Entry[0].data);     TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
     TEST_ASSERT_EQUAL_STRING("" ,dict->Entry[1].data);     TEST_ASSERT_EQUAL(0 ,dict->Entry[1].entrySize);
 
     
-    value = AddDataToDictionary(dict, 0 , (unsigned int)('b')   );
+    value = AddDataToDictionary(dict, 1 , (unsigned int)('b')   );
     TEST_ASSERT_EQUAL(1, value);
     TEST_ASSERT_EQUAL(2, dict->currentIndex);
     TEST_ASSERT_EQUAL_STRING("a" ,dict->Entry[0].data);     TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
@@ -45,21 +45,21 @@ void test_AddDataToDictionary_given_0a_0b_and_size_is_larger_than_data_written_s
 
 /*test case when dictionary is not full, and merging of data occur
  *
- *  Given input = 0a1b
+ *  Given input = 1a2b
  */
-void test_AddDataToDictionary_given_0a_1b_and_size_is_larger_than_data_written_should_add_into_dictionary_correctly()
+void test_AddDataToDictionary_given_1a_2b_and_size_is_larger_than_data_written_should_add_into_dictionary_correctly()
 {
     int value;
     Dictionary *dict = initDictionary(10);
     
-    value = AddDataToDictionary(dict, 0 , (unsigned int)('a')   );
+    value = AddDataToDictionary(dict, 1 , (unsigned int)('a')   );
     TEST_ASSERT_EQUAL(1, value);
     TEST_ASSERT_EQUAL(1, dict->currentIndex);
     TEST_ASSERT_EQUAL_STRING("a" ,dict->Entry[0].data);     TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
     TEST_ASSERT_EQUAL_STRING("" ,dict->Entry[1].data);     TEST_ASSERT_EQUAL(0 ,dict->Entry[1].entrySize);
 
    
-    value = AddDataToDictionary(dict, 1 , (unsigned int)('b')   );
+    value = AddDataToDictionary(dict, 2 , (unsigned int)('b')   );
     TEST_ASSERT_EQUAL(1, value);
     TEST_ASSERT_EQUAL(2, dict->currentIndex);
     TEST_ASSERT_EQUAL_STRING("a" ,dict->Entry[0].data);     TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
@@ -71,20 +71,20 @@ void test_AddDataToDictionary_given_0a_1b_and_size_is_larger_than_data_written_s
 
 /*test case when dictionary is full, and try to add into dictionary
  *
- *  Given input = 0a0b
+ *  Given input = 1a2b
  */
-void test_AddDataToDictionary_given_0a_0b_and_size_is_smaller_than_data_written_should_not_add_into_dictionary_correctly()
+void test_AddDataToDictionary_given_1a_2b_and_size_is_smaller_than_data_written_should_not_add_into_dictionary_correctly()
 {
     int value;
     Dictionary *dict = initDictionary(1);
     
-    value = AddDataToDictionary(dict, 0 , (unsigned int)('a')   );
+    value = AddDataToDictionary(dict, 1 , (unsigned int)('a')   );
     TEST_ASSERT_EQUAL(1, value);
     TEST_ASSERT_EQUAL(1, dict->currentIndex);
     TEST_ASSERT_EQUAL_STRING("a" ,dict->Entry[0].data);     TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
 
    
-    value = AddDataToDictionary(dict, 1 , (unsigned int)('b')   );
+    value = AddDataToDictionary(dict, 2 , (unsigned int)('b')   );
     TEST_ASSERT_EQUAL(0, value);
     
     //Expect the whole dictionary stay the same as before
@@ -95,18 +95,18 @@ void test_AddDataToDictionary_given_0a_0b_and_size_is_smaller_than_data_written_
 
 
 //test case when dictionary is not full for decompression when index contain all zeroes only
-void test_Decompression_given_0a0b0c_and_when_dictionary_is_not_full_should_decompress_correctly_into_abc()
+void test_Decompression_given_1a1b1c_and_when_dictionary_is_not_full_should_decompress_correctly_into_abc()
 {
     int value;
     OutStream out;
     Dictionary *dict = initDictionary(10);
 
     //create dictionary 
-    value = AddDataToDictionary(dict, 0 , (unsigned int)('a')   );
+    value = AddDataToDictionary(dict, 1 , (unsigned int)('a')   );
     assert(value != 0);
-    value = AddDataToDictionary(dict, 0 , (unsigned int)('b')   );
+    value = AddDataToDictionary(dict, 1 , (unsigned int)('b')   );
     assert(value != 0);
-    value = AddDataToDictionary(dict, 0 , (unsigned int)('c')   );
+    value = AddDataToDictionary(dict, 1 , (unsigned int)('c')   );
     assert(value != 0);
 
     
@@ -116,26 +116,26 @@ void test_Decompression_given_0a0b0c_and_when_dictionary_is_not_full_should_deco
     streamWriteBits_Expect(&out, (unsigned int)('c'), 8);           //expect c here
     
     //run
-    Decompression(&out, 0 , (unsigned int)('a'), dict);
-    Decompression(&out, 0 , (unsigned int)('b'), dict);
-    Decompression(&out, 0 , (unsigned int)('c'), dict);
+    Decompression(&out, 1 , (unsigned int)('a'), dict);
+    Decompression(&out, 1 , (unsigned int)('b'), dict);
+    Decompression(&out, 1 , (unsigned int)('c'), dict);
 }
 
 
 
 //test case when dictionary is not full for decompression when index not only zero
-void test_Decompression_given_0a1b2c_and_when_dictionary_is_not_full_should_decompress_correctly_into_aababc()
+void test_Decompression_given_1a2b3c_and_when_dictionary_is_not_full_should_decompress_correctly_into_aababc()
 {
     int value;
     OutStream out;
     Dictionary *dict = initDictionary(10);
 
     //create dictionary 
-    value = AddDataToDictionary(dict, 0 , (unsigned int)('a')   );
+    value = AddDataToDictionary(dict, 1 , (unsigned int)('a')   );
     assert(value != 0);
-    value = AddDataToDictionary(dict, 1 , (unsigned int)('b')   );
+    value = AddDataToDictionary(dict, 2 , (unsigned int)('b')   );
     assert(value != 0);
-    value = AddDataToDictionary(dict, 2 , (unsigned int)('c')   );
+    value = AddDataToDictionary(dict, 3 , (unsigned int)('c')   );
     assert(value != 0);
 
     
@@ -155,15 +155,15 @@ void test_Decompression_given_0a1b2c_and_when_dictionary_is_not_full_should_deco
 
     
     //run
-    Decompression(&out, 0 , (unsigned int)('a'), dict);
-    Decompression(&out, 1 , (unsigned int)('b'), dict);
-    Decompression(&out, 2 , (unsigned int)('c'), dict);
+    Decompression(&out, 1 , (unsigned int)('a'), dict);
+    Decompression(&out, 2 , (unsigned int)('b'), dict);
+    Decompression(&out, 3 , (unsigned int)('c'), dict);
 }
 
 
 
 // test case when dictionary is not needed to be refresh and all index is only 0
-void test_LZ78_Decompression_given_input_0a0b0c_and_size_of_10_should_decompress_into_abc()
+void test_LZ78_Decompression_given_input_1a1b1c_and_size_of_10_should_decompress_into_abc()
 {
     int dictSize = 10;
     char *infilename = "anyfile_in.txt";
@@ -177,22 +177,22 @@ void test_LZ78_Decompression_given_input_0a0b0c_and_size_of_10_should_decompress
     initOutStream_ExpectAndReturn(&out);
     openInStream_ExpectAndReturn(infilename, "rb+" , &in, &in);                       
     openOutStream_ExpectAndReturn(outfilename, "wb+" , &out, &out);
-    streamReadBits_ExpectAndReturn(&in, 16, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 1);
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamReadBits_ExpectAndReturn(&in, 8, (unsigned int)('a') );
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamWriteBits_Expect(&out, (unsigned int)('a') , 8 );
-    streamReadBits_ExpectAndReturn(&in, 16, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 1);
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamReadBits_ExpectAndReturn(&in, 8, (unsigned int)('b') );
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamWriteBits_Expect(&out, (unsigned int)('b') , 8 );
-    streamReadBits_ExpectAndReturn(&in, 16, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 1);
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamReadBits_ExpectAndReturn(&in, 8, (unsigned int)('c') );
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamWriteBits_Expect(&out, (unsigned int)('c') , 8 );
-    streamReadBits_ExpectAndReturn(&in, 16, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, EOF);
     checkEndOfFile_ExpectAndReturn(&in, 1);
     closeInStream_ExpectAndReturn(&in, &in);
     closeOutStream_ExpectAndReturn(&out , &out);
@@ -206,7 +206,7 @@ void test_LZ78_Decompression_given_input_0a0b0c_and_size_of_10_should_decompress
 
 
 // test case when dictionary is not needed to be refresh and the index is not only 0
-void test_LZ78_Decompression_given_input_0a1b2c_and_size_of_10_should_decompress_into_abc()
+void test_LZ78_Decompression_given_input_1a2b3c_and_size_of_10_should_decompress_into_abc()
 {
     int dictSize = 10;
     char *infilename = "anyfile_in.txt";
@@ -220,25 +220,25 @@ void test_LZ78_Decompression_given_input_0a1b2c_and_size_of_10_should_decompress
     initOutStream_ExpectAndReturn(&out);
     openInStream_ExpectAndReturn(infilename, "rb+" , &in, &in);                       
     openOutStream_ExpectAndReturn(outfilename, "wb+" , &out, &out);
-    streamReadBits_ExpectAndReturn(&in, 16, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 1);
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamReadBits_ExpectAndReturn(&in, 8, (unsigned int)('a') );
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamWriteBits_Expect(&out, (unsigned int)('a') , 8 );            //expect a
-    streamReadBits_ExpectAndReturn(&in, 16, 1);
+    streamReadBits_ExpectAndReturn(&in, 16, 2);
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamReadBits_ExpectAndReturn(&in, 8, (unsigned int)('b') );
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamWriteBits_Expect(&out, (unsigned int)('a') , 8 );             //expect ab
     streamWriteBits_Expect(&out, (unsigned int)('b') , 8 );
-    streamReadBits_ExpectAndReturn(&in, 16, 2);
+    streamReadBits_ExpectAndReturn(&in, 16, 3);
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamReadBits_ExpectAndReturn(&in, 8, (unsigned int)('c') );
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamWriteBits_Expect(&out, (unsigned int)('a') , 8 );             //expect abc
     streamWriteBits_Expect(&out, (unsigned int)('b') , 8 );
     streamWriteBits_Expect(&out, (unsigned int)('c') , 8 );
-    streamReadBits_ExpectAndReturn(&in, 16, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, EOF);
     checkEndOfFile_ExpectAndReturn(&in, 1);
     closeInStream_ExpectAndReturn(&in, &in);
     closeOutStream_ExpectAndReturn(&out , &out);
@@ -254,7 +254,7 @@ void test_LZ78_Decompression_given_input_0a1b2c_and_size_of_10_should_decompress
 
 
 // test case when dictionary is needed to be refresh 
-void test_LZ78_Decompression_given_input_0a0b0c_and_size_of_1_should_decompress_into_abc()
+void test_LZ78_Decompression_given_input_1a1b1c_and_size_of_1_should_decompress_into_abc()
 {
     int dictSize = 1;
     char *infilename = "anyfile_in.txt";
@@ -268,22 +268,22 @@ void test_LZ78_Decompression_given_input_0a0b0c_and_size_of_1_should_decompress_
     initOutStream_ExpectAndReturn(&out);
     openInStream_ExpectAndReturn(infilename, "rb+" , &in, &in);                       
     openOutStream_ExpectAndReturn(outfilename, "wb+" , &out, &out); 
-    streamReadBits_ExpectAndReturn(&in, 16, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 1);
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamReadBits_ExpectAndReturn(&in, 8, (unsigned int)('a') );
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamWriteBits_Expect(&out, (unsigned int)('a') , 8 );            //expect a
-    streamReadBits_ExpectAndReturn(&in, 16, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 1);
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamReadBits_ExpectAndReturn(&in, 8, (unsigned int)('b') );
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamWriteBits_Expect(&out, (unsigned int)('b') , 8 );             //expect b
-    streamReadBits_ExpectAndReturn(&in, 16, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, 1);
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamReadBits_ExpectAndReturn(&in, 8, (unsigned int)('c') );       
     checkEndOfFile_ExpectAndReturn(&in, 0);
     streamWriteBits_Expect(&out, (unsigned int)('c') , 8 );             //expect c
-    streamReadBits_ExpectAndReturn(&in, 16, 0);
+    streamReadBits_ExpectAndReturn(&in, 16, EOF);
     checkEndOfFile_ExpectAndReturn(&in, 1);
     closeInStream_ExpectAndReturn(&in, &in);
     closeOutStream_ExpectAndReturn(&out , &out);

@@ -45,9 +45,9 @@ void LZ78_Decompression_Fixed(InStream *in, OutStream *out, Dictionary *dictiona
         
         if( checkEndOfFile(in)  )                                      //check is it a EOF, if yes 
         {
-            assert( index != 0);
-            for(i=0; i < dictionary->Entry[index-1].entrySize; i++)
-                streamWriteBits(out, (unsigned int)(dictionary->Entry[index-1].data[i]), 8);
+            assert( index != 1);
+            for(i=0; i < dictionary->Entry[index-2].entrySize; i++)
+                streamWriteBits(out, (unsigned int)(dictionary->Entry[index-2].data[i]), 8);
             break;
         }
         else
@@ -79,18 +79,17 @@ void LZ78_Decompression_Fixed(InStream *in, OutStream *out, Dictionary *dictiona
 
 void Decompression(OutStream *out, unsigned int index, unsigned int data, Dictionary *dictionary)
 {
-    int signedIndex = (int)index;
     int i;
     char string[4096];
     char *convertedData = (char *)(&data);                      //typecast the int type data to char type
     
-    assert(signedIndex >= 0);
-    if( signedIndex-1 < 0)                                      //if index is 0
+    assert(index > 0);
+    if( index == 1)                                             //if index is 1
         streamWriteBits(out, data, 8);
-    else                                                        //if index is not 0
+    else                                                        //if index is not 1
     {   
         memset (string,0,4096);                                 //clear string
-        strcpy(string,dictionary->Entry[index-1].data);
+        strcpy(string,dictionary->Entry[index-2].data);
         strcat(string, convertedData);                          //combined the string with the data
         
         for(i=0; i < strlen(string); i++)
@@ -116,17 +115,16 @@ void Decompression(OutStream *out, unsigned int index, unsigned int data, Dictio
  */
 int AddDataToDictionary(Dictionary *dictionary, unsigned int index, unsigned int data)
 {
-    int signedIndex = (int)index;                    //to change the unsigned index into signed index
     char *convertedData = (char *)(&data);
     // unsigned int mergedData;
     char string[4096];
     int status;
     
-    assert(signedIndex >= 0);
+    assert(index > 0);
     if(dictionary->currentIndex == dictionary->dictionarySize)
         return 0;
     
-    if( (signedIndex-1) < 0)
+    if( index-1 == 0)
     {
         status = addEntryData(dictionary, convertedData); 
         assert(status == 1);
@@ -135,7 +133,7 @@ int AddDataToDictionary(Dictionary *dictionary, unsigned int index, unsigned int
     else
     {
         memset (string,0,4096);                     //clear string
-        strcpy(string,dictionary->Entry[index-1].data);
+        strcpy(string,dictionary->Entry[index-2].data);
         strcat(string, convertedData);
         status = addEntryData(dictionary, string);
         assert(status == 1);
