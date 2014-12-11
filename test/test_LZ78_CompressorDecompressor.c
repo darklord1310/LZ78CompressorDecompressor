@@ -13,42 +13,36 @@ void tearDown(void)
 {
 }
 
-void xtest_LZ78_CompressorDecompressortest_LZ78_CompressorDecompressor_txt(void)
+
+//test with size of 1
+void test_LZ78_CompressorDecompressortest_LZ78_CompressorDecompressor_txt(void)
 {
 	char *InfileName = "test/support/test_LZ78_CompressorDecompressor.txt" ;
 	char *OutfileName = "test/support/test_LZ78_CompressorDecompressor_Decompressed.txt" ;
-	LZ78_CompressorDecompressor(InfileName,OutfileName,5,Fixed);
+	LZ78_CompressorDecompressor(InfileName,OutfileName, 4096,Fixed);
 }
 
-void xtest_LZ78_CompressorDecompressor_README(void)
+
+void test_LZ78_CompressorDecompressor_README(void)
 {
 	char *InfileName = "test/support/README" ;
 	char *OutfileName = "test/support/README_Decompressed" ;
-	LZ78_CompressorDecompressor(InfileName,OutfileName,4096,Fixed);
+	LZ78_CompressorDecompressor(InfileName,OutfileName, 1500 ,Fixed);
 }
 
 
-void xtest_LZ78_CompressorDecompressor_libjansson_4_dll(void)
+void test_LZ78_CompressorDecompressor_libjansson_4_dll(void)
 {
 	char *InfileName = "test/support/libjansson-4.dll" ;
 	char *OutfileName = "test/support/libjansson-4.dll_Decompressed" ;
-	LZ78_CompressorDecompressor(InfileName,OutfileName,4096,Fixed);
+	LZ78_CompressorDecompressor(InfileName,OutfileName,1000,Fixed);
 }
 
 
-void xtest_LZ78_CompressorDecompressor_StringObject(void)
+void test_LZ78_CompressorDecompressor_StringObject(void)
 {
 	char *InfileName = "test/support/StringObject.o" ;
 	char *OutfileName = "test/support/StringObject_Decompressed.o" ;
-	LZ78_CompressorDecompressor(InfileName,OutfileName,4096,Fixed);
+	LZ78_CompressorDecompressor(InfileName,OutfileName,1,Fixed);
 }
 
-void testing()
-{
-    char *InfileName = "test/support/assignment 2(latest).cpp" ;
-	char *OutfileName = "test/support/assignment 2(latest)_Decompressed" ;
-    int dictSize = 4096;
-    
-    LZ78_CompressorDecompressor(InfileName,OutfileName, dictSize, Fixed);
-
-}
