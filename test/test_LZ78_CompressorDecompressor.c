@@ -19,14 +19,14 @@ void test_LZ78_CompressorDecompressortest_LZ78_CompressorDecompressor_txt_Fixed_
 {
 	char *InfileName = "test/support/Source/test_LZ78_CompressorDecompressor.txt" ;
 	char *OutfileName = "test/support/Decompressed/Fixed/test_LZ78_CompressorDecompressor_Decompressed.txt" ;
-	LZ78_CompressorDecompressor(InfileName,OutfileName, 4096,Fixed);
+	LZ78_CompressorDecompressor(InfileName,OutfileName, 2,Fixed);
 }
 
 void test_LZ78_CompressorDecompressor_README_Fixed_mode(void)
 {
 	char *InfileName = "test/support/Source/README" ;
 	char *OutfileName = "test/support/Decompressed/Fixed/README_Decompressed" ;
-	LZ78_CompressorDecompressor(InfileName,OutfileName, 4096 ,Fixed);
+	LZ78_CompressorDecompressor(InfileName,OutfileName, 4203,Fixed);
 }
 
 void test_LZ78_CompressorDecompressor_libjansson_4_dll_Fixed_mode(void)

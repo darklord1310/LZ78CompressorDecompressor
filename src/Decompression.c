@@ -5,8 +5,16 @@
 #include <string.h>
 #include <assert.h>
 
-
-
+/*
+ * Responsible for the complete decompression process
+ *
+ * Input :    
+ *            infilename is the name of the input file
+ *            outfilename is the name of the output file
+ *            dictSize is the size of the dictionary, maximum is 4096
+ *            mode is for user to select either fixed index or variable index
+ *          
+ */
 void LZ78_Decompressor(char *infilename, char *outfilename, int dictSize, int mode)
 {
     InStream *in;
@@ -15,16 +23,27 @@ void LZ78_Decompressor(char *infilename, char *outfilename, int dictSize, int mo
     
     if(mode == Fixed)
         LZ78_Decompression_Fixed(in, out, dict, infilename, outfilename, dictSize);
-    
+    else
+        LZ78_Decompression_Variable(in, out, dict, infilename, outfilename, dictSize);
 }
 
 
 
-
+/*
+ * Responsible for the complete decompression process for fixed Index
+ *
+ * Input :    dictionary is the pointer to the Dictionary structure
+ *			  in is the pointer pointing to the structure InStream
+ *            out is the pointer pointing to the structure OutStream
+ *            infilename is the name of the input file
+ *            outfilename is the name of the output file
+ *            dictSize is the size of the dictionary, maximum is 4096
+ *          
+ */
 void LZ78_Decompression_Fixed(InStream *in, OutStream *out, Dictionary *dictionary, char *infilename, char *outfilename, int dictSize)
 {
     int status, signedIndex, i;
-    unsigned int index, data, bitsToRead;
+    unsigned int index, data;
 
     in = initInStream();                                              //init InSteam
     out = initOutStream();                                            //init OutStream
@@ -75,8 +94,87 @@ void LZ78_Decompression_Fixed(InStream *in, OutStream *out, Dictionary *dictiona
 }
 
 
+/*
+ * Responsible for the complete decompression process for variable Index
+ *
+ * Input :    dictionary is the pointer to the Dictionary structure
+ *			  in is the pointer pointing to the structure InStream
+ *            out is the pointer pointing to the structure OutStream
+ *            infilename is the name of the input file
+ *            outfilename is the name of the output file
+ *            dictSize is the size of the dictionary, maximum is 4096
+ *          
+ */
+void LZ78_Decompression_Variable(InStream *in, OutStream *out, Dictionary *dictionary, char *infilename, char *outfilename, int dictSize)
+{
+    int status, signedIndex, i;
+    unsigned int index, data, bitsToRead;
+
+    in = initInStream();                                              //init InSteam
+    out = initOutStream();                                            //init OutStream
+    dictionary = initDictionary(dictSize);                            //init Dictionary
+    
+    in = openInStream(infilename, "rb+" , in);                         //open input file
+    out = openOutStream(outfilename, "wb+" , out);                     //open output file
+
+    while(1)
+    {
+        if(dictionary->currentIndex == dictionary->dictionarySize )
+            bitsToRead = 1;
+        else
+            bitsToRead = getVariableIndex(dictionary);
+        printf("currentIndex : %d\n", dictionary->currentIndex);
+        printf("bitsToRead : %d\n", bitsToRead);
+        index = streamReadBits(in, bitsToRead);                        //read index
+        printf("index : %d\n", index);
+        if( checkEndOfFile(in) || index == 0 )                         //check is it a EOF or 0, if yes break from the loop
+            break;
+            
+        data = streamReadBits(in, 8);                                  //read data
+
+        if( checkEndOfFile(in)  )                                      //check is it a EOF, if yes 
+        {
+            assert( index != 1);
+            for(i=0; i < dictionary->Entry[index-2].entrySize; i++)
+                streamWriteBits(out, (unsigned int)(dictionary->Entry[index-2].data[i]), 8);
+            break;
+        }
+        else
+        {
+            status = AddDataToDictionary(dictionary, index, data);      //add data to dictionary
+            if(status == 0)                                             //if failed, refresh dictionary and add again
+            {
+                refreshDictionaryEntryData(dictionary,dictSize);
+                status = AddDataToDictionary(dictionary, index, data);  //add data to dictionary
+                assert(status != 0);                                    //here cannot be 0 because the dictionary has already refreshed
+                assert(dictionary->currentIndex == 1);
+            } 
+            Decompression(out, index, data, dictionary);
+        }
+    }
+
+    closeInStream(in);                                            //close input file
+    closeOutStream(out);                                          //close output file
+    
+    assert(dictionary->currentIndex <= dictSize);
+    
+    destroyDictionary(dictionary,dictSize);                       //free dictionary
+    freeInStream(in);                                             //free InStream
+    freeOutStream(out);                                           //free OutStream
+}
 
 
+
+
+/*
+ * Decompress the compression input
+ *
+ * Input :    out is the pointer which pointing to the OutSream structure
+ *            dictionary is the pointer to the Dictionary structure
+ *            index is the index that read from the compressed output
+ *            data is the data that read from the compressed output
+ *					
+ */
 void Decompression(OutStream *out, unsigned int index, unsigned int data, Dictionary *dictionary)
 {
     int i;
@@ -104,8 +202,9 @@ void Decompression(OutStream *out, unsigned int index, unsigned int data, Dictio
 /*
  * Add data into the dictionary
  *
- * Input :            
- *
+ * Input :    dictionary is the pointer to the Dictionary structure
+ *            index is the index that read from the compressed output
+ *            data is the data that read from the compressed output
  *					
  *
  * Return:
@@ -144,7 +243,7 @@ int AddDataToDictionary(Dictionary *dictionary, unsigned int index, unsigned int
 unsigned int getVariableIndex(Dictionary *dictionary)
 {
     int count = 0;
-    int value = dictionary->currentIndex;
+    int value = dictionary->currentIndex + 1;
     
     if( dictionary->currentIndex == 0)
         return 1;

@@ -49,6 +49,6 @@ void freeInStream(InStream *in);
 void freeOutStream(OutStream *out);
 
 int checkEndOfFile(InStream *in);
-int getPositionInFile(InStream *in);
+
 
 #endif // Stream_H

@@ -218,15 +218,3 @@ int checkEndOfFile(InStream *in)
         return 0;
 }
 
-/* Check the current position of the file
- *
- * Input : in           : in is the InStream containing the file to be checked
- *
- * Output : return current position of the file
- */
-int getPositionInFile(InStream *in)
-{
-    int position = ftell(in->file);
-
-    return position;
-}
