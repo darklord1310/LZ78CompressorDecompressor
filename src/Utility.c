@@ -4,20 +4,16 @@
 
 int determineNumberOfBitsRequired(int index)
 {
-    int bitTest, i ,result = 0;
+    int count = 0;
     
     if (index == 0 )
         return 1;
     
-    for ( i = 0 ; i < (sizeof(int) * 8) ; i ++)
-    {
-        bitTest = index & ( 1 << i ) ;
-        
-        if (bitTest != 0 )
-            result = i;
+    while (index != 0) {
+        count++;
+        index = index >> 1;
     }
-    
-    return (result + 1);
+    return count;
 }
 
 void renameCompressedFile(char *InfileName,char *CompressedfileName,int mode)

@@ -77,7 +77,7 @@ void LZ78_Output(Dictionary *dictionary,OutStream *out,char outputByte,int index
     if (mode == Fixed)
         bitsRequired = 16 ;
     else if (mode == Variable)
-        bitsRequired = determineNumberOfBitsRequired(dictionary->currentIndex - 1);
+        bitsRequired = determineNumberOfBitsRequired(dictionary->currentIndex);
 
     streamWriteBits(out,index,bitsRequired);
     if (EOFstate == 0 ) // prevent writing EOF to file

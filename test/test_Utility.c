@@ -37,6 +37,11 @@ void test_determineNumberOfBitsRequired_given_8_should_return_4()
     TEST_ASSERT_EQUAL(4,determineNumberOfBitsRequired(8));
 }
 
+void test_determineNumberOfBitsRequired_given_4096_should_return_12()
+{
+    TEST_ASSERT_EQUAL(13,determineNumberOfBitsRequired(4096));
+}
+
 void test_renameCompressedFile_given_abc_dot_txt_should_rename_to_abc_dot_LZ()
 {
     char *CompressedName;
