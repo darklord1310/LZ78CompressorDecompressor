@@ -15,7 +15,7 @@ void tearDown(void)
 
 /*sampleText_forCompresssion -> AAAAAAAAA BBBBBBBBB
  * Fixed mode
- * Compressed output -> 1A2A3A4 1B6B7B8 0 
+ * Compressed output -> 1A2A3A4 1B6B7B8  
  *
  */
 
@@ -50,7 +50,7 @@ void test_LZ78_Compression_fixed_mode_given_input_file_sampleText_forCompresssio
 
 /*sampleText_forCompresssion -> AAAAAAAAA BBBBBBBBB
  * Variable mode
- * Compressed output -> 1A2A3A4 1B6B7B8 0
+ * Compressed output -> 1A2A3A4 1B6B7B8 
  * 
  */
 

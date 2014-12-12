@@ -30,7 +30,6 @@ void test_LZ78_Compressor_given_input_A_should_output_1A()
     
     streamReadBits_ExpectAndReturn(&in,8,EOF);
     checkEndOfFile_ExpectAndReturn(&in,1);
-    streamWriteBits_Expect(&out,0,1);
     
     LZ78_Compressor(dict,&in,&out,Variable);
 
@@ -53,7 +52,7 @@ void test_LZ78_Compressor_given_input_AAAAAAAAA_should_output_1A_2A_3A_4()
     checkEndOfFile_ExpectAndReturn(&in,0);
     streamReadBits_ExpectAndReturn(&in,8,'A');
     checkEndOfFile_ExpectAndReturn(&in,0);
-    streamWriteBits_Expect(&out,2,1);
+    streamWriteBits_Expect(&out,2,2);
     streamWriteBits_Expect(&out,'A',8);
     
     streamReadBits_ExpectAndReturn(&in,8,'A');
@@ -74,7 +73,6 @@ void test_LZ78_Compressor_given_input_AAAAAAAAA_should_output_1A_2A_3A_4()
     streamReadBits_ExpectAndReturn(&in,8,EOF);
     checkEndOfFile_ExpectAndReturn(&in,1);
     streamWriteBits_Expect(&out,4,2);
-    streamWriteBits_Expect(&out,0,2);
     
     LZ78_Compressor(dict,&in,&out,Variable);
     
@@ -99,7 +97,7 @@ void test_LZ78_Compressor_given_input_space_A_space_B_should_output_1space_1A_2B
     
     streamReadBits_ExpectAndReturn(&in,8,'A');
     checkEndOfFile_ExpectAndReturn(&in,0);
-    streamWriteBits_Expect(&out,1,1);
+    streamWriteBits_Expect(&out,1,2);
     streamWriteBits_Expect(&out,'A',8);
 
     streamReadBits_ExpectAndReturn(&in,8,32);
@@ -111,7 +109,6 @@ void test_LZ78_Compressor_given_input_space_A_space_B_should_output_1space_1A_2B
     
     streamReadBits_ExpectAndReturn(&in,8,EOF);
     checkEndOfFile_ExpectAndReturn(&in,1);
-    streamWriteBits_Expect(&out,0,2);
     
     LZ78_Compressor(dict,&in,&out,Variable);
 
@@ -132,7 +129,7 @@ void test_LZ78_Compressor_dictionaryIndex_4095_input_ABCABC_should_refresh_dicti
      /*Dictionary Entry 4095*/
     streamReadBits_ExpectAndReturn(&in,8,'A');
     checkEndOfFile_ExpectAndReturn(&in,0);
-    streamWriteBits_Expect(&out,1,12);
+    streamWriteBits_Expect(&out,1,13);
     streamWriteBits_Expect(&out,'A',8);
     
     /*Dictionary Entry 0*/
@@ -144,7 +141,7 @@ void test_LZ78_Compressor_dictionaryIndex_4095_input_ABCABC_should_refresh_dicti
     /*Dictionary Entry 1*/
     streamReadBits_ExpectAndReturn(&in,8,'C');
     checkEndOfFile_ExpectAndReturn(&in,0);
-    streamWriteBits_Expect(&out,1,1);
+    streamWriteBits_Expect(&out,1,2);
     streamWriteBits_Expect(&out,'C',8);
 
     /*Dictionary Entry 2*/
@@ -158,12 +155,11 @@ void test_LZ78_Compressor_dictionaryIndex_4095_input_ABCABC_should_refresh_dicti
     checkEndOfFile_ExpectAndReturn(&in,0);
     streamReadBits_ExpectAndReturn(&in,8,'C');
     checkEndOfFile_ExpectAndReturn(&in,0);
-    streamWriteBits_Expect(&out,2,2);
+    streamWriteBits_Expect(&out,2,3);
     streamWriteBits_Expect(&out,'C',8);
     
     streamReadBits_ExpectAndReturn(&in,8,EOF);
     checkEndOfFile_ExpectAndReturn(&in,1);
-    streamWriteBits_Expect(&out,0,2);
     
     LZ78_Compressor(dict,&in,&out,Variable);
  
@@ -194,7 +190,7 @@ void test_LZ78_Compressor_given_input_CR_LF_LF_A_should_output_1CR_1LF_3A()
     
     streamReadBits_ExpectAndReturn(&in,8,10);
     checkEndOfFile_ExpectAndReturn(&in,0);
-    streamWriteBits_Expect(&out,1,1);
+    streamWriteBits_Expect(&out,1,2);
     streamWriteBits_Expect(&out,'\n',8);
 
     streamReadBits_ExpectAndReturn(&in,8,10);
@@ -206,7 +202,6 @@ void test_LZ78_Compressor_given_input_CR_LF_LF_A_should_output_1CR_1LF_3A()
     
     streamReadBits_ExpectAndReturn(&in,8,EOF);
     checkEndOfFile_ExpectAndReturn(&in,1);
-    streamWriteBits_Expect(&out,0,2);
     
     LZ78_Compressor(dict,&in,&out,Variable);
  
