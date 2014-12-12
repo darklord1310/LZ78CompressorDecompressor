@@ -11,7 +11,7 @@
  * Input :    
  *            infilename is the name of the input file
  *            outfilename is the name of the output file
- *            dictSize is the size of the dictionary, maximum is 4096
+ *            dictSize is the size of the dictionary
  *            mode is for user to select either fixed index or variable index
  *          
  */
@@ -102,7 +102,7 @@ void LZ78_Decompression_Fixed(InStream *in, OutStream *out, Dictionary *dictiona
  *            out is the pointer pointing to the structure OutStream
  *            infilename is the name of the input file
  *            outfilename is the name of the output file
- *            dictSize is the size of the dictionary, maximum is 4096
+ *            dictSize is the size of the dictionary
  *          
  */
 void LZ78_Decompression_Variable(InStream *in, OutStream *out, Dictionary *dictionary, char *infilename, char *outfilename, int dictSize)
@@ -123,10 +123,8 @@ void LZ78_Decompression_Variable(InStream *in, OutStream *out, Dictionary *dicti
             bitsToRead = 1;
         else
             bitsToRead = getVariableIndex(dictionary);
-        printf("currentIndex : %d\n", dictionary->currentIndex);
-        printf("bitsToRead : %d\n", bitsToRead);
         index = streamReadBits(in, bitsToRead);                        //read index
-        printf("index : %d\n", index);
+
         if( checkEndOfFile(in) || index == 0 )                         //check is it a EOF or 0, if yes break from the loop
             break;
             
@@ -259,7 +257,23 @@ unsigned int getVariableIndex(Dictionary *dictionary)
   
 
 
+/*
 
+
+    All the code below is the old algorithm which I have written.
+    
+    The reason I decided to rewrite the algorithm is because the new algorithm is easier, old algorithm has to keep track on the position
+    of the file pointer which is not needed in the new algorithm.
+   
+    The old algorithm flow:
+                            build the dictionary until  _______\        Start to decompress     _______\    If full repeat, until dictionary
+                                it is full                     /                                       /            is not full
+
+    New algorithm flow    :
+                            build the dictionary for    _______\       Decompress              ________\    If dictionary full, reset    _______\  If EOF not encounter, repeat
+                                    once                       /                                       /                                        /
+
+*/
 
 
 /*
@@ -282,8 +296,8 @@ void LZ78_Decompressor(char *infilename, char *outfilename, int dictSize)
 
     while(1)
     {
-        status = finalrebuildDictionaryForDecompression(dictionary, in , &lastDecompressPosition, lastDictionaryLocation);   //rebuild dictionary
-        finalDecompression(in, out, dictionary, &lastDecompressPosition, status);                                            //Decompress
+        status = rebuildDictionaryForDecompression(dictionary, in , &lastDecompressPosition, lastDictionaryLocation);   //rebuild dictionary
+        Decompression(in, out, dictionary, &lastDecompressPosition, status);                                            //Decompress
         
         if(status != -1)
             refreshDictionaryEntryData(dictionary, dictSize);
@@ -303,7 +317,7 @@ void LZ78_Decompressor(char *infilename, char *outfilename, int dictSize)
 
 
 
-void finalDecompression(InStream *in, OutStream *out, Dictionary *dictionary, int *lastDecompressPosition, int lastDictionaryLocation)
+void Decompression(InStream *in, OutStream *out, Dictionary *dictionary, int *lastDecompressPosition, int lastDictionaryLocation)
 {
     unsigned int index, data;
     int signedIndex , i, position;
@@ -364,20 +378,7 @@ void finalDecompression(InStream *in, OutStream *out, Dictionary *dictionary, in
 
 
 
-/*
- * Build the dictionary for decompression
- *
- * Input :          lastDecompressPosition will be 0 at the first time passing in   
- *                  lastDictionaryLocation will be -1 at the first time passing in
- *					
- *
- * Return:
- *            -1     no need for further rebuild
- *          not -1   needed for further rebuild
- *          
- */
- /*
-int finalrebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in, int *lastDecompressPosition, int lastDictionaryLocation)
+int rebuildDictionaryForDecompression(Dictionary *dictionary, InStream *in, int *lastDecompressPosition, int lastDictionaryLocation)
 {
     unsigned int index, data, convertedIndex;
     char convertedData;

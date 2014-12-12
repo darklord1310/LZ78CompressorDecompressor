@@ -44,4 +44,25 @@ void test_LZ78_CompressorDecompressor_StringObject_Fixed_mode(void)
 }
 
 
+void test_LZ78_CompressorDecompressor_README_Variable_mode(void)
+{
+	char *InfileName = "test/support/Source/README" ;
+	char *OutfileName = "test/support/Decompressed/Variable/README_Decompressed" ;
+	LZ78_CompressorDecompressor(InfileName,OutfileName, 4096 ,Variable);
+}
 
+
+void test_LZ78_CompressorDecompressor_libjansson_4_dll_Variable_mode(void)
+{
+	char *InfileName = "test/support/Source/libjansson-4.dll" ;
+	char *OutfileName = "test/support/Decompressed/Variable/libjansson-4_Decompressed.dll" ;
+	LZ78_CompressorDecompressor(InfileName,OutfileName, 4096, Variable);
+}
+
+
+void test_LZ78_CompressorDecompressor_StringObject_Variable_mode(void)
+{
+	char *InfileName = "test/support/Source/StringObject.o" ;
+	char *OutfileName = "test/support/Decompressed/Variable/StringObject_Decompressed.o" ;
+	LZ78_CompressorDecompressor(InfileName,OutfileName, 4096, Variable);
+}

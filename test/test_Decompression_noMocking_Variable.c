@@ -18,8 +18,8 @@ void test()
 }
 
 
-
-void test_aababc_Compressed_Variable_should_compress_into_aababc()
+// test case when dictionary is not needed to be refresh 
+void test_aababc_Compressed_Variable_given_dictionary_size_4096_should_compress_into_aababc()
 {
     int dictSize = 4096;
     char *infilename = "test/support/Source/aababc_Compressed_Variable.txt" ;
@@ -30,4 +30,13 @@ void test_aababc_Compressed_Variable_should_compress_into_aababc()
 }
 
 
+// test case when dictionary is needed to be refresh 
+void test_aababc_Compressed_Variable_given_dictionary_size_1_should_compress_into_aababc()
+{
+    int dictSize = 1;
+    char *infilename = "test/support/Source/aababc_Compressed_Variable.txt" ;
+	char *outfilename = "test/support/Decompressed/Variable/aababc_Compressed_Variable__refresh_Decompressed" ;
+    
+	LZ78_Decompressor(infilename, outfilename, dictSize, Variable);
 
+}
