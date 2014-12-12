@@ -44,7 +44,7 @@ void test_renameCompressedFile_given_abc_dot_txt_should_rename_to_abc_dot_LZ()
     
     CompressedName = calloc(strlen(InfileName)+4,sizeof(char));
     
-    renameCompressedFile(InfileName,CompressedName);
+    renameCompressedFile(InfileName,CompressedName,Fixed);
     
     TEST_ASSERT_EQUAL_STRING("abc.LZ",CompressedName);
     
@@ -58,7 +58,7 @@ void test_renameCompressedFile_given_noname_should_rename_to_noname_dot_LZ()
     
     CompressedName = calloc(strlen(InfileName)+4,sizeof(char));
     
-    renameCompressedFile(InfileName,CompressedName);
+    renameCompressedFile(InfileName,CompressedName,Fixed);
     
     TEST_ASSERT_EQUAL_STRING("noname.LZ",CompressedName);
     
@@ -72,9 +72,37 @@ void test_renameCompressedFile_given_object_dot_o_should_rename_to_object_dot_o(
     
     CompressedName = calloc(strlen(InfileName)+4,sizeof(char));
     
-    renameCompressedFile(InfileName,CompressedName);
+    renameCompressedFile(InfileName,CompressedName,Fixed);
     
     TEST_ASSERT_EQUAL_STRING("object.LZ",CompressedName);
+    
+    free(CompressedName);
+}
+
+void test_renameCompressedFile_given_Fixed_mode_at_Source_should_change_to_Compressed_Fixed()
+{
+    char *CompressedName;
+    char *InfileName = "test/support/Source/test_LZ78_CompressorDecompressor.txt" ;
+    
+    CompressedName = calloc(strlen(InfileName)+20,sizeof(char));
+    
+    renameCompressedFile(InfileName,CompressedName,Fixed);
+    
+    TEST_ASSERT_EQUAL_STRING("test/support/Compressed/Fixed/test_LZ78_CompressorDecompressor.LZ",CompressedName);
+    
+    free(CompressedName);
+}
+
+void test_renameCompressedFile_given_Variable_mode_at_Source_should_change_to_Compressed_Variable()
+{
+    char *CompressedName;
+    char *InfileName = "test/support/Source/test_LZ78_CompressorDecompressor.txt" ;
+    
+    CompressedName = calloc(strlen(InfileName)+20,sizeof(char));
+    
+    renameCompressedFile(InfileName,CompressedName,Variable);
+    
+    TEST_ASSERT_EQUAL_STRING("test/support/Compressed/Variable/test_LZ78_CompressorDecompressor.LZ",CompressedName);
     
     free(CompressedName);
 }

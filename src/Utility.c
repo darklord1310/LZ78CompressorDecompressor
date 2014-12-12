@@ -20,18 +20,33 @@ int determineNumberOfBitsRequired(int index)
     return (result + 1);
 }
 
-void renameCompressedFile(char *InfileName,char *CompressedfileName)
+void renameCompressedFile(char *InfileName,char *CompressedfileName,int mode)
 {
-    int dotPtrLength;
-    char *dotPtr ;
+    char *dotPtr, *findSource ,*backSlash, *storage;
 
     strcpy(CompressedfileName,InfileName);
-    dotPtr = strrchr(CompressedfileName,'.');
-    if (dotPtr != NULL)
+    
+    findSource = strstr(CompressedfileName,"/Source/"); 
+    if (findSource!= NULL)
     {
-        dotPtrLength = strlen(dotPtr);
-        memmove(dotPtr,".LZ",dotPtrLength+1);
+        backSlash = strrchr(CompressedfileName,'/'); // find last backslash '/'
+        storage = calloc(strlen(backSlash)+1,sizeof(char));
+        strcpy(storage,backSlash); //save a copy of string starting from last backslash
+        
+        if (mode == Fixed) //change from /Source/ to /Compressed/Fixed
+            memmove(findSource,"/Compressed/Fixed",strlen("/Compressed/Fixed")+1);
+        else //change from /Source/ to /Compressed/Variable
+            memmove(findSource,"/Compressed/Variable",strlen("/Compressed/Variable")+1);
+            
+        strcat(CompressedfileName,storage);
+        free(storage);
     }
+    
+    dotPtr = strrchr(CompressedfileName,'.'); //find last dot '.'
+    if (dotPtr != NULL)
+        memmove(dotPtr,".LZ",strlen(dotPtr)+1); //change the file format to .LZ
     else
-        strcat(CompressedfileName,".LZ");
+        strcat(CompressedfileName,".LZ"); //make the file format to .LZ
+        
 }
+

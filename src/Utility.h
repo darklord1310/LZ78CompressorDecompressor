@@ -6,5 +6,5 @@ typedef enum { Fixed,
              } Mode;
              
 int determineNumberOfBitsRequired(int index) ;
-void renameCompressedFile(char *InfileName,char *CompressedName);
+void renameCompressedFile(char *InfileName,char *CompressedName,int mode);
 #endif // Utility_H

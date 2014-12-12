@@ -5,8 +5,8 @@
 void LZ78_CompressorDecompressor(char *InfileName,char *OutfileName,int dictSize,int mode)
 {
 	char *CompressedfileName ;
-    CompressedfileName = calloc(strlen(InfileName)+4,sizeof(char));    
-	renameCompressedFile(InfileName,CompressedfileName);
+    CompressedfileName = calloc(strlen(InfileName)+20,sizeof(char));    
+	renameCompressedFile(InfileName,CompressedfileName,mode);
     
 	InStream *in = initInStream();
     OutStream *out = initOutStream();

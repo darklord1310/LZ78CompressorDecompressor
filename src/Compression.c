@@ -25,11 +25,8 @@ void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out, int m
         readByte[0] = (char)(streamReadBits(in,8));
 
         if (checkEndOfFile(in)) // if EOF encountered
-        {
-            EOFstate = 1;
-            LZ78_Output(dictionary,out,0,0,EOFstate,mode); // produce output 0
             break;  // break loop
-        }
+            
         if(isDictionaryFull(dictionary))
             refreshDictionaryEntryData(dictionary,dictionary->dictionarySize);
 
@@ -58,10 +55,7 @@ void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out, int m
         }
 
         if (EOFstate == 1) //EOF encountered previously
-        {
-            LZ78_Output(dictionary,out,0,0,EOFstate,mode); // produce output 0
             break;
-        }
     }
 
 }
