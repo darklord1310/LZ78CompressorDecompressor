@@ -68,13 +68,13 @@ void test_LZ78_Output_Fixed_mode_given_outputByte_A_index_10_EOFstate_1_should_o
     LZ78_Output(&dict,&out,'A',10,1,Fixed);
 }
 
-void test_LZ78_Output_Variable_mode_given_outputByte_A_index_3_EOFstate_0_dict_index_7_should_output_3_3bits_A()
+void test_LZ78_Output_Variable_mode_given_outputByte_A_index_10_EOFstate_0_dict_index_7_should_output_4bits_10__A()
 {
     Dictionary dict ;
     OutStream out ;
 
     dict.currentIndex = 7 ;
-    streamWriteBits_Expect(&out,10,3);
+    streamWriteBits_Expect(&out,10,4);
     streamWriteBits_Expect(&out,'A',8);
 
     LZ78_Output(&dict,&out,'A',10,0,Variable);
