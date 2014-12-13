@@ -101,6 +101,33 @@ void test_AddDataToDictionary_given_1a_2b_and_size_is_smaller_than_data_written_
 }
 
 
+
+/*test case when dictionary is not full, and try to add a binary number into dictionary
+ *
+ *  Given input = 1 01 2 4f
+ */
+void xtest_AddDataToDictionary_given_1_01_2_4f_and_size_is_larger_than_data_written_should_add_into_dictionary_correctly()
+{
+    int value;
+    Dictionary *dict = initDictionary(10);
+    
+    value = AddDataToDictionary(dict, 1 , 0x00   );
+    TEST_ASSERT_EQUAL(1, value);
+    TEST_ASSERT_EQUAL(1, dict->currentIndex);
+    TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
+
+   
+    value = AddDataToDictionary(dict, 2 , 0x4E   );
+    TEST_ASSERT_EQUAL(1, value);
+    TEST_ASSERT_EQUAL(2, dict->currentIndex);
+    TEST_ASSERT_EQUAL(2 ,dict->Entry[1].entrySize);
+    printf("%s\n", dict->Entry[1].data);  
+    TEST_ASSERT_EQUAL( (char)0x014f , dict->Entry[1].data );
+
+}
+
+
+
 //test case when dictionary is not full for decompression when index contain all zeroes only
 void test_Decompression_given_1a1b1c_and_when_dictionary_is_not_full_should_decompress_correctly_into_abc()
 {
