@@ -2,16 +2,20 @@
 #include <string.h>
 #include "malloc.h"
 
-int determineNumberOfBitsRequired(int index)
+int determineNumberOfBitsRequired(int value,int dictionaryIndex)
 {
     int count = 0;
     
-    if (index == 0 )
+    if (value > dictionaryIndex)
+        dictionaryIndex = value ;
+    
+    if (dictionaryIndex == 0 )
         return 1;
     
-    while (index != 0) {
+    while (dictionaryIndex!= 0) 
+    {
         count++;
-        index = index >> 1;
+        dictionaryIndex = dictionaryIndex >> 1;
     }
     return count;
 }
