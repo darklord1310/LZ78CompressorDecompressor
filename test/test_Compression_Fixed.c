@@ -13,37 +13,37 @@ void tearDown(void)
 {
 }
 
-void test_compare_DictionaryData_given_input_AA_and_dictionaryEntry5_contains_AA_should_return_5()
+void test_compare_DictionaryData_given_input_AA_bytesToCompare_2_and_dictionaryEntry5_contains_AA_should_return_5()
 {
     Dictionary *dict = initDictionary(10);
 
-    addEntryData(dict, "aA");
-    addEntryData(dict, "Aa");
-    addEntryData(dict, "bB");
-    addEntryData(dict, "Bb");
-    addEntryData(dict, "cC");
-    addEntryData(dict, "AA");
-    addEntryData(dict, "AA");
-    addEntryData(dict, "a");
+    addEntryData(dict, "aA",2);
+    addEntryData(dict, "Aa",2);
+    addEntryData(dict, "bB",2);
+    addEntryData(dict, "Bb",2);
+    addEntryData(dict, "cC",2);
+    addEntryData(dict, "AA",2);
+    addEntryData(dict, "AA",2);
+    addEntryData(dict, "a",2);
 
-    TEST_ASSERT_EQUAL(5,compare_DictionaryData("AA",dict));
+    TEST_ASSERT_EQUAL(5,compare_DictionaryData("AA",dict,2));
     destroyDictionary(dict,10);
 }
 
-void test_compare_DictionaryData_given_input_CCC_and_dictionary_doesnt_contains_CCC_should_return_minus_1()
+void test_compare_DictionaryData_given_input_cCC_bytesToCompare_3_and_dictionary_doesnt_contains_CCC_should_return_minus_1()
 {
     Dictionary *dict = initDictionary(10);
 
-    addEntryData(dict, "aA");
-    addEntryData(dict, "Aa");
-    addEntryData(dict, "bB");
-    addEntryData(dict, "Bb");
-    addEntryData(dict, "cC");
-    addEntryData(dict, "AA");
-    addEntryData(dict, "AA");
-    addEntryData(dict, "a");
+    addEntryData(dict, "aA",2);
+    addEntryData(dict, "Aa",2);
+    addEntryData(dict, "bB",2);
+    addEntryData(dict, "Bb",2);
+    addEntryData(dict, "cC",2);
+    addEntryData(dict, "AA",2);
+    addEntryData(dict, "AA",2);
+    addEntryData(dict, "a",2);
 
-    TEST_ASSERT_EQUAL(-1,compare_DictionaryData("CCC",dict));
+    TEST_ASSERT_EQUAL(-1,compare_DictionaryData("cCC",dict,3));
     destroyDictionary(dict,10);
 }
 
@@ -81,28 +81,31 @@ void test_LZ78_Output_Variable_mode_given_outputByte_A_index_3_EOFstate_0_dict_i
 }
 
 
-void test_merge_InputDataDictionaryData_given_Hello_dictionary_index_5_contains_World_should_return_HelloWorld()
+void test_copy_DictionaryDataInputData_given_Hello_dictionary_index_5_contains_World_should_return_HelloWorld()
 {
     char outputString[100] = "Hello" ;
     Dictionary *dict = initDictionary(10);
     dict->Entry[5].data = "World" ;
+    dict->Entry[5].entrySize = 5 ;
 
-    merge_InputDataDictionaryData(outputString,dict,5);
+   copy_DictionaryDataInputData(outputString,dict,5);
 
-    TEST_ASSERT_EQUAL_STRING("HelloWorld",outputString);
+    TEST_ASSERT_EQUAL_STRING("World",outputString);
 }
 
 void test_findLastMatchEntry_given_readByte_contain_A_input_AB_dictionary_contains_A_AA_respectively_should_return_index_1_byte_B_string_AAB()
 {
     char dataString[1024] ;
     char readByte[2] = "A";
-    int returnedIndex = 0,EOFstate = 0 , result;
+    int returnedIndex = 0,EOFstate = 0 , result ,dataStringSize;
 
     Dictionary *dict = initDictionary(10);
     InStream in ;
 
     dict->Entry[0].data = "A" ;
+    dict->Entry[0].entrySize = 1;
     dict->Entry[1].data = "AA" ;
+    dict->Entry[1].entrySize = 2;
     dict->currentIndex = 2 ;
 
     streamReadBits_ExpectAndReturn(&in,8,'A');
@@ -110,12 +113,13 @@ void test_findLastMatchEntry_given_readByte_contain_A_input_AB_dictionary_contai
     streamReadBits_ExpectAndReturn(&in,8,'B');
     checkEndOfFile_ExpectAndReturn(&in,0);
 
-    result = findLastMatchEntry(dict,&in,dataString,readByte,returnedIndex, &EOFstate);
+    result = findLastMatchEntry(dict,&in,dataString,&dataStringSize,readByte,returnedIndex, &EOFstate);
 
     TEST_ASSERT_EQUAL(1,result);
     TEST_ASSERT_EQUAL('B',readByte[0]);
     TEST_ASSERT_EQUAL(0,EOFstate);
     TEST_ASSERT_EQUAL_STRING("AAB",dataString);
+    TEST_ASSERT_EQUAL(3,dataStringSize);
 
     destroyDictionary(dict,10);
 }
@@ -124,24 +128,27 @@ void test_findLastMatchEntry_given_readByte_contain_A_input_empty_dictionary_con
 {
     char dataString[1024] ;
     char readByte[2] = "A";
-    int returnedIndex = 0,EOFstate = 0 , result;
+    int returnedIndex = 0,EOFstate = 0 , result,dataStringSize;
 
     Dictionary *dict = initDictionary(10);
     InStream in ;
 
     dict->Entry[0].data = "A" ;
+    dict->Entry[0].entrySize = 1;
     dict->Entry[1].data = "AA" ;
+    dict->Entry[1].entrySize = 2;
     dict->currentIndex = 2 ;
 
     streamReadBits_ExpectAndReturn(&in,8,EOF);
     checkEndOfFile_ExpectAndReturn(&in,1);
 
-    result = findLastMatchEntry(dict,&in,dataString,readByte,returnedIndex, &EOFstate);
+    result = findLastMatchEntry(dict,&in,dataString,&dataStringSize,readByte,returnedIndex, &EOFstate);
 
     TEST_ASSERT_EQUAL(0,result);
     TEST_ASSERT_EQUAL(EOF,readByte[0]);
     TEST_ASSERT_EQUAL(1,EOFstate);
     TEST_ASSERT_EQUAL_STRING("A",dataString);
+    TEST_ASSERT_EQUAL(1,dataStringSize);
 
     destroyDictionary(dict,10);
 }

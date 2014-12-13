@@ -20,8 +20,10 @@ Dictionary *initDictionary(int dictSize)
     dict->Entry = calloc( dictSize, sizeof(DictionaryEntry) );
     
     for(i = 0 ; i < dictSize ; i ++ )
-       dict->Entry[i].data = calloc( 4096, sizeof(char) );
-    
+    {
+        dict->Entry[i].data = calloc( 4096, sizeof(char) );
+        dict->Entry[i].entrySize = 0 ;
+    }
     dict->dictionarySize = dictSize;
     dict->currentIndex = 0;
     
@@ -39,13 +41,13 @@ Dictionary *initDictionary(int dictSize)
  * Return 1 if data has been successfully added
  * Return 0 if data is not added due to full dictionary
  */
-int addEntryData(Dictionary *dictionary, char *EntryDataToAdd)
+int addEntryData(Dictionary *dictionary, char *EntryDataToAdd,int size)
 {
     int index = dictionary->currentIndex ;
     if( !isDictionaryFull(dictionary) )
     {
-        strcpy(dictionary->Entry[index].data , EntryDataToAdd);
-        dictionary->Entry[index].entrySize = getSizeOfString(EntryDataToAdd);
+        memcpy(dictionary->Entry[index].data , EntryDataToAdd,size);
+        dictionary->Entry[index].entrySize += size ;
         dictionary->currentIndex++;
         
         return 1 ;
