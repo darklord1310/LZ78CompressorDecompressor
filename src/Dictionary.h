@@ -19,7 +19,7 @@ struct Dictionary
 
 Dictionary *initDictionary(int dictSize);
 
-int addEntryData(Dictionary *dictionary, char *EntryDataToAdd);
+int addEntryData(Dictionary *dictionary, char *EntryDataToAdd,int size);
 int isDictionaryFull(Dictionary *dictionary);
 int isDictionaryEmpty(Dictionary *dictionary);
 int getSizeOfString(char *string);

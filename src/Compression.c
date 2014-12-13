@@ -18,7 +18,7 @@
 void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out, int mode)
 {
     char readByte[2] ={}, dataString[1024] ;
-    int returnedIndex, lastIndex, EOFstate = 0 , i = 0;
+    int returnedIndex, lastIndex, EOFstate = 0 , i = 0 ,dataStringSize;
 
     while (1)
     {
@@ -32,24 +32,24 @@ void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out, int m
 
         if(isDictionaryEmpty(dictionary)) // if dictionary is empty
         {
-            addEntryData(dictionary, readByte); // directly add it into dictionary
+            addEntryData(dictionary, readByte,1); // directly add it into dictionary
             LZ78_Output(dictionary,out,readByte[0],1,EOFstate,mode); // output (1,x) *without ()
         }
         else // dictionary is not empty
         {
-            returnedIndex = compare_DictionaryData(readByte,dictionary); //check is there any matched data in dictionaryEntry
+            returnedIndex = compare_DictionaryData(readByte,dictionary,1); //check is there any matched data in dictionaryEntry
             if ( returnedIndex >= 0 ) // if true
             {
-                lastIndex = findLastMatchEntry(dictionary,in,dataString,readByte,returnedIndex, &EOFstate);
+                lastIndex = findLastMatchEntry(dictionary,in,dataString,&dataStringSize,readByte,returnedIndex, &EOFstate);
 
                 if (EOFstate != 1)//prevent adding EOF into dictionary
-                    addEntryData(dictionary,dataString); // add dataString into dictionary
+                    addEntryData(dictionary,dataString,dataStringSize); // add dataString into dictionary
 
                 LZ78_Output(dictionary,out,readByte[0],lastIndex+2,EOFstate,mode); // produce output (lastIndex+1 , X) *without ()
             }
             else // no matched data
             {
-                addEntryData(dictionary,readByte);
+                addEntryData(dictionary,readByte,1);
                 LZ78_Output(dictionary,out,readByte[0],1,EOFstate,mode); // output (1,x) *without ()
             }
         }
@@ -96,28 +96,34 @@ void LZ78_Output(Dictionary *dictionary,OutStream *out,char outputByte,int index
  * 				Return -1 if not found
  *
  */
-int compare_DictionaryData(char *inputString,Dictionary *dictionary)
+int compare_DictionaryData(char *inputString,Dictionary *dictionary,int bytesToCompare)
 {
     int i ;
 
+   
+    
     for ( i = 0 ; i < (dictionary->currentIndex) ; i ++ )
     {
-        if (strcmp(inputString,(dictionary->Entry[i].data)) == 0)
+
+        if (memcmp(inputString,(dictionary->Entry[i].data),bytesToCompare) == 0)
             return i ;
     }
 
     return (-1);
 }
 
-/*  Merge data in the selected index of dictionaryEntry with input data
+/*  Copy data in the selected index of dictionaryEntry to input data
+ *
  *
  *	Input :	inputString	:	dataString is the pointer to the input data
- *		  	dictionary	:	dictionary is the pointer to the LZ78 dictionary which contains the data to be merged with
+ *		  	dictionary	:	dictionary is the pointer to the LZ78 dictionary which contains the data to be copied
  *           index       :   index of the dictionary containing the desired data
  */
-void merge_InputDataDictionaryData(char *inputString,Dictionary *dictionary,int index)
+void copy_DictionaryDataInputData(char *inputString,Dictionary *dictionary,int index)
 {
-   strcat(inputString,dictionary->Entry[index].data);
+   int bytesToCopy =  dictionary->Entry[index].entrySize ;
+   
+   memcpy(inputString,dictionary->Entry[index].data,bytesToCopy);
 }
 
 
@@ -133,13 +139,14 @@ void merge_InputDataDictionaryData(char *inputString,Dictionary *dictionary,int 
  *  Output :	Return index of last match entry
  *
  */
-int findLastMatchEntry(Dictionary *dictionary, InStream *in, char *dataString, char *readByte, int returnedIndex, int *EOFstate)
+int findLastMatchEntry(Dictionary *dictionary, InStream *in, char *dataString,int *dataStringSize, char *readByte, int returnedIndex, int *EOFstate)
 {
     int lastIndex = returnedIndex ; // store the index of first match in dictionaryEntry
 
     memset (dataString,0,1024); //clear dataString
-    merge_InputDataDictionaryData(dataString,dictionary,lastIndex); //merge input character with data in dictionary
-
+    copy_DictionaryDataInputData(dataString,dictionary,lastIndex); //merge input character with data in dictionary
+    *dataStringSize = dictionary->Entry[lastIndex].entrySize ; // get the size of dataString
+    
     while(returnedIndex != -1)
     {
         readByte[0] = (char)(streamReadBits(in,8)) ;// read next character
@@ -151,8 +158,9 @@ int findLastMatchEntry(Dictionary *dictionary, InStream *in, char *dataString, c
         }
         else
         {
-            strcat(dataString,readByte); //add next character to dataString
-            returnedIndex = compare_DictionaryData(dataString,dictionary); //check again is there any matched data
+            memcpy( (dataString+*dataStringSize),readByte,1); //add next character to dataString
+            *dataStringSize += 1; //increment dataStringSize
+            returnedIndex = compare_DictionaryData(dataString,dictionary,*dataStringSize); //check again is there any matched data
 
             if (returnedIndex != -1 )  // if there is still existing a match in dictionaryEntry
                 lastIndex = returnedIndex ; // store the index of last match in dictionaryEntry

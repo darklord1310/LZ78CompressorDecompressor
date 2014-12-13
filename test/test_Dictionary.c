@@ -107,10 +107,11 @@ void test_addEntry_given_string_zzz_should_return_1_and_currentIndex_should_poin
 {
     Dictionary *dict = initDictionary(3);
     
-    TEST_ASSERT_EQUAL(1,addEntryData(dict, "zzz"));
+    TEST_ASSERT_EQUAL(1,addEntryData(dict, "zzz",3));
     
     TEST_ASSERT_EQUAL(1,dict->currentIndex);
     TEST_ASSERT_EQUAL_STRING("zzz",dict->Entry[0].data);
+    TEST_ASSERT_EQUAL(3,dict->Entry[0].entrySize);
 
     destroyDictionary(dict,3);
 }
@@ -120,8 +121,8 @@ void test_addEntry_given_string_a_currentIndex_3_should_return_0_for_failure_to_
     Dictionary *dict = initDictionary(3);
     dict->currentIndex = 3 ;
     
-    TEST_ASSERT_EQUAL(0,addEntryData(dict, "a"));
-    
+    TEST_ASSERT_EQUAL(0,addEntryData(dict, "a",1));
+    TEST_ASSERT_EQUAL(0,dict->Entry[0].entrySize);
 
     destroyDictionary(dict,3);
 }
