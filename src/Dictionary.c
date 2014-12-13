@@ -41,13 +41,13 @@ Dictionary *initDictionary(int dictSize)
  * Return 1 if data has been successfully added
  * Return 0 if data is not added due to full dictionary
  */
-int addEntryData(Dictionary *dictionary, char *EntryDataToAdd,int size)
+int addEntryData(Dictionary *dictionary, char *EntryDataToAdd, int size)
 {
     int index = dictionary->currentIndex ;
     if( !isDictionaryFull(dictionary) )
     {
         memcpy(dictionary->Entry[index].data , EntryDataToAdd,size);
-        dictionary->Entry[index].entrySize += size ;
+        dictionary->Entry[index].entrySize = size ;
         dictionary->currentIndex++;
         
         return 1 ;
@@ -143,14 +143,7 @@ void refreshDictionaryEntryData(Dictionary *dictionary,int dictSize)
  */
 void destroyDictionary(Dictionary *dictionary,int dictSize)
 {
-    int i  ;
-    
-    // for ( i = 0 ; i < usedSize ; i ++ )  
-    // {
-        // free(&(dictionary->Entry[i].data));
-        // free(&(dictionary->Entry[i])); 
-    // }  
-    
+
     free(dictionary);
 }
 

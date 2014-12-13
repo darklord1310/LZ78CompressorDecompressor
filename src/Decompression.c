@@ -185,10 +185,10 @@ void Decompression(OutStream *out, unsigned int index, unsigned int data, Dictio
     else                                                        //if index is not 1
     {   
         memset (string,0,4096);                                 //clear string
-        strcpy(string,dictionary->Entry[index-2].data);
-        strcat(string, convertedData);                          //combined the string with the data
-        
-        for(i=0; i < strlen(string); i++)
+        memcpy(string , dictionary->Entry[index-2].data , dictionary->Entry[index-2].entrySize);
+        memmove(string + dictionary->Entry[index-2].entrySize, convertedData, 1);       //combined the string with the data
+
+        for(i=0; i < dictionary->Entry[index-2].entrySize +1; i++)
             streamWriteBits(out, (unsigned int)(string[i]), 8);
     }
 
@@ -213,9 +213,8 @@ void Decompression(OutStream *out, unsigned int index, unsigned int data, Dictio
 int AddDataToDictionary(Dictionary *dictionary, unsigned int index, unsigned int data)
 {
     char *convertedData = (char *)(&data);
-    // unsigned int mergedData;
     char string[4096];
-    int status;
+    int status, i;
     
     assert(index > 0);
     if(dictionary->currentIndex == dictionary->dictionarySize)
@@ -223,21 +222,33 @@ int AddDataToDictionary(Dictionary *dictionary, unsigned int index, unsigned int
     
     if( index-1 == 0)
     {
-        status = addEntryData(dictionary, convertedData); 
+        status = addEntryData(dictionary, convertedData, 1); 
         assert(status == 1);
 
     }
     else
     {
         memset (string,0,4096);                     //clear string
-        strcpy(string,dictionary->Entry[index-2].data);
-        strcat(string, convertedData);
-        status = addEntryData(dictionary, string);
+        memcpy(string , dictionary->Entry[index-2].data , dictionary->Entry[index-2].entrySize);
+        memmove(string + dictionary->Entry[index-2].entrySize, convertedData, 1);
+        status = addEntryData(dictionary, string, dictionary->Entry[index-2].entrySize + 1);
         assert(status == 1);
     }
 }
 
 
+
+
+/*
+ * This function will determine how many bits is needed to read for the index
+ *
+ * Input :    dictionary is the pointer to the Dictionary structure
+ *					
+ *
+ * Return:
+ *           the number of bits that needed to read
+ *          
+ */
 unsigned int getVariableIndex(Dictionary *dictionary)
 {
     int count = 0;
@@ -266,8 +277,8 @@ unsigned int getVariableIndex(Dictionary *dictionary)
     of the file pointer which is not needed in the new algorithm.
    
     The old algorithm flow:
-                            build the dictionary until  _______\        Start to decompress     _______\    If full repeat, until dictionary
-                                it is full                     /                                       /            is not full
+                            build the dictionary until  _______\        Start to decompress     _______\    If full reset and repeat, until dictionary
+                                it is full                     /                                       /            is not overflow
 
     New algorithm flow    :
                             build the dictionary for    _______\       Decompress              ________\    If dictionary full, reset    _______\  If EOF not encounter, repeat
