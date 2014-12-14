@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 
-/* Modified LZ78 Compressor 
+/* Modified LZ78 Compressor
  *
  *  Index 0 is used to represent EOF for decompression usage
  *  Index 1 is used to represent data not found in dictionary
@@ -26,7 +26,7 @@ void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out, int m
 
         if (checkEndOfFile(in)) // if EOF encountered
             break;  // break loop
-            
+
         if(isDictionaryFull(dictionary))
             refreshDictionaryEntryData(dictionary,dictionary->dictionarySize);
 
@@ -77,7 +77,7 @@ void LZ78_Output(Dictionary *dictionary,OutStream *out,char outputByte,int index
     if (mode == Fixed)
         bitsRequired = 16 ;
     else if (mode == Variable)
-        bitsRequired = determineNumberOfBitsRequired(dictionary->currentIndex);
+        bitsRequired = determineNumberOfBitsRequired(index,dictionary->currentIndex);
 
     streamWriteBits(out,index,bitsRequired);
     if (EOFstate == 0 ) // prevent writing EOF to file
@@ -89,8 +89,9 @@ void LZ78_Output(Dictionary *dictionary,OutStream *out,char outputByte,int index
  *  Compare data in the dictionary with input data
  *
  *
- *	Input :	inputString	:	inputString is the pointer to the input data
- *		  	dictionary	:	dictionary is the pointer to the LZ78 dictionary
+ *	Input :	inputString     :	inputString is the pointer to the input data
+ *		  	dictionary      :	dictionary is the pointer to the LZ78 dictionary
+ *          bytesToCompare  :   bytesToCompare is used to indicate how many byte/bytes is/are to be compared
  *
  *	Output :	Return index of match entry if found
  * 				Return -1 if not found
@@ -98,15 +99,34 @@ void LZ78_Output(Dictionary *dictionary,OutStream *out,char outputByte,int index
  */
 int compare_DictionaryData(char *inputString,Dictionary *dictionary,int bytesToCompare)
 {
-    int i ;
+    int i , encounteredIndex = -1;
 
-   
-    
+
+
     for ( i = 0 ; i < (dictionary->currentIndex) ; i ++ )
     {
-
         if (memcmp(inputString,(dictionary->Entry[i].data),bytesToCompare) == 0)
-            return i ;
+        {
+            if (bytesToCompare > dictionary->Entry[i].entrySize ) //NULL case exception handler
+            {
+
+                while(bytesToCompare != dictionary->Entry[i].entrySize && i <= (dictionary->currentIndex) )
+                {
+                    i ++ ; //increment to next entry
+
+                    if (i < (dictionary->currentIndex) ) //current entry is not empty and haven't reach the first encountered empty entry
+                    {
+                        if (memcmp(inputString,(dictionary->Entry[i].data),bytesToCompare) == 0) // compare again
+                            encounteredIndex = i ; //store the index of match entry again and again if there is
+                    }
+                    else //current entry is empty or reach the first encountered empty entry
+                        encounteredIndex = -1; //return -1 for not found
+                }
+                return  encounteredIndex ;
+            }
+            else
+                return i ;
+        }
     }
 
     return (-1);
@@ -117,24 +137,25 @@ int compare_DictionaryData(char *inputString,Dictionary *dictionary,int bytesToC
  *
  *	Input :	inputString	:	dataString is the pointer to the input data
  *		  	dictionary	:	dictionary is the pointer to the LZ78 dictionary which contains the data to be copied
- *           index       :   index of the dictionary containing the desired data
+ *          index       :   index of the dictionary containing the desired data
  */
 void copy_DictionaryDataInputData(char *inputString,Dictionary *dictionary,int index)
 {
    int bytesToCopy =  dictionary->Entry[index].entrySize ;
-   
+
    memcpy(inputString,dictionary->Entry[index].data,bytesToCopy);
 }
 
 
 /*  Continuously read byte and find last match of the data in the dictionary
  *
- *	Input :	dictionary	:	dictionary is the pointer to the LZ78 dictionary which contains the data to be compared
- *           in          :   in is the pointer to InStream for reading a byte purpose
- *           dataString	:	dataString is used later to add the missing data into the dictionary
- *           readByte	:	readByte is used to output the byte of data in LZ78_Output
- *           returnedIndex : returnedIndex contains the first index of the match dictionaryEntry
- *           EOFstate    :   EOFstate is used to remember EOF has been encountered
+ *	Input :	dictionary	    :	dictionary is the pointer to the LZ78 dictionary which contains the data to be compared
+ *          in              :   in is the pointer to InStream for reading a byte purpose
+ *          dataString	    :	dataString is used later to add the missing data into the dictionary
+ *          dataStringSize  :   dataStringSize is used to store the size of the string and will be recorded into dictionaryEntry
+ *          readByte	    :	readByte is used to output the byte of data in LZ78_Output
+ *          returnedIndex   :   returnedIndex contains the first index of the match dictionaryEntry
+ *          EOFstate        :   EOFstate is used to remember EOF has been encountered
  *
  *  Output :	Return index of last match entry
  *
@@ -146,7 +167,6 @@ int findLastMatchEntry(Dictionary *dictionary, InStream *in, char *dataString,in
     memset (dataString,0,1024); //clear dataString
     copy_DictionaryDataInputData(dataString,dictionary,lastIndex); //merge input character with data in dictionary
     *dataStringSize = dictionary->Entry[lastIndex].entrySize ; // get the size of dataString
-    
     while(returnedIndex != -1)
     {
         readByte[0] = (char)(streamReadBits(in,8)) ;// read next character
@@ -161,7 +181,6 @@ int findLastMatchEntry(Dictionary *dictionary, InStream *in, char *dataString,in
             memcpy( (dataString+*dataStringSize),readByte,1); //add next character to dataString
             *dataStringSize += 1; //increment dataStringSize
             returnedIndex = compare_DictionaryData(dataString,dictionary,*dataStringSize); //check again is there any matched data
-
             if (returnedIndex != -1 )  // if there is still existing a match in dictionaryEntry
                 lastIndex = returnedIndex ; // store the index of last match in dictionaryEntry
         }

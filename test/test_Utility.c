@@ -9,38 +9,53 @@ void setUp(void)
 void tearDown(void)
 {
 }
-
-void test_determineNumberOfBitsRequired_given_0_should_return_1()
+/*Value <= dictionaryIndex*/
+/*Value <= dictionaryIndex*/
+void test_determineNumberOfBitsRequired_given_dictIndex_0_should_return_1()
 {
-    TEST_ASSERT_EQUAL(1,determineNumberOfBitsRequired(0));
+    TEST_ASSERT_EQUAL(1,determineNumberOfBitsRequired(0,0));
 
 }
 
-void test_determineNumberOfBitsRequired_given_1_should_return_1()
+void test_determineNumberOfBitsRequired_given_dictIndex_1_should_return_1()
 {
-    TEST_ASSERT_EQUAL(1,determineNumberOfBitsRequired(1));
+    TEST_ASSERT_EQUAL(1,determineNumberOfBitsRequired(0,1));
 
 }
 
-void test_determineNumberOfBitsRequired_given_2_should_return_2()
+void test_determineNumberOfBitsRequired_given_dictIndex_2_should_return_2()
 {
-    TEST_ASSERT_EQUAL(2,determineNumberOfBitsRequired(2));
+    TEST_ASSERT_EQUAL(2,determineNumberOfBitsRequired(0,2));
 }
 
-void test_determineNumberOfBitsRequired_given_5_should_return_3()
+void test_determineNumberOfBitsRequired_given_dictIndex_5_should_return_3()
 {
-    TEST_ASSERT_EQUAL(3,determineNumberOfBitsRequired(5));
+    TEST_ASSERT_EQUAL(3,determineNumberOfBitsRequired(0,5));
 }
 
-void test_determineNumberOfBitsRequired_given_8_should_return_4()
+void test_determineNumberOfBitsRequired_given_dictIndex_8_should_return_4()
 {
-    TEST_ASSERT_EQUAL(4,determineNumberOfBitsRequired(8));
+    TEST_ASSERT_EQUAL(4,determineNumberOfBitsRequired(0,8));
 }
 
-void test_determineNumberOfBitsRequired_given_4096_should_return_12()
+void test_determineNumberOfBitsRequired_given_dictIndex_4096_should_return_13()
 {
-    TEST_ASSERT_EQUAL(13,determineNumberOfBitsRequired(4096));
+    TEST_ASSERT_EQUAL(13,determineNumberOfBitsRequired(0,4096));
 }
+
+/*Value > dictionaryIndex*/
+/*Value > dictionaryIndex*/
+void test_determineNumberOfBitsRequired_given_value_2_dictIndex_1_should_return_2()
+{
+    TEST_ASSERT_EQUAL(2,determineNumberOfBitsRequired(2,1));
+}
+
+
+void test_determineNumberOfBitsRequired_given_value_4_dictIndex_2_should_return_3()
+{
+    TEST_ASSERT_EQUAL(3,determineNumberOfBitsRequired(4,2));
+}
+
 
 void test_renameCompressedFile_given_abc_dot_txt_should_rename_to_abc_dot_LZ()
 {

@@ -68,13 +68,13 @@ void test_LZ78_Output_Fixed_mode_given_outputByte_A_index_10_EOFstate_1_should_o
     LZ78_Output(&dict,&out,'A',10,1,Fixed);
 }
 
-void test_LZ78_Output_Variable_mode_given_outputByte_A_index_3_EOFstate_0_dict_index_7_should_output_3_3bits_A()
+void test_LZ78_Output_Variable_mode_given_outputByte_A_index_10_EOFstate_0_dict_index_7_should_output_4bits_10__A()
 {
     Dictionary dict ;
     OutStream out ;
 
     dict.currentIndex = 7 ;
-    streamWriteBits_Expect(&out,10,3);
+    streamWriteBits_Expect(&out,10,4);
     streamWriteBits_Expect(&out,'A',8);
 
     LZ78_Output(&dict,&out,'A',10,0,Variable);
@@ -349,4 +349,61 @@ void test_LZ78_Compressor_given_input_CR_LF_LF_A_should_output_1CR_1LF_3A()
     TEST_ASSERT_EQUAL('A',dict->Entry[2].data[1]);
 
     destroyDictionary(dict,10);
+}
+
+
+void test_LZ78_Compressor_given_9x_NULL_should_return_1NULL_2NULL_3NULL_4()
+{
+    Dictionary *dict = initDictionary(10);
+    InStream in ;
+    OutStream out ;
+    char dataString1[1] = {} , dataString2[2] = {} , dataString3[3] = {} ;
+    
+    /*Dictionary Entry 0 will Contains 0 EntrySize : 1*/
+    streamReadBits_ExpectAndReturn(&in,8,0);
+    checkEndOfFile_ExpectAndReturn(&in,0);
+    streamWriteBits_Expect(&out,1,16);
+    streamWriteBits_Expect(&out,0,8);
+
+    /*Dictionary Entry 1 will Contains 00 EntrySize : 2*/
+    streamReadBits_ExpectAndReturn(&in,8,0);
+    checkEndOfFile_ExpectAndReturn(&in,0);
+    streamReadBits_ExpectAndReturn(&in,8,0);
+    checkEndOfFile_ExpectAndReturn(&in,0);
+    streamWriteBits_Expect(&out,2,16);
+    streamWriteBits_Expect(&out,0,8);
+
+    /*Dictionary Entry 2 will Contains 000 EntrySize : 3*/
+    streamReadBits_ExpectAndReturn(&in,8,0);
+    checkEndOfFile_ExpectAndReturn(&in,0);
+    streamReadBits_ExpectAndReturn(&in,8,0);
+    checkEndOfFile_ExpectAndReturn(&in,0);
+    streamReadBits_ExpectAndReturn(&in,8,0);
+    checkEndOfFile_ExpectAndReturn(&in,0);
+    streamWriteBits_Expect(&out,3,16);
+    streamWriteBits_Expect(&out,0,8);
+
+    streamReadBits_ExpectAndReturn(&in,8,0);
+    checkEndOfFile_ExpectAndReturn(&in,0);
+    streamReadBits_ExpectAndReturn(&in,8,0);
+    checkEndOfFile_ExpectAndReturn(&in,0);
+    streamReadBits_ExpectAndReturn(&in,8,0);
+    checkEndOfFile_ExpectAndReturn(&in,0);
+    streamReadBits_ExpectAndReturn(&in,8,EOF);
+    checkEndOfFile_ExpectAndReturn(&in,1);
+    streamWriteBits_Expect(&out,4,16);
+
+    LZ78_Compressor(dict,&in,&out,Fixed);
+
+    
+    TEST_ASSERT_EQUAL(1,dict->Entry[0].entrySize);
+    TEST_ASSERT_EQUAL(0,memcmp(dataString1,(dict->Entry[0].data),1));
+    
+    TEST_ASSERT_EQUAL(2,dict->Entry[1].entrySize);
+    TEST_ASSERT_EQUAL(0,memcmp(dataString2,(dict->Entry[1].data),2));
+    
+    TEST_ASSERT_EQUAL(3,dict->Entry[2].entrySize);
+    TEST_ASSERT_EQUAL(0,memcmp(dataString3,(dict->Entry[0].data),3));
+    
+    destroyDictionary(dict,10);    
 }
