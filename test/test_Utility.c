@@ -2,6 +2,8 @@
 #include "Utility.h"
 #include <string.h>
 #include "malloc.h"
+#include "Stream.h"
+
 void setUp(void)
 {
 }

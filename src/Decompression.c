@@ -55,13 +55,12 @@ void LZ78_Decompression_Fixed(InStream *in, OutStream *out, Dictionary *dictiona
     while(1)
     {
         index = streamReadBits(in, 16);                                //read index
-        signedIndex = (int)index;                                      //convert it to a signed index
 
         if( checkEndOfFile(in)  )                                      //check is it a EOF, if yes break from the loop
             break;
             
         data = streamReadBits(in, 8);                                  //read data
-        
+
         if( checkEndOfFile(in)  )                                      //check is it a EOF, if yes 
         {
             assert( index != 1);
@@ -186,10 +185,12 @@ void Decompression(OutStream *out, unsigned int index, unsigned int data, Dictio
     {   
         memset (string,0,4096);                                 //clear string
         memcpy(string , dictionary->Entry[index-2].data , dictionary->Entry[index-2].entrySize);
-        memmove(string + dictionary->Entry[index-2].entrySize, convertedData, 1);       //combined the string with the data
+        memcpy(string + dictionary->Entry[index-2].entrySize, convertedData, 1);
 
-        for(i=0; i < dictionary->Entry[index-2].entrySize +1; i++)
+        for(i=0; i < dictionary->Entry[index-2].entrySize + 1; i++)
+        {
             streamWriteBits(out, (unsigned int)(string[i]), 8);
+        }
     }
 
 }
@@ -224,13 +225,12 @@ int AddDataToDictionary(Dictionary *dictionary, unsigned int index, unsigned int
     {
         status = addEntryData(dictionary, convertedData, 1); 
         assert(status == 1);
-
     }
     else
     {
         memset (string,0,4096);                     //clear string
         memcpy(string , dictionary->Entry[index-2].data , dictionary->Entry[index-2].entrySize);
-        memmove(string + dictionary->Entry[index-2].entrySize, convertedData, 1);
+        memcpy(string + dictionary->Entry[index-2].entrySize, convertedData, 1);
         status = addEntryData(dictionary, string, dictionary->Entry[index-2].entrySize + 1);
         assert(status == 1);
     }

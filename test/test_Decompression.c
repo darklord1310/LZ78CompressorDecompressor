@@ -512,3 +512,92 @@ void test_LZ78_Decompression_Variable_given_input_1a2b1b_and_size_of_2_should_de
     
     LZ78_Decompression_Variable(&in, &out, dict, infilename, outfilename, dictSize);
 }
+
+
+
+
+// test case for binary input when dictionary is not needed to be refresh 
+void test_LZ78_Decompression_Variable_given_input_1_00_2_4f_3_00_and_size_of_10_should_decompress_into_00_00_4f_00_4f_00()
+{
+    int dictSize = 10;
+    char *infilename = "anyfile_in.txt";
+    char *outfilename = "anyfile_out.txt";
+    Dictionary *dict;
+    InStream in;
+    OutStream out;
+    
+    // create test fixture
+    initInStream_ExpectAndReturn(&in);
+    initOutStream_ExpectAndReturn(&out);
+    openInStream_ExpectAndReturn(infilename, "rb+" , &in, &in);                       
+    openOutStream_ExpectAndReturn(outfilename, "wb+" , &out, &out); 
+    streamReadBits_ExpectAndReturn(&in, 1, 1);
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 0x00 );
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamWriteBits_Expect(&out, 0x00 , 8 );            //expect 0x00
+    streamReadBits_ExpectAndReturn(&in, 2, 2);
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 0x4f );
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamWriteBits_Expect(&out, 0x00 , 8 );             //expect 0x00
+    streamWriteBits_Expect(&out, 0x4f , 8 );             //expect 0x4f
+    streamReadBits_ExpectAndReturn(&in, 2, 3);
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 0x00 );       
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamWriteBits_Expect(&out, 0x00 , 8 );             //expect 0x00
+    streamWriteBits_Expect(&out, 0x4f , 8 );             //expect 0x4f
+    streamWriteBits_Expect(&out, 0x00 , 8 );             //expect 0x00
+    streamReadBits_ExpectAndReturn(&in, 3, EOF);
+    checkEndOfFile_ExpectAndReturn(&in, 1);
+    closeInStream_ExpectAndReturn(&in, &in);
+    closeOutStream_ExpectAndReturn(&out , &out);
+    freeInStream_Expect(&in);
+    freeOutStream_Expect(&out);
+    
+    LZ78_Decompression_Variable(&in, &out, dict, infilename, outfilename, dictSize);
+}
+
+
+
+// test case for binary input when dictionary is needed to be refresh 
+void test_LZ78_Decompression_Variable_given_input_1_00_2_4f_1_00_and_size_of_1_should_decompress_into_00_00_4f_00()
+{
+    int dictSize = 2;
+    char *infilename = "anyfile_in.txt";
+    char *outfilename = "anyfile_out.txt";
+    Dictionary *dict;
+    InStream in;
+    OutStream out;
+    
+    // create test fixture
+    initInStream_ExpectAndReturn(&in);
+    initOutStream_ExpectAndReturn(&out);
+    openInStream_ExpectAndReturn(infilename, "rb+" , &in, &in);                       
+    openOutStream_ExpectAndReturn(outfilename, "wb+" , &out, &out); 
+    streamReadBits_ExpectAndReturn(&in, 1, 1);
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 0x00 );
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamWriteBits_Expect(&out, 0x00 , 8 );            //expect 0x00
+    streamReadBits_ExpectAndReturn(&in, 2, 2);
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 0x4f );
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamWriteBits_Expect(&out, 0x00 , 8 );             //expect 0x00
+    streamWriteBits_Expect(&out, 0x4f , 8 );             //expect 0x4f
+    streamReadBits_ExpectAndReturn(&in, 1, 1);
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamReadBits_ExpectAndReturn(&in, 8, 0x00 );       
+    checkEndOfFile_ExpectAndReturn(&in, 0);
+    streamWriteBits_Expect(&out, 0x00 , 8 );             //expect 0x00
+    streamReadBits_ExpectAndReturn(&in, 2, EOF);
+    checkEndOfFile_ExpectAndReturn(&in, 1);
+    closeInStream_ExpectAndReturn(&in, &in);
+    closeOutStream_ExpectAndReturn(&out , &out);
+    freeInStream_Expect(&in);
+    freeOutStream_Expect(&out);
+    
+    LZ78_Decompression_Variable(&in, &out, dict, infilename, outfilename, dictSize);
+}

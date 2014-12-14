@@ -43,10 +43,10 @@ Dictionary *initDictionary(int dictSize)
  */
 int addEntryData(Dictionary *dictionary, char *EntryDataToAdd, int size)
 {
-    int index = dictionary->currentIndex ;
+    int index = dictionary->currentIndex;
     if( !isDictionaryFull(dictionary) )
     {
-        memcpy(dictionary->Entry[index].data , EntryDataToAdd,size);
+        memcpy(dictionary->Entry[index].data , EntryDataToAdd,size);                
         dictionary->Entry[index].entrySize = size ;
         dictionary->currentIndex++;
         

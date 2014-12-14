@@ -1,6 +1,7 @@
 #include "Utility.h"
 #include <string.h>
 #include "malloc.h"
+#include "Stream.h"
 
 int determineNumberOfBitsRequired(int value,int dictionaryIndex)
 {
@@ -50,3 +51,50 @@ void renameCompressedFile(char *InfileName,char *CompressedfileName,int mode)
         
 }
 
+
+/*      This function is used to determine the file size of 
+ *      two input files
+ *
+ *      Inputs:
+ *                  infilename1   the filename for input file 1
+ *                  infilename2   the filename for input file 2
+ *
+ *      Return:
+ *                  1   if the two files have the same size
+ *                  0   if the two files have a different size
+ */
+int verifyDecompressedFile(char *infilename1, char *infilename2)
+{
+    unsigned int value1, value2;
+    int counter1 = -1, counter2 = -1;
+    InStream *in1, *in2;
+    
+    in1 = initInStream();                                              
+    in2 = initInStream();                                              
+    
+    in1 = openInStream(infilename1, "rb+" , in1);                         
+    in2 = openInStream(infilename2, "rb+" , in2);                      
+    
+    do
+    {
+        value1 = streamReadBits(in1, 8);
+        counter1++;
+    }while(!checkEndOfFile(in1) );
+
+    do
+    {
+        value2 = streamReadBits(in2, 8);
+        counter2++;
+    }while(!checkEndOfFile(in2) );
+    
+    
+    closeInStream(in1);                                           
+    closeInStream(in2);   
+    freeInStream(in1);                                           
+    freeInStream(in2);        
+
+    if( counter2 == counter1)
+        return 1;
+    else
+        return 0;
+}
