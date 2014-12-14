@@ -146,6 +146,7 @@ unsigned int streamReadBits(InStream *in, int bitSize)
         bitRead = streamReadBit(in);
         dataRead = dataRead | bitRead << i;
     }
+	
     return dataRead ;
 }
 
