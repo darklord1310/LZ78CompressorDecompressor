@@ -14,11 +14,11 @@
 Dictionary *initDictionary(int dictSize)
 {
     int i ;
-    
+
     Dictionary *dict;
     dict = malloc(sizeof(Dictionary));
     dict->Entry = calloc( dictSize, sizeof(DictionaryEntry) );
-    
+
     for(i = 0 ; i < dictSize ; i ++ )
     {
         dict->Entry[i].data = calloc( 4096, sizeof(char) );
@@ -26,10 +26,9 @@ Dictionary *initDictionary(int dictSize)
     }
     dict->dictionarySize = dictSize;
     dict->currentIndex = 0;
-    
+
     return dict;
 }
-
 
 /* *
  *  Add data to the current empty/available DictionaryEntry
@@ -46,16 +45,15 @@ int addEntryData(Dictionary *dictionary, char *EntryDataToAdd, int size)
     int index = dictionary->currentIndex;
     if( !isDictionaryFull(dictionary) )
     {
-        memcpy(dictionary->Entry[index].data , EntryDataToAdd,size);                
+        memcpy(dictionary->Entry[index].data , EntryDataToAdd,size);
         dictionary->Entry[index].entrySize = size ;
         dictionary->currentIndex++;
-        
+
         return 1 ;
     }
     else
         return 0 ;
 }
-
 
 /**
  *  Check if the dictionary is full based on currentIndex
@@ -69,7 +67,7 @@ int isDictionaryFull(Dictionary *dictionary)
 {
     if( dictionary->currentIndex >= dictionary->dictionarySize )
         return 1 ;
-    else    
+    else
         return 0 ;
 
 }
@@ -86,7 +84,7 @@ int isDictionaryEmpty(Dictionary *dictionary)
 {
     if( dictionary->currentIndex == 0 )
         return 1 ;
-    else    
+    else
         return 0 ;
 }
 
@@ -100,13 +98,13 @@ int isDictionaryEmpty(Dictionary *dictionary)
 int getSizeOfString(char *string)
 {
 	int j=0,length=0;
-	
+
 	while ( string[j] != '\0')
 	{
 		length++;
 		j++;
 	}
-    
+
 	return length;
 }
 
@@ -121,16 +119,16 @@ int getSizeOfString(char *string)
 void refreshDictionaryEntryData(Dictionary *dictionary,int dictSize)
 {
     int i  ;
-   
+
     assert(dictSize <= 4096);
-    
+
     for ( i = 0 ; i < dictSize ; i ++ )
     {
         assert(i < 4096);
         memset (dictionary->Entry[i].data,0,4096);
         dictionary->Entry[i].entrySize = 0;
     }
-    
+
     dictionary->currentIndex = 0;
 }
 
@@ -143,7 +141,6 @@ void refreshDictionaryEntryData(Dictionary *dictionary,int dictSize)
  */
 void destroyDictionary(Dictionary *dictionary,int dictSize)
 {
-
     free(dictionary);
 }
 

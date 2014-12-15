@@ -23,7 +23,7 @@ void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out, int m
     while (1)
     {
         readByte[0] = (unsigned char)(streamReadBits(in,8));
-		
+
         if (checkEndOfFile(in)) // if EOF encountered
             break;  // break loop
 
@@ -57,7 +57,6 @@ void LZ78_Compressor(Dictionary *dictionary, InStream *in, OutStream *out, int m
         if (EOFstate == 1) //EOF encountered previously
             break;
     }
-
 }
 
 /* Produce output for LZ78 Compressor
@@ -83,7 +82,6 @@ void LZ78_Output(Dictionary *dictionary,OutStream *out,unsigned char outputByte,
     if (EOFstate == 0 ) // prevent writing EOF to file
         streamWriteBits(out,(unsigned int)(outputByte),8);
 }
-
 
 /* *
  *  Compare data in the dictionary with input data
@@ -114,9 +112,8 @@ int compare_DictionaryData(unsigned char *inputString,Dictionary *dictionary,int
 						if (bytesToCompare == dictionary->Entry[j].entrySize )
 							return j;
 					}
-				
 				}
-				return -1; 
+				return -1;
             }
             else
                 return i ;
@@ -139,7 +136,6 @@ void copy_DictionaryDataInputData(unsigned char *inputString,Dictionary *diction
 
    memcpy(inputString,dictionary->Entry[index].data,bytesToCopy);
 }
-
 
 /*  Continuously read byte and find last match of the data in the dictionary
  *
@@ -181,5 +177,3 @@ int findLastMatchEntry(Dictionary *dictionary, InStream *in,unsigned char *dataS
 
     return lastIndex ;
 }
-
-

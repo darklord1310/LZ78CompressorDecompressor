@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
 typedef struct OutStream OutStream;
 typedef struct InStream InStream;
 
@@ -49,6 +48,5 @@ void freeInStream(InStream *in);
 void freeOutStream(OutStream *out);
 
 int checkEndOfFile(InStream *in);
-
 
 #endif // Stream_H

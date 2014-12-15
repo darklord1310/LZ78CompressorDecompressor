@@ -6,7 +6,7 @@ typedef struct DictionaryEntry DictionaryEntry;
 
 struct DictionaryEntry
 {
-    char *data;         
+    char *data;
     int entrySize;      // the size of the data string
 };
 
@@ -27,6 +27,4 @@ int getSizeOfString(char *string);
 void refreshDictionaryEntryData(Dictionary *dictionary,int dictSize);
 void destroyDictionary(Dictionary *dictionary,int dictSize);
 
-
 #endif // Dictionary_H
-

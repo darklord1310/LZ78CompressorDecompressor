@@ -52,7 +52,7 @@ void freeOutStream(OutStream *out)
 /*  Open selected file in selected mode for InStream
  *
  *  Input : filename    : filename is the name of the file to be opened
- *          mode        : mode is the file operation mode 
+ *          mode        : mode is the file operation mode
  *          in          : in is the InStream that going to open the file
  */
 InStream *openInStream(char *filename, char *mode, InStream *in)
@@ -70,7 +70,7 @@ InStream *openInStream(char *filename, char *mode, InStream *in)
 /*  Open selected file in selected mode for OutStream
  *
  *  Input : filename    : filename is the name of the file to be opened
- *          mode        : mode is the file operation mode 
+ *          mode        : mode is the file operation mode
  *          out         : out is the OutStream that going to open the file
  */
 OutStream *openOutStream(char *filename, char *mode, OutStream *out)
@@ -89,7 +89,7 @@ OutStream *closeOutStream(OutStream *out)
 {
     if (out->bitIndex != 0)
         streamFlush(out);
-        
+
     fclose(out->file);
 }
 
@@ -112,41 +112,41 @@ InStream *closeInStream(InStream *in)
 unsigned int streamReadBit(InStream *in)
 {
     int bitTest ;
-    
+
     bitTest = in->byteToRead & (1 << in->bitIndex) ; //read lSB first
     in -> bitIndex ++ ;
-    
+
     if (bitTest != 0 )
-        return 1 ; 
-    else 
+        return 1 ;
+    else
         return 0 ;
 }
 
 /*  Read multiple bits of data from InStream
  *
  *  Input : in          : in is the InStream containing the bits to read
- *          bitSize     : bitSize is the amount of bits to be read          
+ *          bitSize     : bitSize is the amount of bits to be read
  *
- *  Output: return read data 
+ *  Output: return read data
  */
 unsigned int streamReadBits(InStream *in, int bitSize)
 {
     unsigned int dataRead = 0, bitRead = 0 ,i ;
-    
+
     for ( i = 0 ; i < bitSize ; i ++)
     {
         if (in->bitIndex == 8 ) //fully extracted 1 byte
         {
             if (in->file != NULL)
 				fread(&(in->byteToRead),1,1,in->file); //read new byte
-            
+
 			in->bitIndex = 0 ;
         }
-        
+
         bitRead = streamReadBit(in);
         dataRead = dataRead | bitRead << i;
     }
-	
+
     return dataRead ;
 }
 
@@ -164,39 +164,39 @@ void streamWriteBit(OutStream *out,int bitToWrite)
 /*  Write multiple bits of data to OutStream byteToWrite
  *
  *  Input : out          : out is the OutStream that will write bits to byteToWrite
- *          value        : value is the value to be written 
- *          bitSize      : bitSize is the number of bits for the value to be written 
+ *          value        : value is the value to be written
+ *          bitSize      : bitSize is the number of bits for the value to be written
  *
  */
 void streamWriteBits(OutStream *out,unsigned int value,int bitSize)
 {
     int bitToWrite, i ,j ;
-    
+
     for ( i = 0 ; i < bitSize ; i ++) //write value to buffer
     {
         if (out->bitIndex == 8)
             streamFlush(out);
 
         bitToWrite = value & (1 << i ) ;
-        
+
         if (bitToWrite != 0 )
             bitToWrite = 1 ;
-        else 
+        else
             bitToWrite = 0 ;
-            
+
         streamWriteBit(out,bitToWrite);
     }
-}    
-    
+}
+
 /*  Flush byteToWrite in OutStream
  *
  *  Input : out          : out is the OutStream that contains the byteToWrite to be flushed
- */ 
+ */
 void streamFlush(OutStream *out)
 {
     int n;
     n = fwrite(&(out->byteToWrite),1,1,out->file);
-    
+
     out->byteToWrite = 0;
     out->bitIndex = 0 ;
 }
@@ -212,10 +212,9 @@ int checkEndOfFile(InStream *in)
 {
     int result ;
     result = feof (in->file) ;
-       
+
     if (result != 0)
         return 1;
-    else 
+    else
         return 0;
 }
-
