@@ -34,6 +34,7 @@ void test_LZ78_Decompressor_given_input_1a1b1c_and_size_of_1_should_decompress_i
     
     LZ78_Decompressor(infilename, outfilename, dictSize, Fixed);
 
+
 }
 
 
@@ -45,6 +46,7 @@ void test_LZ78_Decompressor_given_input_1a2b2a1b3a5_and_size_of_1000_should_deco
     char *outfilename = "test/support/Decompressed/LZ78decompressor_out_1a2b2a1b3a5.txt";
     
     LZ78_Decompressor(infilename, outfilename, dictSize, Fixed);
+
 }
 
 
