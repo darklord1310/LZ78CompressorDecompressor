@@ -29,6 +29,7 @@ void test_LZ78_CompressorDecompressor_README_Fixed_mode(void)
 	char *InfileName = "test/support/Source/README" ;
 	char *OutfileName = "test/support/Decompressed/Fixed/README_Decompressed" ;
 	LZ78_CompressorDecompressor(InfileName,OutfileName, 4096,Fixed);
+
     int status = verifyDecompressedFile(InfileName, OutfileName);
     TEST_ASSERT_EQUAL(1, status);
 }
@@ -38,8 +39,10 @@ void test_LZ78_CompressorDecompressor_libjansson_4_dll_Fixed_mode(void)
 	char *InfileName = "test/support/Source/libjansson-4.dll" ;
 	char *OutfileName = "test/support/Decompressed/Fixed/libjansson-4_Decompressed.dll" ;
 	LZ78_CompressorDecompressor(InfileName,OutfileName,4096,Fixed);
+
     int status = verifyDecompressedFile(InfileName, OutfileName);
     TEST_ASSERT_EQUAL(1, status);
+
 }
 
 void test_LZ78_CompressorDecompressor_StringObject_Fixed_mode(void)
@@ -47,6 +50,7 @@ void test_LZ78_CompressorDecompressor_StringObject_Fixed_mode(void)
 	char *InfileName = "test/support/Source/StringObject.o" ;
 	char *OutfileName = "test/support/Decompressed/Fixed/StringObject_Decompressed.o" ;
 	LZ78_CompressorDecompressor(InfileName,OutfileName,4096,Fixed);
+
     int status = verifyDecompressedFile(InfileName, OutfileName);
     TEST_ASSERT_EQUAL(1, status);
 }
@@ -57,6 +61,7 @@ void test_LZ78_CompressorDecompressor_README_Variable_mode(void)
 	char *InfileName = "test/support/Source/README" ;
 	char *OutfileName = "test/support/Decompressed/Variable/README_Decompressed" ;
 	LZ78_CompressorDecompressor(InfileName,OutfileName, 4096 ,Variable);
+
     int status = verifyDecompressedFile(InfileName, OutfileName);
     TEST_ASSERT_EQUAL(1, status);
 }
@@ -80,28 +85,4 @@ void test_LZ78_CompressorDecompressor_StringObject_Variable_mode(void)
     int status = verifyDecompressedFile(InfileName, OutfileName);
     TEST_ASSERT_EQUAL(1, status);
 }
-
-
-// void testing()
-// {
-
-    // char *InfileName = "test/support/Source/testing.txt" ;
-	// char *OutfileName = "test/support/Decompressed/Fixed/testing_Decompressed.txt" ;
-	// LZ78_CompressorDecompressor(InfileName,OutfileName, 8, Fixed);
-
-// }
-
-// void test()
-// {
-    // int numberofbits;
-    
-    // initialize dictionary
-    // Dictionary *dict = initDictionary(10);
-    // dict->currentIndex = 2;
-    
-    // numberofbits = getVariableIndex(dict);
-    // printf("myfunctionans: %d\n", numberofbits);
-    
-// }
-
 

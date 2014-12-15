@@ -3,6 +3,13 @@
 #include "malloc.h"
 #include "Stream.h"
 
+/*  Determine Number of Bits Required to be written
+ *
+ *  Input : value          	: value is the index to be written
+ *			dictionaryIndex	: dictionaryIndex is the current index of the dictionary
+ *
+ *	Output : return number of bits required
+ */ 
 int determineNumberOfBitsRequired(int value,int dictionaryIndex)
 {
     int count = 0;
@@ -21,6 +28,14 @@ int determineNumberOfBitsRequired(int value,int dictionaryIndex)
     return count;
 }
 
+/*  Rename compressedFile to .LZ and place them to correct directry
+ *
+ *  Input : InfileName          : InfileName is the input file name
+ *			CompressedfileName	: CompressedfileName is used to store the CompressedfileName
+ *			mode				: Fixed will store the compressed file into test/support/Compressed/Fixed
+ *								  Variable will store the compressed file into test/support/Compressed/Variable
+ *
+ */ 
 void renameCompressedFile(char *InfileName,char *CompressedfileName,int mode)
 {
     char *dotPtr, *findSource ,*backSlash, *storage;
@@ -86,7 +101,6 @@ int verifyDecompressedFile(char *infilename1, char *infilename2)
         value2 = streamReadBits(in2, 8);
         counter2++;
     }while(!checkEndOfFile(in2) );
-    
     
     closeInStream(in1);                                           
     closeInStream(in2);   

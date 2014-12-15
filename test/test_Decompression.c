@@ -4,7 +4,6 @@
 #include "mock_Stream.h"
 #include <assert.h>
 
-
 void setUp(void)
 {
     
@@ -14,8 +13,6 @@ void tearDown(void)
 {
 
 }
-
-
 
 /*test case when dictionary is not full, and no merging of data occur
  *
@@ -39,9 +36,6 @@ void test_AddDataToDictionary_given_1a_1b_and_size_is_larger_than_data_written_s
     TEST_ASSERT_EQUAL_STRING("a" ,dict->Entry[0].data);     TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
     TEST_ASSERT_EQUAL_STRING("b" ,dict->Entry[1].data);     TEST_ASSERT_EQUAL(1 ,dict->Entry[1].entrySize);
 }
-
-
-
 
 /*test case when dictionary is not full, and merging of data occur
  *
@@ -73,9 +67,6 @@ void test_AddDataToDictionary_given_1a_2b_3c_and_size_is_larger_than_data_writte
     TEST_ASSERT_EQUAL_STRING("abc" ,dict->Entry[2].data);    TEST_ASSERT_EQUAL(3 ,dict->Entry[2].entrySize);
 }
 
-
-
-
 /*test case when dictionary is full, and try to add into dictionary
  *
  *  Given input = 1a2b
@@ -99,34 +90,6 @@ void test_AddDataToDictionary_given_1a_2b_and_size_is_smaller_than_data_written_
     TEST_ASSERT_EQUAL_STRING("a" ,dict->Entry[0].data);     TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
 
 }
-
-
-
-/*test case when dictionary is not full, and try to add a binary number into dictionary
- *
- *  Given input = 1 01 2 4f
- */
-void xtest_AddDataToDictionary_given_1_01_2_4f_and_size_is_larger_than_data_written_should_add_into_dictionary_correctly()
-{
-    int value;
-    Dictionary *dict = initDictionary(10);
-    
-    value = AddDataToDictionary(dict, 1 , 0x00   );
-    TEST_ASSERT_EQUAL(1, value);
-    TEST_ASSERT_EQUAL(1, dict->currentIndex);
-    TEST_ASSERT_EQUAL(1 ,dict->Entry[0].entrySize);
-
-   
-    value = AddDataToDictionary(dict, 2 , 0x4E   );
-    TEST_ASSERT_EQUAL(1, value);
-    TEST_ASSERT_EQUAL(2, dict->currentIndex);
-    TEST_ASSERT_EQUAL(2 ,dict->Entry[1].entrySize);
-    printf("%s\n", dict->Entry[1].data);  
-    TEST_ASSERT_EQUAL( (char)0x014f , dict->Entry[1].data );
-
-}
-
-
 
 //test case when dictionary is not full for decompression when index contain all zeroes only
 void test_Decompression_given_1a1b1c_and_when_dictionary_is_not_full_should_decompress_correctly_into_abc()
@@ -154,8 +117,6 @@ void test_Decompression_given_1a1b1c_and_when_dictionary_is_not_full_should_deco
     Decompression(&out, 1 , (unsigned int)('b'), dict);
     Decompression(&out, 1 , (unsigned int)('c'), dict);
 }
-
-
 
 //test case when dictionary is not full for decompression when index not only zero
 void test_Decompression_given_1a2b3c_and_when_dictionary_is_not_full_should_decompress_correctly_into_aababc()
@@ -193,8 +154,6 @@ void test_Decompression_given_1a2b3c_and_when_dictionary_is_not_full_should_deco
     Decompression(&out, 2 , (unsigned int)('b'), dict);
     Decompression(&out, 3 , (unsigned int)('c'), dict);
 }
-
-
 
 // test case when dictionary is not needed to be refresh and all index is only 1
 void test_LZ78_Decompression_Fixed_given_input_1a1b1c_and_size_of_10_should_decompress_into_abc()
@@ -236,8 +195,6 @@ void test_LZ78_Decompression_Fixed_given_input_1a1b1c_and_size_of_10_should_deco
     
     LZ78_Decompression_Fixed(&in, &out, dict, infilename, outfilename, dictSize);
 }
-
-
 
 // test case when dictionary is not needed to be refresh and the index is not only 1
 void test_LZ78_Decompression_Fixed_given_input_1a2b3c_and_size_of_10_should_decompress_into_abc()
@@ -283,10 +240,6 @@ void test_LZ78_Decompression_Fixed_given_input_1a2b3c_and_size_of_10_should_deco
     LZ78_Decompression_Fixed(&in, &out, dict, infilename, outfilename, dictSize);
 }
 
-
-
-
-
 // test case when dictionary is needed to be refresh 
 void test_LZ78_Decompression_Fixed_given_input_1a1b1c_and_size_of_1_should_decompress_into_abc()
 {
@@ -327,7 +280,6 @@ void test_LZ78_Decompression_Fixed_given_input_1a1b1c_and_size_of_1_should_decom
     
     LZ78_Decompression_Fixed(&in, &out, dict, infilename, outfilename, dictSize);
 }
-
 
 void test_getVariableIndex_given_0_should_return_1()
 {
@@ -392,8 +344,6 @@ void test_getVariableIndex_given_4096_should_return_13()
     TEST_ASSERT_EQUAL(13 , numberofbits);
 }
 
-
-
 // test case when dictionary is not needed to be refresh, index is only 1
 void test_LZ78_Decompression_Variable_given_input_1a1b_and_size_of_10_should_decompress_into_ab()
 {
@@ -429,7 +379,6 @@ void test_LZ78_Decompression_Variable_given_input_1a1b_and_size_of_10_should_dec
     
     LZ78_Decompression_Variable(&in, &out, dict, infilename, outfilename, dictSize);
 }
-
 
 // test case when dictionary is not needed to be refresh, index is not only 1
 void test_LZ78_Decompression_Variable_given_input_1a2b2_and_size_of_10_should_decompress_into_aaba()
@@ -469,8 +418,6 @@ void test_LZ78_Decompression_Variable_given_input_1a2b2_and_size_of_10_should_de
     
     LZ78_Decompression_Variable(&in, &out, dict, infilename, outfilename, dictSize);
 }
-
-
 
 // test case when dictionary is needed to be refresh 
 void test_LZ78_Decompression_Variable_given_input_1a2b1b_and_size_of_2_should_decompress_into_aabb()
@@ -512,9 +459,6 @@ void test_LZ78_Decompression_Variable_given_input_1a2b1b_and_size_of_2_should_de
     
     LZ78_Decompression_Variable(&in, &out, dict, infilename, outfilename, dictSize);
 }
-
-
-
 
 // test case for binary input when dictionary is not needed to be refresh 
 void test_LZ78_Decompression_Variable_given_input_1_00_2_4f_3_00_and_size_of_10_should_decompress_into_00_00_4f_00_4f_00()
@@ -558,8 +502,6 @@ void test_LZ78_Decompression_Variable_given_input_1_00_2_4f_3_00_and_size_of_10_
     
     LZ78_Decompression_Variable(&in, &out, dict, infilename, outfilename, dictSize);
 }
-
-
 
 // test case for binary input when dictionary is needed to be refresh 
 void test_LZ78_Decompression_Variable_given_input_1_00_2_4f_1_00_and_size_of_1_should_decompress_into_00_00_4f_00()
