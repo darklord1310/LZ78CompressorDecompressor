@@ -60,7 +60,7 @@ void test_LZ78_CompressorDecompressor_README_Variable_mode(void)
 {
 	char *InfileName = "test/support/Source/README" ;
 	char *OutfileName = "test/support/Decompressed/Variable/README_Decompressed" ;
-	LZ78_CompressorDecompressor(InfileName,OutfileName, 4096 ,Variable);
+	LZ78_CompressorDecompressor(InfileName,OutfileName, 4096,Variable);
 
     int status = verifyDecompressedFile(InfileName, OutfileName);
     TEST_ASSERT_EQUAL(1, status);

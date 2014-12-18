@@ -120,11 +120,8 @@ void refreshDictionaryEntryData(Dictionary *dictionary,int dictSize)
 {
     int i  ;
 
-    assert(dictSize <= 4096);
-
     for ( i = 0 ; i < dictSize ; i ++ )
     {
-        assert(i < 4096);
         memset (dictionary->Entry[i].data,0,4096);
         dictionary->Entry[i].entrySize = 0;
     }
