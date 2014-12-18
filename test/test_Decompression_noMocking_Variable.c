@@ -4,6 +4,7 @@
 #include "Stream.h"
 #include "Utility.h"
 #include <assert.h>
+#include "CustomAssertions.h"
 
 void setUp(void)
 {
@@ -27,6 +28,7 @@ void test_aababc_Compressed_Variable_given_dictionary_size_4096_should_compress_
 	char *outfilename = "test/support/Decompressed/Variable/aababc_Compressed_Variable_Decompressed" ;
     
 	LZ78_Decompressor(infilename, outfilename, dictSize, Variable);
+    TEST_ASSERT_EQUAL_FILE("test/support/Source/aababc.txt", outfilename);
     
 }
 
@@ -39,5 +41,6 @@ void test_aababc_Compressed_Variable_given_dictionary_size_2_should_compress_int
 	char *outfilename = "test/support/Decompressed/Variable/aababc_Compressed_Refresh_Variable_Decompressed" ;
     
 	LZ78_Decompressor(infilename, outfilename, dictSize, Variable);
+    TEST_ASSERT_EQUAL_FILE("test/support/Source/aababc.txt", outfilename);
 
 }
