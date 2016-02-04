@@ -15,7 +15,7 @@
  *            mode is for user to select either fixed index or variable index
  *
  */
-void LZ78_Decompressor(char *infilename, char *outfilename, int dictSize, int mode)
+void ADDCALL LZ78_Decompressor(char *infilename, char *outfilename, int dictSize, int mode)
 {
     InStream *in;
     OutStream *out;
@@ -26,6 +26,10 @@ void LZ78_Decompressor(char *infilename, char *outfilename, int dictSize, int mo
     else
         LZ78_Decompression_Variable(in, out, dict, infilename, outfilename, dictSize);
 }
+
+/* temp command here*/
+// gcc -c -o Decompression.o Decompression.c Dictionary.o Dictionary.c Stream.o Stream.c Utility.o Utility.c -D ADD_EXPORTS
+
 
 /*
  * Responsible for the complete decompression process for fixed Index
